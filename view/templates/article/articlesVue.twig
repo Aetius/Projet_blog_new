@@ -1,0 +1,54 @@
+
+
+{% extends 'layoutFront.twig'%}
+
+{% block content %}
+	<h1> les articles</h1>
+	<ul>
+		{% for article in articles%}  //quand on fait ca, on crée une variable loop, qui permet de récupérer différentes infos. en tapant {{loop.index}}, on récupère l'index. 
+			<li>
+				{{article.name | striptags | truncate(50, true, '...')}}
+			</li>
+		{% endfor %}
+
+	</ul>
+{% endblock %}}
+
+//en lien avec la fonction article de twigFrontend.
+//on peut ajouter des liens avec comme variable des id d'articles. 
+
+//on peut ajouter des filtres avec | : nl2br (pour remplacer des sauts de lignes par des br.)
+
+//dans twig, on n'a accès qu'aux fonctions définies par twig.  
+//pour ajouter une fonction, on utilise addFunction(new Twig_SimpleFunction('nomDeLaFonction', function($callbackDeLaFonctionAExecuter){
+	return 'salut' . $valeur;}));
+
+
+
+///autre ex : 
+
+{% bloc content%}
+	<h1> les derniers articles </h1>
+	<div class="row">
+		{% for article in articles %}
+			<div class="col-xs">
+				<div class="card">
+					<div class="card-block">
+						<h4 class="card-title">{{ article.name}}</h4>
+						<p class="card-text">{{ article.content | striptags | truncate(50, true, '...')}}</p>
+						<a href='#'>Voir l'article</a>
+					</div>
+				</div>
+			</div>
+			{{ if loop.index % 4 == 0}}  
+			//ou {% if loop.index is divisibleby (4) %}
+			// ou on utilise bootstrap, avec un col-xs-4, et c'est plus simple...
+			</div><div class="row">
+			
+			{% endif%}
+		{% endfor %}
+
+{# rappel : les affichages {{}}, les blocs :{%%}
+#}
+
+{# pour faire une concaténation : 'str'~ variable #}

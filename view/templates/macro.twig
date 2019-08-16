@@ -1,0 +1,32 @@
+
+{% macro input (name, placeholder, options=[] ) %}
+	<div class="{{options.col | default('col-md-6')}}">
+	    <div class="form-group">
+	    	<input type="{{options.type | default('text')}}" class="form-control"  id="{{name}}" name="{{name}}"  placeholder="{{placeholder}}"  required="required" data-validation-required-message="Merci d'entrer {{placeholder}}">
+	    	<p class="help-block text-danger"></p>
+		</div>
+	</div>
+{% endmacro %}
+
+{% macro textarea (name, placeholder, rows='4', cols ='40', options=[] ) %}  
+	
+		<div class="form-group">
+			
+				<textarea type="text" class="form-control" id="{{name}}" name="{{name}}" placeholder="{{placeholder}}" rows="{{rows}}" cols="{{cols}}" data-validation-required-message="Merci d'écrire {{placeholder}}"></textarea>
+		
+		</div>
+	
+{% endmacro %}
+
+{% macro skillBar (name, value, options=[]) %}
+<div class="{{options.class | default ('col-sm-12')}}">
+	<div class="lead"> {{name}}
+	</div>
+	<div class ="progress">
+		<div class ="progress-bar wow fadeInLeft" data-progress="90%" style ="width:{{value}}; visibility: visible;  animation-name: fadeInLeft" >
+		</div>
+	</div>
+</div>
+
+{% endmacro%}
+

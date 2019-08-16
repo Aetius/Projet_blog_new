@@ -1,0 +1,6 @@
+#besoin du système de récriture d'url
+RewriteEngine on
+#si le fichier est joignable, pas la peine d'aller plus loin
+RewriteCond %{REQUEST_FILENAME} !-f
+#on dit qu'importe ce qu'il trouve, il faut rediriger vers index.php 
+RewriteRule . index.php [L]

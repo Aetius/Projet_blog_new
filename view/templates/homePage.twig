@@ -1,0 +1,234 @@
+{% extends "layoutFront.twig" %}
+
+
+{% block title %}Accueil{% endblock %}
+
+
+{% block content %}
+
+{% import 'macro.twig' as form %}
+
+<!-- Header -->
+  <header class="masthead">
+    <div class="container">
+      <div class="intro-text">
+        <h1 class="intro-heading text-uppercase"> Développeur PHP junior </h1>
+        <p class="intro-lead-in">"Je débute, mais ca va saigner"</p>
+        <h3 class="intro-lead-in">Thomas Brumain</h3>
+        <a class="btn btn-primary btn-xl text-uppercase js-scroll-trigger" href="/#contact">Me contacter</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- realisation with thumbnails of these realisation in span -->
+  <section class="page-section">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12 text-center">
+          <h2 class="section-heading text-uppercase">Mes réalisations</h2>
+        </div>
+      </div>
+      <div class="row text-center">
+        <div class="col-md-6 portfolio-item">
+          <a class="portfolio-link" data-toggle="modal" href="#portfolioModal1">
+            <div class="portfolio-hover">
+              <div class="portfolio-hover-content">
+                <i class="fas fa-plus fa-3x"></i>
+              </div>
+            </div>
+            <img class="img-fluid" src="/images/siteWP.png" alt="">
+          </a>
+          <div class="portfolio-caption">
+            <h4>Site avec Wordpress</h4>
+            <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Minima maxime quam architecto quo inventore harum ex magni, dicta impedit.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-sm-6 portfolio-item">
+          <a class="portfolio-link" data-toggle="modal" href="#portfolioModal2">
+            <div class="portfolio-hover">
+              <div class="portfolio-hover-content">
+                <i class="fas fa-plus fa-3x"></i>
+              </div>
+            </div>
+            <img class="img-fluid" src="/images/siteBootstrap.png" alt="">
+          </a>
+          <div class="portfolio-caption">
+            <h4>Site sur mesure</h4>
+            <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Minima maxime quam architecto quo inventore harum ex magni, dicta impedit.</p>
+          </div>
+        </div>
+      </div>
+      <div class="text-center">
+        <a class="btn btn-primary btn-xl" type="button" href="portofolio">Voir les autres projets</a>
+    </div>
+  </section>
+
+  <!-- Skills -->
+  <section class="bg-light page-section" id="skills">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12 text-center">
+          <h2 class="section-heading text-uppercase">Mes compétences</h2>
+          <h3 class="section-subheading text-muted">Lorem ipsum dolor sit amet consectetur.</h3>
+        </div>
+      </div>
+      <div class="row col-lg-12 text-center">
+        <div class="col-md-6">
+          <h3 class="text-center">Langages de programmation</h3>
+          {{ form.skillBar ('PHP', '30%')}}
+          {{ form.skillBar ('JavaScript', '15%')}}
+        </div>
+        <div class="col-md-6">
+          <h3 class="text-center">Autres langages</h3>
+          {{ form.skillBar ('HTML', '50%')}}
+          {{ form.skillBar ('CSS', '50%')}}
+        </div>
+      </div>
+          <div class="col-md-12 text-center">
+            <h3 >Framwork, CRM et templating</h3>
+          </div>
+          <div class="d-flex justify-content-md-center">
+            <div class="col-md-12 row text-center">
+            {{ form.skillBar ('Bootstrap', '30%', {class:'col-md-6'})}}
+            {{ form.skillBar ('Wordpress', '30%', {class:'col-md-6'})}}
+            {{ form.skillBar ('Moteur de templating Twig', '20%', {class:'col-md-6'})}}
+          </div>
+          </div>
+        </div>
+ 
+      <div class="row">
+        <div class="col-lg-8 mx-auto text-center">
+          <p class="large text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aut eaque, laboriosam veritatis, quos non quis ad perspiciatis, totam corporis ea, alias ut unde.</p>
+        </div>
+      </div>
+
+  </section>
+
+  <!-- Contact -->
+  <section class="page-section" id="contact">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12 text-center">
+          <h2 class="section-heading text-uppercase">Me Contacter</h2>
+        </div>
+      </div>
+      
+      <div class="col-md-12">
+        <div class="row">
+          <div class="col-md-8">
+            <div class="row">
+              <form method="post" action="">
+                <h3 class="section-heading">Formulaire de contact</h3>
+                {%if var.success == 1 %}
+                  <div class="alert alert-success"> Le mail a bien été envoyé
+                  </div>
+                {%endif%}
+                <div class="row">
+
+                  {{form.input ('surname', 'votre prénom')}}
+                  {{form.input ('name', 'votre nom')}}
+                  {{form.input ('email', 'votre email', {col:'col-md-12', type:'email'})}}
+                </div>
+                  {{form.textarea ('message', 'votre message')}}
+                <div class="clearfix"></div>
+                <div class="col-lg-12 text-center">
+                  <div id="success"></div>
+                  <button class="btn btn-primary btn-xl text-uppercase" type="submit">Envoyer</button>
+                </div>
+              </form>
+            </div>   
+          </div>
+          <div class="col-md-4">
+            <ul class=" social-buttons">
+              <li class="">
+                <a href="#">
+                  <i class="fab fa-linkedin-in"></i>
+                </a>
+              </li>
+              <li class="">
+                <a href="#">
+                  <i class="fab fa-github"></i>
+                </a>
+              </li>
+              <li class="">
+                <a href="#">
+                  <i class="fab fa-lien_cv"></i>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+
+<!-- Modal 1 -->
+  <div class="portfolio-modal modal fade" id="portfolioModal1" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="close-modal" data-dismiss="modal">
+          <div class="lr">
+            <div class="rl"></div>
+          </div>
+        </div>
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-8 mx-auto">
+              <div class="modal-body">
+                <!-- Project Details Go Here -->
+                <h2 class="text-uppercase">Projet Wordpress : </h2>
+                <p class="item-intro text-muted">Un site de vente et location de chalets.</p>
+                <img class="img-fluid d-block mx-auto" src="/images/siteWP.png" alt="">
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Est blanditiis dolorem culpa incidunt minus dignissimos deserunt repellat aperiam quasi sunt officia expedita beatae cupiditate, maiores repudiandae, nostrum, reiciendis facere nemo!</p>
+                <ul class="list-inline">
+                  <li>Date: Janvier 2019</li>
+                  <li>Exercice Openclassrooms</li>
+                </ul>
+                <button class="btn btn-primary" data-dismiss="modal" type="button">
+                  <i class="fas fa-times"></i>
+                  Fermer le projet</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 2 -->
+  <div class="portfolio-modal modal fade" id="portfolioModal2" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="close-modal" data-dismiss="modal">
+          <div class="lr">
+            <div class="rl"></div>
+          </div>
+        </div>
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-8 mx-auto">
+              <div class="modal-body">
+                <!-- Project Details Go Here -->
+                <h2 class="text-uppercase">Projet de site sur mesure : </h2>
+                <p class="item-intro text-muted">Site de promotion pour un festival, effectué en html, css, JS.</p>
+                <img class="img-fluid d-block mx-auto" src="/images/siteBootstrap.png" alt="">
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Est blanditiis dolorem culpa incidunt minus dignissimos deserunt repellat aperiam quasi sunt officia expedita beatae cupiditate, maiores repudiandae, nostrum, reiciendis facere nemo!</p>
+                <ul class="list-inline">
+                  <li>Date: Avril 2019</li>
+                  <li>Exercice Openclassrooms</li>
+                </ul>
+                <button class="btn btn-primary" data-dismiss="modal" type="button">
+                  <i class="fas fa-times"></i>
+                  Fermer le projet</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% endblock %}

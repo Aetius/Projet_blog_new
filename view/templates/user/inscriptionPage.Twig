@@ -1,0 +1,31 @@
+{% extends "layoutBack.twig" %}
+
+{% block title %}Inscription{% endblock %}
+
+{% block content %}
+
+{% import 'macro.twig' as form %}
+
+<main>
+<section class="bg-light page-section">
+    <div class="container">
+<h2>page inscription</h2> 
+<div class="row">
+<form method="post" action="inscription">
+
+{{ form.input ('Name', 'Votre prénom', '1', '20', {autofocus:'autofocus'} )}}
+{{ form.input ('Lastname', 'Votre nom', '1', '20')}}
+{{ form.input ('Mail', 'Votre adresse mail', '1', '20', {type:'email'})}}
+{{ form.input ('Login', 'Votre login', '1', '30')}}
+{{ form.input ('Password', 'Votre mot de passe', '', '40', {type:'password'} )}}
+{{ form.input ('PasswordConfirm', 'Veuillez confirmer votre mot de passe', '', '40', {type:'password'} )}}
+
+<button type="submit" >Envoyer</button>
+<button type="reset">Réinitialiser</button>
+</form>
+</form>
+
+</div>
+</section>
+    </main>
+{% endblock %}

@@ -1,0 +1,15 @@
+fichiers de sécurisation accès admin. 
+
+ne pas mettre le nom admin : trop facile d'accès. 
+
+ne pas oublier de modifier le chemin d'accès du .htaccess pour que la restriction fonctionne. 
+pour le trouver facilement : créer un fichier chemin.php, et taper cette ligne : <?php echo realpath('chemin.php'); ?>
+puis on remplace chemin.php par .htpasswd
+
+
+
+pour le fichier .htpasswd 
+le schéma : login:mot_de_passe
+
+conseil : crypter le mot de passe via php. utilisation de password_hash
+ATTENTION : le cryptage ne fonctionne pas avec certains serveurs. 
