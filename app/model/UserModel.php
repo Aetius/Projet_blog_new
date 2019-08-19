@@ -44,8 +44,7 @@ class UserModel /*extends AbstractModel*/{
 		$request->closeCursor();
 	}
 
-	public function read($userControl){
-		
+	private function read($userControl){
 		$request=$this->_bdd->prepare("SELECT login,password, role FROM users WHERE login =:login");
 		$request->execute(array('login'=> $userControl->login()));
 		$result=$request->fetch(PDO::FETCH_ASSOC);
@@ -54,12 +53,10 @@ class UserModel /*extends AbstractModel*/{
 		$this->_bddUserRole=$result['role'];
 	}
 
-	public function verifUse($name, $id){
-		$request=$this->_bdd->prepare("SELECT $id, password, role FROM users WHERE $id =:$id");
+	private function verifUse($name, $id){
+		$request=$this->_bdd->prepare("SELECT $id, FROM users WHERE $id =:$id");
 		$request->execute(array($id=>$name));
 		$result=$request->fetch(PDO::FETCH_ASSOC);
-		$this->_passwordConnexion =$result['password']; 
-		$this->_role = $result['role'];
 		$request->closeCursor(); 
 		return $result[$id];
 		
@@ -82,7 +79,7 @@ class UserModel /*extends AbstractModel*/{
 
 	////////////setters//////////////
 
-	public function setVerification($verification){
+	private function setVerification($verification){
 		return Verification::input($verification);
 	}
 

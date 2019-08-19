@@ -2,21 +2,19 @@
 {% macro input (name, placeholder, options=[] ) %}
 	<div class="{{options.col | default('col-md-6')}}">
 	    <div class="form-group">
-	    	<input type="{{options.type | default('text')}}" class="form-control"  id="{{name}}" name="{{name}}"  placeholder="{{placeholder}}"  required="required" data-validation-required-message="Merci d'entrer {{placeholder}}">
+	    	<input type="{{options.type | default('text')}}" value="{{options.value | default('')}}" class="form-control"  id="{{name}}" name="{{name}}"  placeholder="{{placeholder}}"  required="required" data-validation-required-message="Merci d'entrer {{placeholder}}">
 	    	<p class="help-block text-danger"></p>
 		</div>
 	</div>
 {% endmacro %}
 
-{% macro textarea (name, placeholder, rows='4', cols ='40', options=[] ) %}  
-	
+
+{% macro textarea (name, placeholder, options=[] ) %}  
 		<div class="form-group">
-			
-				<textarea type="text" class="form-control" id="{{name}}" name="{{name}}" placeholder="{{placeholder}}" rows="{{rows}}" cols="{{cols}}" data-validation-required-message="Merci d'écrire {{placeholder}}"></textarea>
-		
+				<textarea type="text"  class="form-control"  id="{{name}}" name="{{name}}" placeholder="{{placeholder}}" rows="{{options.rows | default("4")}}" cols="{{options.cols | default("100")}}" data-validation-required-message="Merci d'écrire {{placeholder}}">{%if session.inputs.message != "" %}{{session.inputs.message}}{% endif%}</textarea>
 		</div>
-	
 {% endmacro %}
+
 
 {% macro skillBar (name, value, options=[]) %}
 <div class="{{options.class | default ('col-sm-12')}}">
@@ -27,6 +25,7 @@
 		</div>
 	</div>
 </div>
-
 {% endmacro%}
+
+
 

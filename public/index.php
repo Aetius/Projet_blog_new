@@ -21,11 +21,10 @@ $router->addRoutes(array(
   array('POST', '/connexion', 'user#connexion'),
   array('GET', '/connexion/espace', 'user#show'),
   array('GET', '/connexion/logout', 'user#logout'),
-  array('GET', '/contact', 'user#show'),
   array('GET', '/comment', 'comment#show'),
   array('GET', '/comment/create', 'comment#show'), 
   array('POST', '/comment/create', 'comment#create'),
-  array('POST', '/', 'mail#sendContact'),
+  array('POST', '/', 'mail#sendMail'),
   array('GET', '/', 'home')
   //array('DELETE','/users/[i:id]', 'users#delete', 'delete_user')
 ));

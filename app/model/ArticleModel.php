@@ -38,7 +38,7 @@ class ArticleModel{
 		$request->closeCursor();
 	}
 
-	public function read(){
+	public function all(){
 		$request=$this->_bdd->prepare("SELECT * FROM articles ORDER BY id DESC LIMIT 0,10");
 		$request->execute(array());
 		while ($result=$request->fetch(PDO::FETCH_ASSOC)){

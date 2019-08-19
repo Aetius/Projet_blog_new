@@ -20,7 +20,7 @@ class Verification{
 	}
 
 	public static function name($name){
-		if(preg_match("#^[a-zA-Z]*$#", $name)){
+		if(preg_match("#^[a-zA-Z]{2,}$#", $name)){
 			return 'valide';
 		}else{
 			return 'non valide';
@@ -28,7 +28,7 @@ class Verification{
 	}
 
 	public static function mail($mail){
-		if (preg_match("#^[a-zA-Z0-9\.]*[@]{1}[a-z]{1,20}\.[a-z]{2,8}$#", $name)){
+		if (preg_match("#^[a-zA-Z0-9\.]{2,}[@]{1}[a-z]{1,20}\.[a-z]{2,8}$#", $mail)){
 			return 'valide';
 		}else{
 			return 'non valide';

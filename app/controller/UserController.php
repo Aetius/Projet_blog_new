@@ -32,7 +32,7 @@ public function show(){
 	}
 	$url=$url[count($url)-1];		
 	$twig =new \View\twigView();
-	$twig->show("/user/$url"."Page");
+	$twig->show("/$url"."Page");
 }
 
 public function logout(){
@@ -45,22 +45,14 @@ public function logout(){
 //les valeurs du constructeur sont initialisées avec les mutateurs correspondants : principe d'encapsulation. 
 ////////////////////fonction redirection et confirmation que l'enregistrement a bien été fait. 
 
-public function defineUsers($id){
-	foreach ($_POST as $key => $value) {
-		$key = Verification::input($key);
-		$value = Verification::input($value);
-		$name = "set".$key;
-		$this->_modelUser->$name($value, $id); 
-		
-		if ((!($this->_modelUser->error)=="")&& (!(in_array($this->_modelUser->error, $this->_error)))){
-			 (array_push($this->_error, $this->_modelUser->error)); 
-		};
-	}	
-}
+
+/////////hydratation des données récupérées via les setters du modèle. 
+
+
 
 ///loop function that verify if inscription's datas are ok. if not, post an error message. ////////
 public function inscription(){   
-	$this->defineUsers("inscription"); 
+	$this->hydrateUser("inscription"); 
 	if (empty($this->_error)){
 		$this->_modelUser->create();
 		echo 'inscription terminée'; 
@@ -73,7 +65,7 @@ public function inscription(){
 
 ///////////////////	VERIFIER QUE LES EDITOR NE PEUVENT PAS ALLER SUR L'ESPACE ADMIN GENERAL./////////////////////////////
 public function connexion(){  
-	$this->defineUsers('connexion');
+	$this->hydrateUser('connexion');
 	if ((empty($this->_error))&& ($this->_modelUser->connexion() == true)){
 		$this->_session->run($this->_modelUser->name(), $this->_modelUser->role());
 		if ($this->_modelUser->role() == 'admin'){
@@ -111,48 +103,63 @@ public function connexion(){
 		echo "Identifiant ou mot de passe invalide";
 		require ("../view/connexionPage.php");
 	}*/
-}
+	}
 
-public function modification(){
-	
-}
+	public function modification(){
+		
+	}
 
-public function delete(){
+	public function delete(){
 
-}
+	}
 
 
-//////////////getters/////////////////
+	//////////////getters/////////////////
 
-public function name(){
-	
-	return $this->_name;
-}
+	public function name(){
+		
+		return $this->_name;
+	}
 
-public function lastName(){
-	
-	return $this->_lastName;
-}
+	public function lastName(){
+		
+		return $this->_lastName;
+	}
 
-public function mail(){
-	return $this->_mail;
-}
+	public function mail(){
+		return $this->_mail;
+	}
 
-public function login(){
-	return $this->_login;
-}
+	public function login(){
+		return $this->_login;
+	}
 
-public function password(){
-	return $this->_password;
-}
+	public function password(){
+		return $this->_password;
+	}
 
-public function role(){
-	return $this->_role;
-}
+	public function role(){
+		return $this->_role;
+	}
 
 
 
 //voir pour définir les rôles.
 
+
+
+	private function hydrateUser($id){
+		foreach ($_POST as $key => $value) {
+			$key = Verification::input($key);
+			$value = Verification::input($value);  /////vérif avec les setters dans le model. nécessaire de le refaire dans le setter ? 
+			$name = "set".$key;
+			if (method_exists($this->_modelUser, $name)){ 
+				$this->_modelUser->$name($value, $id); 
+			};
+			if ((!($this->_modelUser->error)=="")&& (!(in_array($this->_modelUser->error, $this->_error)))){
+				 (array_push($this->_error, $this->_modelUser->error)); 
+			};
+		}	
+	}
 }
 
