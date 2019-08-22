@@ -8,9 +8,7 @@ abstract class AbstractModel{
 	protected function __construct(){
 
 		$newBDD = new BDDConnection();
-
 		$this->_bdd = $newBDD->connection();
-		var_dump($self->_bdd);
 		return ($self->_bdd);
 	}
 

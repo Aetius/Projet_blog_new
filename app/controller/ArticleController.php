@@ -17,7 +17,7 @@ class ArticleController{
 	}
 
 ///////////show functions to call the pages article. /////////////
-	public function show($id, $result=[]){
+	private function show($id, $result=[]){
 		$twig = new \View\twigView();
 		$twig->show("/article/$id", $result);
 	}

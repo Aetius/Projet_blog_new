@@ -10,12 +10,9 @@ class twigView extends twigConfig{
 	
 	public function show($page, $var=[]){
 		if (!empty($var)){
-		/*	$test=$this->twig->load("$page.twig");
-			echo $test->renderBlock("contact", ['var'=> $var]);*/
-			echo $this->twig->render("$page.twig", ['var'=> $var,  '_fragment'=>'contact']);
-			
+			echo $this->twig->render("$page.twig", ['var'=> $var]);
 		}else{
-		echo $this->twig->render("$page.twig", ['_fragment'=>'contact']);
+		echo $this->twig->render("$page.twig");
 		}
 	}
 }

@@ -137,6 +137,10 @@
                   {{form.input ('email', 'votre email', {col:'col-md-12', type:'email', value:session.inputs.email})}}
                 </div>
                   {{form.textarea ('message', 'votre message')}}
+                <div class="visibility form-group">
+                  <label>Cliquez ici</label>
+                  <input type="checkbox" name="envoi" id="envoi" class="form-control" value="vrai">
+                </div>
                 <div class="clearfix"></div>
                 <div class="col-lg-12 text-center">
                   <div id="success"></div>

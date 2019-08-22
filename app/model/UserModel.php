@@ -6,182 +6,163 @@ use App\controller\UsersController;
 use App\model\AbstractModel;
 use App\utilities\Verification;
 
-class UserModel /*extends AbstractModel*/{
-		private $_bddUserLogin;
-		private $_bddUserPassword;
-		private $_bddUserRole;
-		private $_read;
-		private $_userInBDD;
-		private $_verifLogin;
-		private $_verifMail;
-		private $_bdd; 
-		
+class UserModel{
 
-		public $error;
-		private $_name;
-		private $_lastName;
-		private $_mail;
-		private $_login ;
-		private $_password; 
-		private $__passwordConnexion;
-		private $_connexion;
-		
+	public $error=[];
+	private $name;
+	private $lastname;
+	private $mail;
+	private $login ;
+	private $password; 
+	private $passwordConnexion;
+	private $connexion;
+	private $bdd;
+	private $dataInBdd;
 
-	public function __construct(){		
-		$this->_bdd=(BDDConnection::Connection()); 
+	public function __construct(){
+		$this->bdd=(BDDConnection::Connection()); 
 	}
 
-	public function create(){		
-		$request=$this->_bdd->prepare('INSERT INTO users(name, last_name, mail, login, password, role) VALUES(:name, :last_name, :mail, :login, :password, :role)');
+
+/*private functions seaching datas in the bdd */
+	private function create(){		
+		$request=$this->bdd->prepare('INSERT INTO users(name, last_name, mail, login, password, role) VALUES(:name, :last_name, :mail, :login, :password, :role)');
 		$request->execute(array(
-			'name'=>($this->_name), 
-			'last_name'=>($this->_lastName),
-			'mail'=>($this->_mail),
-			'login'=>($this->_login),
-			'password'=>($this->_password),
+			'name'=>($this->name), 
+			'last_name'=>($this->lastName),
+			'mail'=>($this->mail),
+			'login'=>($this->login),
+			'password'=>($this->password),
 			'role'=>("editor")
 			));
 		$request->closeCursor();
 	}
 
-	private function read($userControl){
-		$request=$this->_bdd->prepare("SELECT login,password, role FROM users WHERE login =:login");
-		$request->execute(array('login'=> $userControl->login()));
-		$result=$request->fetch(PDO::FETCH_ASSOC);
-		$this->_bddUserLogin = $result['login'];
-		$this->_bddUserPassword=$result['password'];
-		$this->_bddUserRole=$result['role'];
-	}
-
-	private function verifUse($name, $id){
-		$request=$this->_bdd->prepare("SELECT $id, FROM users WHERE $id =:$id");
-		$request->execute(array($id=>$name));
+	private function readUser($login){
+		$request=$this->bdd->prepare("SELECT * FROM users WHERE login =:login");
+		$request->execute(array(':login'=> $login));
 		$result=$request->fetch(PDO::FETCH_ASSOC);
 		$request->closeCursor(); 
-		return $result[$id];
-		
-		/*$this->_read=$this->_bdd->prepare("SELECT mail FROM users WHERE mail =:mail");
-		$this->_read->execute(array('mail'=> $userControl->mail()));
-		$this->_userInBDD=$this->_read->fetch(PDO::FETCH_ASSOC);
-		$this->_verifMail = $this->_userInBDD['mail'];
-		$this->_read->closeCursor(); */
+		return $result;
 	}
 
 
-	public function update(){
+	private function verifUse($value, $field){
+		$request=$this->bdd->prepare("SELECT id FROM users WHERE $field=:field");
+		$request->execute(array(':field' => $value));
+		$result=$request->fetch(PDO::FETCH_ASSOC);
+		$request->closeCursor(); 
+		return 'true';
 	}
 
-	public function delete(){
-
+	private function loginPassword($value){
+		$request=$this->bdd->prepare("SELECT password FROM users WHERE login=:login");
+		$request->execute(array( ':login'=>$value ));
+		$result=$request->fetch(PDO::FETCH_ASSOC);
+		$request->closeCursor(); 
+		return $result['password'];
 	}
 
 
-
-	////////////setters//////////////
-
-	private function setVerification($verification){
-		return Verification::input($verification);
-	}
-
-	public function setName($name, $id){
-		$name = $this->setVerification($name);
-		if(preg_match("#^[a-zA-Z]*$#", $name)){
-			return $this->_name = $name;
+	
+/*functions calling the request, and return the result of this action .*/
+	public function inscription(){
+		if (!empty($this->name)&&!empty($this->lastName)&&!empty($this->mail)&&!empty($this->login)&&!empty($this->password)){
+			gettype($this->password);
+			$this->create();
+			return true;
 		}else{
-			return $this->error='nom invalide';
+			return false;
 		}
-	}
-
-	public function setLastname($name, $id){
-		$name = $this->setVerification($name);
-		if(preg_match("#^[a-zA-Z]*$#", $name)){
-			return $this->_lastName = $name;
-		}else{
-			return $this->error='nom invalide';
-		}
-	}
-
-	public function setMail($name, $id){
-		$name = $this->setVerification($name);
-		if (!(preg_match("#^[a-zA-Z0-9\.]*[@]{1}[a-z]{1,20}\.[a-z]{2,8}$#", $name))){
-			return $this->error='email invalide';
-		} elseif (strcmp($this->verifUse($name, "mail"), $name)==0){
-			return $this->error='email déjà utilisé';
-		}else{
-			return $this->_mail = $name; 
-		}
-	}
-
-	public function setLogin($name, $id){
-		$name = $this->setVerification($name);
-		if(!(is_string($name))) {
-			return $this->error="login invalide";
-		}elseif ((strcmp($this->verifUse($name, "login"), $name)==0)) {
-			if ($id == 'connexion'){
-				return $this->_login = $name; 
-			}else{
-				return $this->error="login déjà utilisé";
-			}
-		}elseif (($id == 'inscription')) {
-			return $this->_login = $name; 
-		}else {
-			return $this->error="login invalide";
-		}
-	}
-
-	public function setPassword($name, $id){
-		if (is_string($name = $this->setVerification($name))){
-			if ($id =='connexion'){
-				if ((!(is_null($name))) && (password_verify($name, $this->_passwordConnexion))){
-					return $this->_connexion = true;
-				}else {
-					return $this->_connexion = false;
-				}
-			}elseif ($id =='inscription'){
-				return $this->_password = $name;
-			}else{
-				return $this->_error='mot de passe invalide';
-			}
-		}
-	}
-
-	public function setPasswordConfirm($name, $id){
-		($name = $this->setVerification($name));
-		if (is_string($name)&& $name == $this->_password){
-			return ($this->_password = password_hash($name, PASSWORD_DEFAULT)); 
-		}else {
-			return $this->error="confirmation du mot de passe invalide";
-		}
-	}
-
-
-
-//////a modifier
-	public function setVerifPassword(){
-		$var=$_POST['password'];
-		$var = Verification::InVerify($var);
-		if(is_string($var)){
-			$this->_password=$var;
-			return $this->_password;
-		}else{
-			return $this->_error='mot de passe invalide';
-		}
-	}
-
-
-///////////////////////////getters//////////////////
-
-	public function role(){
-		return $this->_role;
-	}
-
-	public function name(){
-		return $this->_name;
 	}
 
 	public function connexion(){
-		return $this->_connexion; 
+		$login = $this->login; 
+		if (password_verify($this->password, $this->loginPassword($login))){
+			return true;  
+		}
 	}
+
+	public function user($login){
+		return $this->readUser($login);
+	}
+
+	public function saveInput(){
+		return $saveInput=["Name"=>"$this->name", "Lastname"=>$this->lastname, "Mail"=>$this->mail, "Login"=>$this->login];
+	}
+
+
+	/*setters*/
+
+	public function setName($value, $field){
+		if (Verification::name($value) == 'valide'){
+			return $this->name = $value;
+		}else {
+			return $this->error[$field]='Le prénom est invalide';
+		}
+	}
+
+	public function setLastName($value, $field){
+		if (Verification::name($value) == 'valide'){
+			return $this->lastName = $value;
+		}else{
+			return $this->error[$field]='Le nom est invalide';
+		}
+	}
+
+	public function setMail($value, $field){
+		if ((!isset($value))||(Verification::mail($value) != 'valide')){
+			return $this->error[$field]="L'email est invalide";
+		}else{
+			$this->mail = $value; 
+			$this->isInBDD($value, 'mail', 'mailExist');
+		}
+	}
+
+	public function setLogin($value, $field){
+		if(!(is_string($value))) {
+			return $this->error[$field]="Le login est invalide";	
+		}else{
+			$this->login = $value;
+			$this->isInBDD($value, 'login', 'loginExist'); 
+		}
+	}
+
+	public function setPassword($value, $field){  ///////////////////////::ne pas oublier de supprimer $this->password = $value; (permet d'entrer des mdp de moins de 8 caractères)/////////////////
+		$this->password = $value;
+		if (Verification::password($value) == 'valide'){
+			return $this->password = $value; 
+		}else{
+			return $this->error[$field]='Le mot de passe est invalide';
+		}
+	}
+
+	public function setPasswordConfirm($value, $field){
+		if (Verification::password($value) == 'valide'){
+			var_dump($value);
+			var_dump($this->password);
+			die();
+			if ($this->password === $value){
+				return ($this->password = password_hash($value, PASSWORD_DEFAULT, ['cost'=>12]));
+			}
+		}else{
+			return $this->error[$field]="La confirmation du mot de passe est invalide";
+		}
+	}
+
+/*getters*/
+	public function login(){
+		return $this->login;
+	}
+
+	/*function that verify if the data is in the bdd. works with setters*/
+	private function isInBDD($value, $field, $key){
+		if(($this->verifUse($value, $field))==true){
+			return $this->dataInBdd[$key]=true;  
+		}
+	}
+	
+
 
 
 }
