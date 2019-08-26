@@ -10,8 +10,8 @@ $router = new AltoRouter();
 //$router->map('GET', '/articles/', 'Articles#show', 'test');
 
 $router->addRoutes(array(
-  array('POST','/articles/create', 'article#create'),
   array('GET', '/articles/create', 'article#showCreate'),
+  array('POST','/articles/create', 'article#create'),
   array('GET', '/articles/delete/[i:id]', 'article#delete'),
   array('GET', '/articles/[i:id]', 'article#showOneArticle'),
   array('GET', '/articles', 'article#showArticles'),
@@ -19,7 +19,12 @@ $router->addRoutes(array(
   array('POST', '/inscription', "user#inscription"),
   array('GET', '/connexion', 'user#showConnexion'),
   array('POST', '/connexion', 'user#connexion'),
-  array('GET', '/connexion/dashboard', 'user#showDashboard'),
+  array('GET', '/connexion/dashboard', 'user#showdashboard'),
+  array('POST', '/connexion/dashboard', 'article#dashboard'),
+  //array('DELETE', '/connexion/dashboard/[delete:action][i:id]', 'article#delete'),
+  //array('DELETE', '/connexion/dashboard', 'article#delete'),
+  array('GET', '/connexion/settings', 'user#showSettings'),
+  array('POST', '/connexion/settings', 'user#update'),
   array('GET', '/connexion/logout', 'user#logout'),
   array('GET', '/comment', 'comment#show'),
   array('GET', '/comment/create', 'comment#show'), 

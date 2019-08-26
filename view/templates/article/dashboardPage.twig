@@ -1,0 +1,65 @@
+{% extends "layoutback.twig" %}
+
+{% block title %}Tableau de bord{% endblock %}
+
+{% block content %}
+
+{% import 'macro.twig' as form %}
+
+<main>
+
+<section class="bg-light page-section">
+    <div class="container col-lg-12 m-lg-3">
+		<h1 class="text-center">Votre tableau de bord</h1> 
+	</div>
+ 	<div class=" no-gutters">	
+ 		<div class="row col-md-12">
+			<div class="col-md-3"> 
+				<h4>Tous les articles</h4>
+				{% for key, article in var %}  
+			
+						<div class="card no-gutters">
+							<div class="card-block text-center">
+								<h4 class="card-title "><a href="/articles/{{article.id}}" >{{article.title |title }}</a></h4>
+								<div class="row card-body ">
+									<p class="card-text mr-5"><a href="/articles/{{article.id}}">Modifier</a></p>
+									<p class="card-text"><a href="/articles/{{article.id}}">Supprimer</a></p>
+								</div>
+							</div>
+					
+					</div>
+
+				{% endfor %}
+			</div>
+			<div class="col-md-8"> 
+				<h2 class="text-center mt-4">Les 4 derniers articles</h2>
+				<div class="col-md-12 m-lg-5">
+		
+					{% for key, value in var if key <4 %}
+						<div class="col-xs-12 mt-4 ml-5">
+							<div class="card">
+								<div class="card-block text-center">
+									<h4 class="card-title">{{ value.title}}</h4>
+									<p class="card-text">{{ value.content | striptags}}</p>
+									<a href='#'>Voir l'article</a>
+									<div class="d-flex justify-content-between ">
+										<form method="POST" class="pl-3">
+											<button class="btn btn-primary text-align" type="submit" name="Update" value={{value.id}}>Modifier l'article</button>
+										</form>
+										<form method="POST" class="text-right pr-3">
+											<button class="btn btn-primary " type="submit" name="Delete" value={{value.id}}>Supprimer l'article</button>
+										</form>
+									</div>
+								</div>
+							</div>
+						</div>
+					{% endfor %}	
+				</div>
+			</div>
+		</div>
+  	</div>
+</section>
+
+</main>
+
+{% endblock %}

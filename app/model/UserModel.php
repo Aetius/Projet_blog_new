@@ -8,7 +8,7 @@ use App\utilities\Verification;
 
 class UserModel{
 
-	public $error=[];
+	private $error=[];
 	private $name;
 	private $lastname;
 	private $mail;
@@ -18,6 +18,8 @@ class UserModel{
 	private $connexion;
 	private $bdd;
 	private $dataInBdd;
+	private $oldPassword;
+
 
 	public function __construct(){
 		$this->bdd=(BDDConnection::Connection()); 
@@ -29,7 +31,7 @@ class UserModel{
 		$request=$this->bdd->prepare('INSERT INTO users(name, last_name, mail, login, password, role) VALUES(:name, :last_name, :mail, :login, :password, :role)');
 		$request->execute(array(
 			'name'=>($this->name), 
-			'last_name'=>($this->lastName),
+			'last_name'=>($this->lastname),
 			'mail'=>($this->mail),
 			'login'=>($this->login),
 			'password'=>($this->password),
@@ -39,7 +41,7 @@ class UserModel{
 	}
 
 	private function readUser($login){
-		$request=$this->bdd->prepare("SELECT * FROM users WHERE login =:login");
+		$request=$this->bdd->prepare("SELECT name, mail, role FROM users WHERE login =:login");
 		$request->execute(array(':login'=> $login));
 		$result=$request->fetch(PDO::FETCH_ASSOC);
 		$request->closeCursor(); 
@@ -48,11 +50,12 @@ class UserModel{
 
 
 	private function verifUse($value, $field){
+		
 		$request=$this->bdd->prepare("SELECT id FROM users WHERE $field=:field");
 		$request->execute(array(':field' => $value));
 		$result=$request->fetch(PDO::FETCH_ASSOC);
 		$request->closeCursor(); 
-		return 'true';
+		return $result;
 	}
 
 	private function loginPassword($value){
@@ -63,22 +66,42 @@ class UserModel{
 		return $result['password'];
 	}
 
+	private function modifData($login, $modif, $newValue){
+		$request=$this->bdd->prepare ("UPDATE users SET $modif=:valueModif WHERE login=:login");
+		$result=$request->execute(array(
+			':login'=>$login,
+			'valueModif'=>$newValue));
+		$request->closeCursor(); 
+		return $result;
+	}
+
+	private function deleteUser($login){
+		$request=$this->bdd->prepare("DELETE FROM users WHERE login=:login");
+		$result=$request->execute(array(":login"=>$login));
+		$request->closeCursor(); 
+		return $result;
+	}
+
 
 	
 /*functions calling the request, and return the result of this action .*/
 	public function inscription(){
-		if (!empty($this->name)&&!empty($this->lastName)&&!empty($this->mail)&&!empty($this->login)&&!empty($this->password)){
-			gettype($this->password);
-			$this->create();
-			return true;
+		if (!empty($this->name)&&!empty($this->lastname)&&!empty($this->mail)&&!empty($this->login)&&!empty($this->password)){
+				$this->create();
+				return true;
 		}else{
 			return false;
 		}
 	}
 
 	public function connexion(){
-		$login = $this->login; 
-		if (password_verify($this->password, $this->loginPassword($login))){
+		if (password_verify($this->password, $this->loginPassword($this->login))){
+			return true;  
+		}
+	}
+
+	public function oldPasswordConfirm($login){
+		if (password_verify($this->oldPassword, $this->loginPassword($login))){
 			return true;  
 		}
 	}
@@ -88,8 +111,17 @@ class UserModel{
 	}
 
 	public function saveInput(){
-		return $saveInput=["Name"=>"$this->name", "Lastname"=>$this->lastname, "Mail"=>$this->mail, "Login"=>$this->login];
+		return $saveInput=["Name"=>$this->name, "Lastname"=>$this->lastname, "Mail"=>$this->mail, "Login"=>$this->login];
 	}
+
+	public function update($label, $login){
+		return($this->modifData($login, $label, $this->$label));
+	}
+
+	public function delete($login){
+		return($this->deleteUser($login));
+	}
+
 
 
 	/*setters*/
@@ -104,7 +136,7 @@ class UserModel{
 
 	public function setLastName($value, $field){
 		if (Verification::name($value) == 'valide'){
-			return $this->lastName = $value;
+			return $this->lastname = $value;
 		}else{
 			return $this->error[$field]='Le nom est invalide';
 		}
@@ -115,7 +147,7 @@ class UserModel{
 			return $this->error[$field]="L'email est invalide";
 		}else{
 			$this->mail = $value; 
-			$this->isInBDD($value, 'mail', 'mailExist');
+			$this->isInBDD($value, 'mail', 'Mail');
 		}
 	}
 
@@ -124,12 +156,11 @@ class UserModel{
 			return $this->error[$field]="Le login est invalide";	
 		}else{
 			$this->login = $value;
-			$this->isInBDD($value, 'login', 'loginExist'); 
+			$this->isInBDD($value, 'login', 'Login'); 
 		}
 	}
 
-	public function setPassword($value, $field){  ///////////////////////::ne pas oublier de supprimer $this->password = $value; (permet d'entrer des mdp de moins de 8 caractères)/////////////////
-		$this->password = $value;
+	public function setPassword($value, $field){  
 		if (Verification::password($value) == 'valide'){
 			return $this->password = $value; 
 		}else{
@@ -137,25 +168,41 @@ class UserModel{
 		}
 	}
 
-	public function setPasswordConfirm($value, $field){
+	public function setoldPassword($value, $field){
 		if (Verification::password($value) == 'valide'){
-			var_dump($value);
-			var_dump($this->password);
-			die();
-			if ($this->password === $value){
-				return ($this->password = password_hash($value, PASSWORD_DEFAULT, ['cost'=>12]));
-			}
+			return $this->oldPassword = $value; 
 		}else{
-			return $this->error[$field]="La confirmation du mot de passe est invalide";
+			return $this->error[$field]='Le mot de passe est invalide';
 		}
 	}
 
-/*getters*/
+	public function setPasswordConfirm($value, $field){
+		if (Verification::password($value) == 'valide'){
+			if ($this->password === $value){
+				$this->password = password_hash($value, PASSWORD_DEFAULT, ['cost'=>12]);
+			}else{
+				return $this->error[$field]="La confirmation du mot de passe est invalide";
+			}
+		}
+	}
+
+
+			/*getters*/
 	public function login(){
 		return $this->login;
 	}
 
-	/*function that verify if the data is in the bdd. works with setters*/
+	public function dataInBdd(){
+		return $this->dataInBdd; 
+	}
+
+	public function error(){
+		return $this->error; 
+	}
+
+
+
+			/*function that verify if the data is in the bdd. works with setters*/
 	private function isInBDD($value, $field, $key){
 		if(($this->verifUse($value, $field))==true){
 			return $this->dataInBdd[$key]=true;  
