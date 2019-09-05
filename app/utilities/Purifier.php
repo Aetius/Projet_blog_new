@@ -2,7 +2,10 @@
 
 namespace App\utilities;
 
-class Verification{
+require_once '../vendor/ezyang/htmlpurifier/library/HTMLPurifier.auto.php';
+
+class Purifier{
+
 	public static function input($strVerify){
 		$strVerify=htmlspecialchars($strVerify);
 		if (is_numeric($strVerify)){
@@ -21,28 +24,15 @@ class Verification{
 			return str_replace($search, $replace, $strVerify);
 	}
 
-	public static function name($name){
-		if(preg_match("#^[a-zA-Z]{2,}$#", $name)){
-			return 'valide';
-		}else{
-			return 'non valide';
-		}
+
+	public static function htmlPurifier($dirty_html){
+
+		$config = \HTMLPurifier_Config::createDefault();
+		$purifier = new \HTMLPurifier($config);
+		return ($clean_html = $purifier->purify($dirty_html));
+		
 	}
 
-	public static function mail($mail){
-		if (preg_match("#^[a-zA-Z0-9\.]{2,}[@]{1}[a-z]{1,20}\.[a-z]{2,8}$#", $mail)){
-			return 'valide';
-		}else{
-			return 'non valide';
-		}
-	}
 
-	public static function password($password){
-		if (preg_match("#^[a-zA-Z(0-9)+(,?.;!%@&)+]{8,}$#", $password)){
-			return 'valide';
-		}else{
-			return 'non valide';
-		}
-	}
 
 }

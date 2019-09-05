@@ -1,0 +1,72 @@
+
+{% extends "layoutBack.twig" %}
+
+{% block title %}Ajout nouvel article{% endblock %}
+
+{% import 'macro.twig' as form %}
+{% block content %}
+	<div class="articles">
+		<div class="container">
+			<h1 class="text-center m-lg-5">Modification de l'article : {{var.title}}</h1> 
+			<div class="col-md-12 row">
+				
+				<div class="col-md-12 text-center">
+						<form method="post">
+							<div class="text-center"> 
+							{%if var.success == 1 %}
+				                <div class="alert alert-success"> L'article a bien été modifié !!
+				            	</div>
+				            {%endif%}
+				            {%if var.success == 2 %}
+				                <div class="alert alert-danger"> Echec de la modification !!
+				            	</div>
+				            {%endif%}
+							<div class="row">
+								<div class="col-md-5 text-right">	
+									{{ form.input ('Title', 'Titre de l\'article', {value:var.title})}}
+								</div>
+								<div class="col-md-6 text-left">
+									{{ form.textarea ('Description', 'Résumé de l\'article', {value:var.description} )}}
+
+								</div>
+							</div>
+							<div >
+									{{ form.textarea ('Content', 'Contenu de l\'article', {value:var.content, class:'tinyMCE'})}}
+							</div>
+							<div>
+								<div class="col-md-12 text-center">
+									<p>Publier ?</p>
+									
+										<div class="col-md-12">
+											<label for="published">non</label>
+											<input type="radio" name="published" value="non" checked>
+											<label for="published">oui</label>
+											<input type="radio" id="Published" name="published" value="oui" >
+											<div class="col-md-12 expandable">
+												<a><label for="publishedDate">Date de la publication : </label></a>
+												<input type="date" id="PublishedDate" name="publishedDate" value="2019-08-22" min="2019-07-31">
+											</div>
+										</div>
+								
+
+								</div>		
+								<div class="row">
+									<div class="col-md-4 text-right">
+										<button type ="button">Retour</button>   {# mettre un eventlistener dessus pour faire un retour arrière #}
+									</div>
+									<div class="col-md-4 text-center">
+										<button type="submit">Modifier</button>
+									</div>
+									<div class="col-md-4 text-left">
+										<button type="reset">Réinitialiser</button>
+									</div>
+								</div>
+							</div>
+						</form>
+				
+				</div>
+			</div>
+		</div>
+	</div>
+	</div>
+{% endblock %}

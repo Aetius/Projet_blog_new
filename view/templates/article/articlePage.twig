@@ -17,7 +17,7 @@
 							<div class="card-block">
 								<h4 class="card-title">{{article.title |title }}</h4>
 								<p class ="card-text">{{article.description}}</p>
-								<p class="card-text">{{article.content | striptags('<br><p>')|slice(0,200)}}</p> 
+								<p class="card-text">{{article.content | striptags('<br><p>')|slice(0,200)|raw}}</p> 
 								<a href="/articles/{{article.id}}">lire la suite </a>
 								{# le content est à remplacer par description, et un lien. #}
 							</div>

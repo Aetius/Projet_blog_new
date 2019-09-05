@@ -4,6 +4,7 @@ namespace App\Model;
 use App\Model\BDDConnection;
 use PDO;
 use App\App\controller\ArticleController;
+use App\utilities\Purifier;
 
 
 
@@ -14,49 +15,54 @@ class ArticleModel{
 	private $dateCreation;
 	private $content;
 	private $id;
-	private $result=[]; 
-	private $published; 
-	private $publishedDate; 
+	private $published=null; 
+	private $publishedDate=null; 
 	private $title; 
 	private $error=[]; 
 
 
 	public function __construct(){		
-		$this->bdd=(BDDConnection::Connection()); 
+		$this->bdd=(BDDConnection::connection()); 
 	}
 
 	public function create(){
-		$request=$this->bdd->prepare('INSERT INTO articles(title, description, content, publicated, date_creation, author_id) VALUES(:title, :description, :content, :publicated, :date_creation, :author_id )');
+
+		$request=$this->bdd->prepare('INSERT INTO articles(title, description, content, publicated, date_creation, author_id, date_publication) VALUES(:title, :description, :content, :publicated, :date_creation, :author_id, :date_publication )');
 		$request->execute(array(
-			'title'=>($this->title), 
-			'description'=>($this->description),
-			'content'=>($this->content),
-			'publicated'=>($this->publishedDate),
-			'date_creation'=>($this->setDate()),
-			'author_id'=>("6")
+			':title'=>($this->title), 
+			':description'=>($this->description),
+			':content'=>($this->content),
+			':publicated'=>($this->published),
+			':date_publication'=>($this->publishedDate), 
+			':date_creation'=>($this->setDate()),
+			':author_id'=>("6")
 			));
 		$request->closeCursor();
 	}
 
 	public function all($numberArticles=10){
-		$request=$this->bdd->prepare("SELECT * FROM articles ORDER BY id DESC LIMIT :number");
-		$request->bindParam(':number', $numberArticles, PDO::PARAM_INT);
+		$request=$this->bdd->prepare("SELECT * FROM articles ORDER BY id DESC");
 		$request->execute();
+		$allResult=[];
 		while ($result=$request->fetch(PDO::FETCH_ASSOC)){
-			array_push($this->result, $result);
+			foreach ($result as $key => $value) {
+				$result[$key]=(htmlspecialchars_decode($value));
+			}
+			array_push($allResult, $result);
 		}
 		$request->closeCursor();
-		return $this->result; 
+		return $allResult; 
 	}
 
 	public function readOne($id){
 		$request=$this->bdd->prepare("SELECT * FROM articles WHERE id=:id");
 		$request->execute(array(":id"=>$id));
-		while ($result=$request->fetch(PDO::FETCH_ASSOC)){
-			array_push($this->result, $result);
-		}
+		$result=$request->fetch(PDO::FETCH_ASSOC);
+		foreach ($result as $key => $value) {
+				$result[$key]=(htmlspecialchars_decode($value));
+			}
 		$request->closeCursor();
-		return $this->result; 
+		return $result; 
 	}
 
 	public function verifUse($name, $id){
@@ -67,7 +73,7 @@ class ArticleModel{
 		return $result[$id];
 	}
 
-	private function deleteArticle($id){
+	public function delete($id){
 		$request=$this->bdd->prepare("DELETE FROM articles WHERE id=:id");
 		$result=$request->execute(array(":id"=>$id));
 		$request->closeCursor(); 
@@ -75,19 +81,27 @@ class ArticleModel{
 	}
 	
 
-	/*functions calling the request, and return the result of this action .*/
-
-	public function delete($id){
-		return ($this->deleteArticle($id));
+	public function update(){
+		$request=$this->bdd->prepare ('UPDATE articles SET title=:title, content=:content, date_update=:dateUpdate, description=:description, publicated=:publicated, date_publication=:date_publication WHERE id=:id');
+	/*var_dump($this->title);
+		die();*/
+		$result=$request->execute(array(
+			':title'=>$this->title, 
+			':content'=>$this->content, 
+			':dateUpdate'=>$this->setDate(), 
+			':description'=>$this->description, 
+			':publicated'=>$this->published,
+			':date_publication'=>$this->publishedDate,
+			':id'=>$this->id
+		));
+		$request->closeCursor(); 
+		return $result;
 	}
+
 
 
 
 	/*getters*/
-
-	public function result(){
-		return $this->result; 
-	}
 
 	public function error(){
 		return $this->error;
@@ -95,8 +109,8 @@ class ArticleModel{
 
 
 	////////////////setters///////////////
-	public function setVerification($verification){
-		return \App\utilities\Verification::textVerify($verification);
+	public function setVerification($Purifier){
+		return \App\utilities\Purifier::text($Purifier);
 	}
 
 	public function setDate(){
@@ -144,6 +158,26 @@ class ArticleModel{
 		}
 	}
 
+	public function setId($name){
+		$name = $this->setVerification($name);
+			return $this->id = $name; 
+		}
+
+
+	public function hydratePost(){
+		$allKey=[];
+		foreach ($_POST as $key => $value) {
+			$key = Purifier::input($key);
+			//$value = Purifier::input($value); 
+			$value=Purifier::htmlPurifier($value);
+			$name = "set".$key;
+			$allKey= [$key=>$value];
+			if(method_exists($this, $name)){
+				$this->$name($value); 
+			};
+		}
+			return $allKey;
+	}
 
 
 

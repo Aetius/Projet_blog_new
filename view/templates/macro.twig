@@ -11,7 +11,7 @@
 
 {% macro textarea (name, placeholder, options=[] ) %}  
 		<div class="form-group">
-				<textarea type="text"  class="form-control"  id="{{name}}" name="{{name}}" placeholder="{{placeholder}}" rows="{{options.rows | default("4")}}" cols="{{options.cols | default("100")}}" data-validation-required-message="Merci d'écrire {{placeholder}}">{%if session.inputs.message != "" %}{{session.inputs.message}}{% endif%}</textarea>
+				<textarea type="text"  class="form-control {{options.class}}"  id="{{name}}" name="{{name}}" placeholder="{{placeholder}}" rows="{{options.rows | default("4")}}" cols="{{options.cols | default("100")}}" data-validation-required-message="Merci d'écrire {{placeholder}}">{{options.value}}</textarea>
 		</div>
 {% endmacro %}
 

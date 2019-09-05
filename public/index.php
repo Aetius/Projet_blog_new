@@ -4,14 +4,15 @@ require '../vendor/autoload.php';
 
 
 $router = new AltoRouter();
-
-
-
+/*var_dump(realpath('../vendor/tinymce/tinymce/tinymce.min.js'));
+die();*/
 //$router->map('GET', '/articles/', 'Articles#show', 'test');
 
 $router->addRoutes(array(
   array('GET', '/articles/create', 'article#showCreate'),
   array('POST','/articles/create', 'article#create'),
+  array('GET','/articles/update/[i:id]', 'article#showUpdate'),
+  array('POST','/articles/update/[i:id]', 'article#update'),
   array('GET', '/articles/delete/[i:id]', 'article#delete'),
   array('GET', '/articles/[i:id]', 'article#showOneArticle'),
   array('GET', '/articles', 'article#showArticles'),

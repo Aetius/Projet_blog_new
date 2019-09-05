@@ -21,8 +21,8 @@
 						<form method="post">
 							{%if (var.errors is not null) %}
 								<div class="alert alert-danger"> 
-									<p>Echec de l'inscription : </p>
-									{% for value in var.errors|sort|reverse(true) %}
+									<p class="text-center">Echec de l'inscription : </p>
+									{% for value in var.errors %}
 										<li>
 											<ul>
 												{{value}}

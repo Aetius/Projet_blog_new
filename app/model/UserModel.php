@@ -4,7 +4,8 @@ use App\model\BDDConnection;
 use PDO;
 use App\controller\UsersController;
 use App\model\AbstractModel;
-use App\utilities\Verification;
+use App\utilities\Purifier;
+use App\utilities\ErrorException;
 
 class UserModel{
 
@@ -27,7 +28,7 @@ class UserModel{
 
 
 /*private functions seaching datas in the bdd */
-	private function create(){		
+	public function create(){		
 		$request=$this->bdd->prepare('INSERT INTO users(name, last_name, mail, login, password, role) VALUES(:name, :last_name, :mail, :login, :password, :role)');
 		$request->execute(array(
 			'name'=>($this->name), 
@@ -40,7 +41,7 @@ class UserModel{
 		$request->closeCursor();
 	}
 
-	private function readUser($login){
+	public function readUser($login){
 		$request=$this->bdd->prepare("SELECT name, mail, role FROM users WHERE login =:login");
 		$request->execute(array(':login'=> $login));
 		$result=$request->fetch(PDO::FETCH_ASSOC);
@@ -49,7 +50,7 @@ class UserModel{
 	}
 
 
-	private function verifUse($value, $field){
+	public function verifUse($value, $field){
 		
 		$request=$this->bdd->prepare("SELECT id FROM users WHERE $field=:field");
 		$request->execute(array(':field' => $value));
@@ -58,7 +59,7 @@ class UserModel{
 		return $result;
 	}
 
-	private function loginPassword($value){
+	public function loginPassword($value){
 		$request=$this->bdd->prepare("SELECT password FROM users WHERE login=:login");
 		$request->execute(array( ':login'=>$value ));
 		$result=$request->fetch(PDO::FETCH_ASSOC);
@@ -66,16 +67,16 @@ class UserModel{
 		return $result['password'];
 	}
 
-	private function modifData($login, $modif, $newValue){
+	public function modifData($login, $modif, $newValue){
 		$request=$this->bdd->prepare ("UPDATE users SET $modif=:valueModif WHERE login=:login");
 		$result=$request->execute(array(
 			':login'=>$login,
-			'valueModif'=>$newValue));
+			':valueModif'=>$newValue));
 		$request->closeCursor(); 
 		return $result;
 	}
 
-	private function deleteUser($login){
+	public function delete($login){
 		$request=$this->bdd->prepare("DELETE FROM users WHERE login=:login");
 		$result=$request->execute(array(":login"=>$login));
 		$request->closeCursor(); 
@@ -101,89 +102,156 @@ class UserModel{
 	}
 
 	public function oldPasswordConfirm($login){
-		if (password_verify($this->oldPassword, $this->loginPassword($login))){
-			return true;  
+		try {
+			if ((password_verify($this->oldPassword, $this->loginPassword($login)))!=true){
+				throw new ErrorException("L'ancien mot de passe n'est pas valide");
+			}
+		}catch (ErrorException $exception){
+			$this->error['password']= ($exception); 
 		}
 	}
 
-	public function user($login){
-		return $this->readUser($login);
-	}
 
 	public function saveInput(){
 		return $saveInput=["Name"=>$this->name, "Lastname"=>$this->lastname, "Mail"=>$this->mail, "Login"=>$this->login];
 	}
 
-	public function update($label, $login){
+	public function update($login, $label){
 		return($this->modifData($login, $label, $this->$label));
 	}
 
-	public function delete($login){
-		return($this->deleteUser($login));
-	}
 
 
 
 	/*setters*/
 
 	public function setName($value, $field){
-		if (Verification::name($value) == 'valide'){
+		try {
+			if (Purifier::name($value) != 'valide'){
+				throw new ErrorException('Le prénom est invalide');
+			}$this->name = $value;
+		}catch (ErrorException $exception){
+			$this->error[$field]= ($exception);
+		}
+
+		/*if (Purifier::name($value) === true){
 			return $this->name = $value;
 		}else {
 			return $this->error[$field]='Le prénom est invalide';
-		}
+		}*/
 	}
 
 	public function setLastName($value, $field){
-		if (Verification::name($value) == 'valide'){
+		try {
+			if (Purifier::name($value) != 'valide'){
+				throw new ErrorException('Le nom est invalide');
+			}
+			$this->lastname = $value;
+		}catch (ErrorException $exception){
+			$this->error[$field]= ($exception);
+		}
+
+		/*if (Purifier::name($value) === true){
 			return $this->lastname = $value;
 		}else{
 			return $this->error[$field]='Le nom est invalide';
-		}
+		}*/
 	}
 
 	public function setMail($value, $field){
-		if ((!isset($value))||(Verification::mail($value) != 'valide')){
+		try{
+			if ((!isset($value))||(Purifier::mail($value) != 'valide')){
+				throw new ErrorException("L'email est invalide");
+			}
+			$this->mail = $value; 
+			$this->isInBDD($value, 'mail', 'Mail');
+		}catch (ErrorException $exception){
+			$this->error[$field]= ($exception);
+		}
+
+
+
+		/*if ((!isset($value))||(Purifier::mail($value) === true)){
 			return $this->error[$field]="L'email est invalide";
 		}else{
 			$this->mail = $value; 
 			$this->isInBDD($value, 'mail', 'Mail');
-		}
+		}*/
 	}
 
 	public function setLogin($value, $field){
-		if(!(is_string($value))) {
+		try {
+			if (is_int($value)){
+				throw new ErrorException("Le login est invalide");
+			}
+			$this->login = $value;
+			$this->isInBDD($value, 'login', 'Login'); 
+		}catch (ErrorException $exception){
+			$this->error[$field]= ($exception);
+		}
+
+
+		/*if(!(is_string($value))) {
 			return $this->error[$field]="Le login est invalide";	
 		}else{
 			$this->login = $value;
 			$this->isInBDD($value, 'login', 'Login'); 
-		}
+		}*/
 	}
 
 	public function setPassword($value, $field){  
-		if (Verification::password($value) == 'valide'){
+		try {
+			if (Purifier::password($value) != 'valide'){
+				throw new ErrorException("Le mot de passe est invalide");
+			}
+			$this->password = $value;
+		}catch (ErrorException $exception){
+			$this->error[$field]= ($exception);
+		}
+
+		/*if (Purifier::password($value) === true){
 			return $this->password = $value; 
 		}else{
 			return $this->error[$field]='Le mot de passe est invalide';
-		}
+		}*/
 	}
 
 	public function setoldPassword($value, $field){
-		if (Verification::password($value) == 'valide'){
+		try {
+			if (Purifier::password($value) != 'valide'){
+				throw new ErrorException("Le mot de passe est invalide");
+			}
+			$this->oldPassword = $value;
+		}catch (ErrorException $exception){
+			$this->error[$field]= ($exception);
+		}
+
+		/*if (Purifier::password($value) === true){
 			return $this->oldPassword = $value; 
 		}else{
 			return $this->error[$field]='Le mot de passe est invalide';
-		}
+		}*/
 	}
 
 	public function setPasswordConfirm($value, $field){
-		if (Verification::password($value) == 'valide'){
+
+		try {
+			if ((Purifier::password($value) != 'valide') || ($this->password != $value)){
+				throw new ErrorException("La confirmation du mot de passe est invalide");
+			}
+			$this->password = password_hash($value, PASSWORD_DEFAULT, ['cost'=>12]);
+		}catch (ErrorException $exception){
+			$this->error[$field]= ($exception);
+		}	
+
+
+		/*if (Purifier::password($value) === true){
 			if ($this->password === $value){
 				$this->password = password_hash($value, PASSWORD_DEFAULT, ['cost'=>12]);
 			}else{
 				return $this->error[$field]="La confirmation du mot de passe est invalide";
 			}
-		}
+		}*/
 	}
 
 
@@ -209,6 +277,36 @@ class UserModel{
 		}
 	}
 	
+
+
+/*hydrate user in UserModel.  */	
+	public function hydrateUser(){
+		$allKey=[];
+		foreach ($_POST as $key => $value) {
+			$key = Purifier::input($key);
+			$value = Purifier::input($value);  
+			$name = "set".$key;
+			array_push($allKey, $key);
+			if (method_exists($this,$name)){ 
+				$this->$name($value, $key); 
+			}
+		}
+		return $allKey;
+	}
+
+/*verify if mail or login are already in bdd*/
+	public function duplication(){
+		if (!empty($this->dataInBdd)){
+				
+			foreach ($this->dataInBdd as $key => $value) {
+				if ($key ==="Login") {
+					$this->error['Login']="Le login est déjà utilisée";
+				}elseif ($key === "Mail"){
+					$this->error['Mail']="L'adresse mail est déjà utilisée";
+				}
+			}
+		}
+	}
 
 
 

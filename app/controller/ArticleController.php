@@ -3,18 +3,20 @@ namespace App\controller;
 
 use App\controller\abstractController;
 use App\Model\ArticleModel;
-use App\utilities\Verification;
+use App\controller\UserController;
 
 
 
 
 class ArticleController /*extends abstractController*/ {
-	private $modelArticles; 
-	private $error=[]; 
+	private $modelArticles;
+	private $controllerUser;
+	private $success=[];
 
 
 	public function __construct(){
 		$this->modelArticles = new ArticleModel(); 
+		$this->controllerUser = new UserController(); 
 		$this->session(); 
 	}
 
@@ -27,33 +29,43 @@ class ArticleController /*extends abstractController*/ {
 
 	public function showDashboard(){
 		$result=$this->modelArticles->all();
-		
+		$result['success']= $this->success;
+
 		$this->show('dashboardPage', $result);
 	}
 
-	public function showArticles(){//appeler get. 
-		$this->modelArticles->all(); 
-		$result = $this->modelArticles->result();//à l'intérieur du modèle. 
+	public function showArticles(){ 
+		$result = $this->modelArticles->all(); 
 		$this->show("articlePage", $result);
 	}
 	
-	public function showOneArticle($id){
-		$this->modelArticles->readOne($id);
-		$result = $this->modelArticles->result();//à l'intérieur du modèle. 
-		$this->show("oneArticlePage", $result);
+	public function showOneArticle($id, $page="oneArticlePage"){
+		$result = $this->modelArticles->readOne($id);
+		if ($result!=false){
+			$this->show("$page", $result);
+		}else{
+			header("location:/articles");
+		}
+
 	}
 
 	public function showCreate(){
 		$this->show("createArticle");
 	}
 
+	public function showUpdate($idArticle){
+		if ($this->controllerUser->admin()===true){ 
+			$this->showOneArticle($idArticle, "updateArticle");
+		}
+	}
+
 
 
 /*creation update and delete pages*/
 	public function create(){
-		$this->verificationPost(); 
+		$this->modelArticles->hydratePost(); 
 		$inscription = 0;
-		if (empty($this->error)){
+		if (empty($this->modelArticles->error())){
 			$this->modelArticles->create();
 			$inscription = ["success"=> 1];
 		}else{
@@ -63,33 +75,57 @@ class ArticleController /*extends abstractController*/ {
 	}
 
 	public function dashboard(){
-		$postValue = $this->verificationPost();
-		if (empty($this->error)){
+
+		$postValue = $this->modelArticles->hydratePost();
+		if (empty($this->modelArticles->error())){
 			if (array_key_exists("Delete", $postValue)){
 				$this->delete($postValue);
+			}elseif (array_key_exists("Update", $postValue)) {
+				header("location:/articles/update/".$postValue['Update']);
 			}
 		}else{
 			//$this->show('dashboardPage', $this->error);
 		}
 	}
 
+
+	public function update($idArticle){
+		$this->modelArticles->setId($idArticle);
+		$this->modelArticles->hydratePost(); 
+		if (empty($this->modelArticles->error())){
+			if ($this->modelArticles->update()===true){
+				$this->success= 1;
+			}
+		}else{
+			$this->success= 2;
+		}
+		$this->show('dashboardPage', $this->success);
+		header("location:/connexion/dashboard", false);
+		var_dump($this->success); 
+		die();
+
+	}
+
 	private function delete($postValue){
 		//vérifier les habilitations du user.
 		if (is_int($postValue['Delete'])){
 			if ($this->modelArticles->delete($postValue['Delete'])===true){
-				$result=[];
-
+				$this->result="l'article a bien été supprimé";
 				$this->showDashboard();
 			}
 		}
-
 	}
 
 
 
 
+	
+
+
+
+
 	// this function verifies the inputs by sending them in a set function in the articleModel. 
-	private function verificationPost(){
+	/*private function hydratePost(){
 		$allKey=[];
 		foreach ($_POST as $key => $value) {
 			$key = Verification::input($key);
@@ -105,7 +141,7 @@ class ArticleController /*extends abstractController*/ {
 			}
 			return $allKey;
 		}
-	}
+	}*/
 
 
 	/*start $_session if it is not already launch*/

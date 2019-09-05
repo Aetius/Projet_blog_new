@@ -11,20 +11,18 @@
 		<h1> les articles</h1>
 		<div class="container">
 			<div class="col-md-12 row">
-				{% for key, article in var %}  
-			
-						<div class="card col-md-4">
+						<div class="card col-md-12">
 							<div class="card-block">
-								<h4 class="card-title">{{article.title |title }}</h4>
-								<p class ="card-text">{{article.description}}</p>
-								<p class="card-text">{{article.content | striptags('<br><p>')|slice(0,200)}}</p> 
-								<a href="/articles/{{article.id}}">lire la suite </a>
+								<h4 class="card-title">{{var.title |title }}</h4>
+								<p class ="card-text">{{var.description}}</p>
+				
+								<p class="card-text mb-3">{{var.content |striptags('<br><p>')|raw}}</p> 
 								{# le content est à remplacer par description, et un lien. #}
+				
 							</div>
 					
 					</div>
 
-				{% endfor %}
 
 			</div>
 		</div>
