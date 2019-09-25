@@ -1,0 +1,82 @@
+
+{% extends "layoutFront.twig" %}
+
+{% block title %}Les articles{% endblock %}
+
+
+{% block content %}
+	<div class="articles">
+		<div class="row col-md-12"> 
+			<div class="  col-md-10 order-2">
+				<div class="intro-text pb-5">
+					<h1>{{results.article.title |title }}</h1>
+				</div>
+			
+				<div class=" col-md-11 text-center mb-5 pb-3 ml-5">
+	{# articles #}				
+					<div class="card-block text-center px-5">		
+						<div class ="h2 card-text pb-5">{{results.article.description}}
+						</div>
+						<div class="card-text text-justify pb-2">{{results.article.content | striptags('<br><p>')|raw}}
+						</div> 
+					</div>
+	{# add comment #}				
+					<div class="px-2">
+						<form method="POST" class="text-right">
+							<button class="btn btn-primary btn-md" type="submit" name="articleId" value={{results.article.id}}>Ajouter un commentaire</button>
+						</form>
+					</div>
+	{# comments #}
+					<div class="card-block text-center py-5">	
+						{% for key, comments in results.comments %} 
+							<div class="card mb-3 px-3 py-2">
+								<p class="text-left">{{comments.author_id | title }} a écrit : </p>
+								<div class="card-text text-justify pb-2">{{comments.comment | striptags('<br><p>')|raw}}
+								<p class="text-right">{{comments.date_comment}}</p>
+								</div> 
+							</div>
+
+						{% endfor %} 
+					</div>
+				</div>
+			</div>
+				
+		{# sidebar : display all articles in bdd#}
+			<nav class="nav flex-column col-md-2 order-1">
+				<div class="col-12 "> 
+					<div class=" text-center mt-4 "> 
+							<h4 class="mb-4">Tous les articles</h4>
+					{# 	<div class="container">
+							<div class="row justify-content-around mt-2 mb-2">
+								{% for key, value in options %} 
+									<div class="list-group">
+										<a class="list-group-item {{(value.page)}}" href="/connexion/dashboard/page{{key}}">{{key}} </a>
+									</div>
+								{% endfor %}
+							</div>
+						</div>
+						<div> #}
+						{% for key, value in options %}
+							{% if key matches '/[0-9]/'%}  
+								<div class="card mt-4">
+									<div class="card-block text-center">
+										<div >
+											<a class="no-gutters " href="/articles/{{value.id}}" id={{value.id}} >
+												<h5 class="card-title mt-2 ">{{value.title |title }}</h5>
+											</a>
+											<div class="card-body py-1 px-1">
+												<p class="mb-1">{{value.description|title|striptags('<br><p>')|raw }}</p>
+											</div>
+										</div>
+									</div>
+								</div>
+							{% endif %}
+						{% endfor %}
+						</div>
+					</div>
+				</div>
+			</nav>
+		</div>
+	</div>
+		
+{% endblock %}

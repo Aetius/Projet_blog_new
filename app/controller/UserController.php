@@ -5,15 +5,17 @@ use App\controller\abstractController;
 use App\controller\ArticleController;
 use App\model\UserModel;
 use App\utilities\Purifier;
+use App\controller\TwigController; 
+use App\controller\Controller; 
 
-class UserController /*extends abstractController*/{
+class UserController extends Controller{
 	private $modelUser; 
 	private $session; 
 	private $errors=[];
 
 	public function __construct(){
 		$this->modelUser= new UserModel();
-		$this->session();
+		sessionController::getSession(); 
 	}
 
 
@@ -25,27 +27,34 @@ class UserController /*extends abstractController*/{
 				header('Location:/connexion/dashboard');
 			}	
 		}else {
-			$this->show("connexion");
+			$this->show("connexionPage");
 		}
 	}
 
-	public function showInscription(){
-		$this->show("inscription");
+	public function showInscription(){ 
+		$this->show("inscriptionPage");
 	}
 
-	public function showDashboard(){
+	public function showDashboard($id=0){
+		$id=Purifier::htmlPurifier($id); 
 		if ($this->admin('dashboard')===true){
 			$articleController=new ArticleController();
-			$articleController->showDashboard();
+			$articleController->showDashboard($id);
 		}
 	}
 
 	public function showSettings(){	
 		if ($this->admin() ===true){
-			$this->show('settings');
+			$this->show('settingsPage');
 		}
 	}
 
+	public function showPage(){
+		$parts = explode("::", __METHOD__);
+		$page = $parts[1]; 
+		$this->show($page."Page");
+
+	}
 
 	public function admin(){
 		if (array_key_exists('access', $_SESSION)) {
@@ -60,33 +69,27 @@ class UserController /*extends abstractController*/{
 	}
 
 
-	private function show($id, $result=[]){
-		$twig = new \View\twigView();
-		$twig->show("/user/$id".'Page', $result);
-	}
 
 /*creation update and delete users*/
 	public function inscription(){
-		$this->modelUser->hydrateUser();
-		$this->modelUser->duplication(); 
-		if (empty($this->modelUser->error())){
-			if($this->modelUser->inscription()=== true){
+		$inputs= $this->modelUser->hydrate();
+		if (empty($this->modelUser->errors())){
+			if($this->modelUser->inscription($inputs)=== true){ 
 				header('Location:/connexion');
-			}else{
-				header('Location:/inscription');
-			}
-		}else{
-			$errorResult['saveInputUser']=$this->modelUser->saveInput();
-			$errorResult['errors'] = $this->modelUser->error();
-			$this->show("inscription", $errorResult);
-			$errorResult=[];		
-		}
+		
+			};
+		};
+		$errorResult['saveInputUser']=$this->modelUser->saveInput();
+		$errorResult['errors'] = $this->modelUser->errors();
+		$this->show("inscriptionPage", $errorResult);
+		$errorResult=[];		
+		
 	}
 
 
 	public function update(){
 		$login = $_SESSION['access']['login'];    
-		$allKey = $this->modelUser->hydrateUser(); 
+		$allKey = $this->modelUser->hydrate(); 
 
 		if (in_array("Mail", $allKey)){
 			$this->updateMail('mail', $login);
@@ -102,34 +105,34 @@ class UserController /*extends abstractController*/{
 
 	private function updateMail($label, $login){
 		$this->modelUser->duplication(); 
-		if (($this->updateError()===false) && ($this->modelUser->update($login, $label)===true)){
+		if (($this->updateError()===false) && ($this->modelUser->updateUser($login, $label)===true)){
 			$_SESSION['success']=1;
-			$this->show('settings', $this->getData($login));
+			$this->show('settingsPage', $this->getData($login));
 		}
 	}
 /////////////////////:à refaire
 	private function updatePassword($label, $login){
 		$this->modelUser->oldPasswordConfirm($login);
-		if (($this->updateError()===false)&&($this->modelUser->update($login, $label)===true)){
+		if (($this->updateError()===false)&&($this->modelUser->updateUser($login, $label)===true)){
 			$_SESSION['success']=1;
-			$this->show('settings', $this->getData($login));
+			$this->show('settingsPage', $this->getData($login));
 		}
 		/*if ($this->modelUser->oldPasswordConfirm($login)!=true){
 			$this->errors['password']="L'ancien mot de passe n'est pas valide";
 			$this->updateError();
-		}elseif (($this->updateError()===false)&&($this->modelUser->update($label, $login)===true)){
+		}elseif (($this->updateError()===false)&&($this->modelUser->updateUser($label, $login)===true)){
 			$_SESSION['success']=1;
 			$this->show('settings', $this->getData($login));
 		}*/
 	}
 	
 	private function updateError(){
-		if (empty($this->modelUser->error())){
+		if (empty($this->modelUser->errors())){
 			return false;
-		}elseif (!(empty($this->modelUser->error()))) {	
+		}elseif (!(empty($this->modelUser->errors()))) {	
 			$_SESSION['success']=2;
-			$errorResult['errors'] = $this->modelUser->error();
-			$this->show("settings", $errorResult);
+			$errorResult['errors'] = $this->modelUser->errors();
+			$this->show("settingsPage", $errorResult);
 			$errorResult=[];		
 		}
 	}
@@ -148,14 +151,13 @@ class UserController /*extends abstractController*/{
 
 /*connexion, logout and verification of login and password*/
 	public function connexion(){
-			$this->modelUser->hydrateUser();
+			$this->modelUser->hydrate();
 			$this->modelUser->connexion();
-
-			if ((empty($this->modelUser->error()))&& ($this->modelUser->connexion() === true)){
+			if ((empty($this->modelUser->errors()))&& ($this->modelUser->connexion() === true)){
 				$_SESSION['access']=['auth'=>'valide', 'login'=>$this->modelUser->login()];
 				header('location: connexion/dashboard');
 			}else{
-			$this->show('connexion', 'Identifiant et/ou Mot de passe invalide');
+			$this->show('connexionPage', 'Identifiant et/ou Mot de passe invalide');
 			}
 	}
 
@@ -163,6 +165,12 @@ class UserController /*extends abstractController*/{
 	public function logout(){
 		session_destroy();
 		header('Location:/connexion');
+	}
+
+	public function defineUser($userId){ 
+		$userParams = $this->modelUser->one('id', $userId); 
+		$user=$userParams['login']; 
+		return $user; 
 	}
 
 
@@ -174,14 +182,14 @@ class UserController /*extends abstractController*/{
 
 
 //////voir si ca fonctionne. sinon, fonction hydrate dessous. 
-/*	private function modelUser->hydrateUser($id){
+/*	private function modelUser->hydrate($id){
 		foreach ($_POST as $key => $value) {
 			$key = Purifier::input($key);
 			$value = Purifier::input($value); 
 			$name = "set".$key;
 			$this->__set($name, $value);
-			if ((!($this->modelUser->modelUser->error)=="")&& (!(in_array($this->modelUser->modelUser->error, $this->modelUser->error)))){
-				 (array_push($this->_error, $this->_modelUser->modelUser->error)); 
+			if ((!($this->modelUser->modelUser->errors)=="")&& (!(in_array($this->modelUser->modelUser->errors, $this->modelUser->errors)))){
+				 (array_push($this->_error, $this->_modelUser->modelUser->errors)); 
 			};
 		}
 	}
@@ -193,7 +201,7 @@ class UserController /*extends abstractController*/{
 
 
 /*
-	private function hydrateUser(){
+	private function hydrate(){
 		$allKey=[];
 		foreach ($_POST as $key => $value) {
 			$key = Purifier::input($key);
@@ -204,8 +212,8 @@ class UserController /*extends abstractController*/{
 				$this->modelUser->$name($value, $key); 
 			}
 			
-		}if ((!($this->modelUser->modelUser->error())=="")){
-				$this->errors= $this->modelUser->modelUser->error(); 
+		}if ((!($this->modelUser->modelUser->errors())=="")){
+				$this->errors= $this->modelUser->modelUser->errors(); 
 		}
 		return $allKey;
 	}*/
@@ -228,19 +236,19 @@ class UserController /*extends abstractController*/{
 
 /*add the login in $_SESSION*/
 	private function getData($login){
-		$login=Purifier::input($login);
-		return($_SESSION['user']=$this->modelUser->readUser($login));
+		$login=Purifier::htmlPurifier($login);
+		return($_SESSION['user']=$this->modelUser->one('login', $login));
 	}
 
 
 
 
 	/*start $_session if it is not already launch*/
-
+/*
 	private function session(){
 		if (session_status()===PHP_SESSION_NONE){
 			session_start(); 
 		}
-	}
+	}*/
 
 }

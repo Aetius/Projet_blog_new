@@ -19,10 +19,10 @@
 				<div class="row">
 					<div class="row">
 						<form method="post">
-							{%if (var.errors is not null) %}
+							{%if (results.errors is not null) %}
 								<div class="alert alert-danger"> 
 									<p class="text-center">Echec de l'inscription : </p>
-									{% for value in var.errors %}
+									{% for value in results.errors %}
 										<li>
 											<ul>
 												{{value}}
@@ -32,10 +32,10 @@
 								</div>
 							{%endif%}
 							<div class="row ">
-								{{ form.input ('Name', 'Votre prénom',  {autofocus:'autofocus', value:var.saveInputUser.Name} )}}
-								{{ form.input ('Lastname', 'Votre nom', {value:var.saveInputUser.Lastname})}}
-								{{ form.input ('Mail', 'Votre adresse mail', {type:'email', value:var.saveInputUser.Mail})}}
-								{{ form.input ('Login', 'Votre login', {value:var.saveInputUser.Login})}}
+								{{ form.input ('Name', 'Votre prénom',  {autofocus:'autofocus', value:results.saveInputUser.Name} )}}
+								{{ form.input ('Lastname', 'Votre nom', {value:results.saveInputUser.Lastname})}}
+								{{ form.input ('Mail', 'Votre adresse mail', {type:'email', value:results.saveInputUser.Mail})}}
+								{{ form.input ('Login', 'Votre login', {value:results.saveInputUser.Login})}}
 								{{ form.input ('Password', 'Votre mot de passe', {type:'password'} )}}
 								{{ form.input ('PasswordConfirm', 'Veuillez confirmer votre mot de passe', {type:'password'} )}}
 								<div class="visibility form-group">

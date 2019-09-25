@@ -1,6 +1,8 @@
 <?php
 
-namespace utilities;
+namespace App\utilities;
+
+use App\utilities\ValidatorError; 
 
 class Validator{
 	
@@ -17,130 +19,145 @@ class Validator{
 
 
 	public function __construct($params){
-		$this->params = $params; 
+		$this->params = $params;
 	}
 
-	public function require($keys){
-		foreach ($keys as $key) {
-			$value=$this->getValues($key); 
+	public function required($keys){                   ///keys est un tableau, contenant clé et valeur. à rapprocher de l'hydratation. 
+		foreach ($keys as $key) {  
+			$value=$this->getValue($key); 
 			if (is_null($value)){
-				$this->errors[$key]="Le champs $key est vide";
+				 $this->addError($key, 'required');
 			}
 		}
-		return $this; 
+		return $this; ///sert à retourner l'objet pour continuer les tests. 
 	}
 
-	public function length($key, $min, $max=null){
-		$value=$this->getValue($key); 
-		$length=mb_strlen($value); 
 
-		if(
-			!is_null($min) &&
-			!is_null($max) &&
-			($length < $min || $length > $max)
-		)	{
-				$this->errors[$key]="pb entre min et max";
-				return $this; 
-		}
-		if(
-			!is_null($min) &&
-			($length < $min)
-		)	{
-				$this->errors[$key]="pb entre min et max";
-				return $this; 
-		}
-
-		if(
-			!is_null($max) &&
-			($length > $max)
-		)	{
-				$this->errors[$key]="pb max";
-				return $this; 
-		}
-		return $this; 
+	public function name($key){
+		 $value = $this->getValue($key);
+        if(!preg_match("#[a-zA-Z0-9]{2,}#", $value)){
+			$this->addError($key, 'regex');
+		}return $this; 
 	}
 
-	public function notEmpty($keys){
-		foreach ($keys as $key) {
-			$value=$thisè>getValues($key); 
-			if (is_null($value)|| empty($value)){
-				$this->errors[$key]="min est pb";
-			}
-		}
+	public function mail($key){
+         $value = $this->getValue($key);
+		if (preg_match("#^[a-zA-Z0-9._-]{2,}@[a-z0-9]{2,20}\.[a-z]{2,6}$#", $key)){
+			$this->addError($key, 'regex');
 
-
-	public function isValid(){
-		return empty($this->errors); 
+		}return $this;
 	}
 
-	public function getErrors(){
-		return $this->errors; 
+	public function password($key){ 
+         $value = $this->getValue($key);
+        if (!preg_match("#^\S*(?=\S{8,})(?=\S*[a-z])(?=\S*[,?;.:/!%@])(?=\S*[\d])\S*$#", $value)){
+			$this->addError($key, 'password'); 
+		}return $this;
 	}
 
-	public function datetime($key){
 
-		$value=$this->getValue($key);
-		$datetime=\date_create_from_format('Y-m-d H:i:s', $value)
-		$errors=\date_get_last_errors();
-		if ($errors['error_count'] > 0){    /////attention, risque d'erreurs avec error_count (en lien avec les tests unitaires. 38min dans la vidéo.)
-			$this->errors[$key]='pas de propriété datetime';
-		}
-		return $this
-	}
+	public function notEmpty($keys) {
+        foreach ($keys as $key) { 
+            $value = $this->getValue($key); 
+            if (is_null($value) || empty($value)) {
+                $this->addError($key, 'empty'); 
+            }
+        } 
+        return $this;
+    }
 
-	private function getValue($key){
-		if (array_key_exists($key, $this->params)){
-			return $this->params[$key];
-		}
-		return null; 
-	}
+    public function length(string $key, ?int $min, ?int $max = null): self{ 
+        $value = $this->getValue($key); 
+        $length = mb_strlen($value);
+        if (
+            !is_null($min) &&
+            !is_null($max) &&
+            ($length < $min || $length > $max)
+        ) {
+            $this->addError($key, 'betweenLength', [$min, $max]);
+            return $this;
+        }
+        if (
+            !is_null($min) &&
+            $length < $min
+        ) {
+            $this->addError($key, 'minLength', [$min]);  
+            return $this;
+        }
+        if (
+            !is_null($max) &&
+            $length > $max
+        ) {
+            $this->addError($key, 'maxLength', [$max]);
+        }
+        return $this;
+    }
+
+    /**
+     * Vérifie que l'élément est un slug
+     *
+     * @param string $key
+     * @return Validator
+     */
+    public function slug(string $key): self
+    {
+        $value = $this->getValue($key);
+        $pattern = '/^([a-z0-9]+-?)+$/';
+        if (!is_null($value) && !preg_match($pattern, $value)) {
+            $this->addError($key, 'slug');
+        }
+        return $this;
+    }
+
+    public function dateTime (string $key, string $format = "Y-m-d H:i:s"): self
+    {
+        $value = $this->getValue($key);
+        $date = \DateTime::createFromFormat($format, $value);
+        $errors = \DateTime::getLastErrors();
+        if ($errors['error_count'] > 0 || $errors['warning_count'] > 0 || $date === false) {
+            $this->addError($key, 'datetime', [$format]);
+        }
+        return $this;
+    }
+
+    public function isValid(): bool
+    {
+        return empty($this->errors);
+    }
+
+    /**
+     * Récupère les erreurs
+     * @return ValidationError[]
+     */
+    public function getErrors(): array
+    {
+        return $this->errors;
+    }
+
+    /**
+     * Ajoute une erreur
+     *
+     * @param string $key
+     * @param string $rule
+     * @param array $attributes
+     */
+    private function addError(string $key, string $rule, array $attributes = []): void
+    {
+        $this->errors[] = (new ValidatorError($key, $rule, $attributes))->errorMessage();
+        //echo $this->errors[$key];die(); pour pouvoir lire les données. __toString convertit l'objet en chaine, et met les params. 
+    }
+
+    private function getValue(string $key)
+    {
+        if (array_key_exists($key, $this->params)) {
+            return $this->params[$key];
+        }
+        return null;
+    }
 }
 
 
-/*validator*/
-public $errors=[];
-
-
-	public static function name($name){
-		if(preg_match("#^[a-zA-Z]{2,}$#", $name)){
-			return true;
-		}
-		return false;
-	}
-
-	public static function mail($mail){
-		if (preg_match("#^[a-zA-Z0-9\.]{2,}[@]{1}[a-z]{1,20}\.[a-z]{2,8}$#", $mail)){
-			return true;
-		}
-		return false;
-	}
-
-	public static function password($password){
-		if (preg_match("#^[a-zA-Z(0-9)+(,?.;!%@&)+]{8,}$#", $password)){
-			return true;
-		}
-		return false;
-	}
 
 
 
 
-
-
-dans model : 
-$validator = $this->getValidator($request); 
-if ($validator->isValid()){
-	//on met dans la partie create ou update.
-}
-$errors=validator->getErrors();
-//on renvoie à la vue. 
-
-private function getValidator($request){
-	return (new Validator($request->getParsedBody()))
-	->required('content', 'name')
-	->length('content', 10)
-	->length('name', 2, 250);
-
-	//règle de validation faite. 
-	//on l'envoie à la vue. 
-}

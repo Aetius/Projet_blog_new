@@ -4,19 +4,30 @@ use PDO;
 //créer un utilisateur pour la lecture seule, un pour l'ajout des commentaires, et un pour l'écriture newsletter. 
 
 class BDDConnection{
-	private static $_bdd;
+	private static $_bdd = null;
 
 	public static function connection(){
 		if (is_null(self::$_bdd)){
-			new BDDConnection;  //on lance la fonction construct de la class
-			return self::$_bdd; //on retourne le résultat. si on fait self::$_bdd=new BDDConnection;, on retourne la classe et non l'instance de PDO.
+			$dsn = 'mysql:host=localhost;dbname=projet_p5_blog_oc;charset=utf8';
+			$user = 'root';
+			$password = '';
+			$options=[PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION];
+			
+		
+			try{
+				self::$_bdd = new PDO($dsn, $user , $password, $options);	
+			}catch (\PDOException $e){
+				die ("L'accès à la bdd est refusée");
+				
+			}
+			
 		}
 		return self::$_bdd;
 	}
 
 //pour se connecter : BDDConnection::getInstance();
 
-	private function __construct(){
+	/*private function __construct(){
 		$dsn = 'mysql:host=localhost;dbname=projet_p5_blog_2;charset=utf8';
 		$user = 'root';
 		$password = '';
@@ -29,7 +40,7 @@ class BDDConnection{
 			die ("L'accès à la bdd est refusée");
 			
 		}
-	}
+	}*/
 }
 		/*try {
 			self::$_bdd = new PDO('mysql:host=localhost;dbname=projet_p5_blog_2;charset=utf8', 'root', ''); 

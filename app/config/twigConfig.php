@@ -1,17 +1,21 @@
 <?php
-namespace View;
+namespace App\config;
 
 class twigConfig{
 	protected $twig;
 
 	protected function config() {
-		$loader = new \Twig\Loader\FilesystemLoader(array (__DIR__.'/templates', __DIR__.'/templates/article', __DIR__.'/templates/comment', __DIR__.'/templates/user'));
+
+		$path=((dirname($_SERVER['DOCUMENT_ROOT']))."/Views");
+
+		$loader = new \Twig\Loader\FilesystemLoader(array ("$path/templates", "$path/article", "$path/comment", "$path/user"));
 		$this->twig = new \Twig\Environment($loader, [
 	    	'cache' => false, //__DIR__.'/tmp',
 	    	'debug' =>true,
 	    	/*ne pas oublier de réactiver le cache lors de la mise en production.*/
 		]);
 		$this->twig->addExtension(new \Twig\Extension\DebugExtension());
+		
 		if (isset($_SESSION)){
 			$this->twig->addGlobal('session', $_SESSION);
 		}

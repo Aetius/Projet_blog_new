@@ -19,11 +19,11 @@
 	                  <div class="alert alert-success"> La modification a bien été prise en compte
 	                  </div>
 	                {%endif%}
-	            {%if (var.errors is not null) %}
+	            {%if (results.errors is not null) %}
 					<div class="alert alert-danger"> 
 						<p>Echec de l'inscription : </p>
 						<div class="text-left">
-							{% for value in var.errors|sort|reverse(true) %}
+							{% for value in results.errors|sort|reverse(true) %}
 								<li>
 									<ul>
 										{{value}}

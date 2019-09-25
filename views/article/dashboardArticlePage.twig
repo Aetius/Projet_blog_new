@@ -1,0 +1,203 @@
+{% extends "layoutback.twig" %}
+
+{% block title %}Page Article{% endblock %}
+
+{% block content %}
+
+{% import 'macro.twig' as form %}
+
+<main>
+{# alert success or not if update or creation are donne #}
+	<section class="bg-light page-section text-center" role="alert">
+		{% for key, value in display.success%}
+		    {%if key == 1 %}
+		        <div class="alert alert-success"> {{value}}
+		    	</div>
+		    {%endif%}
+		    {%if key == 2 %}
+		        <div class="alert alert-danger"> {{value}}
+		    	</div>
+		    {%endif%}
+		{% endfor %}
+
+	 	<div class="d-flex align-content-end flex-wrap ">	
+	 		<div class="row col-md-12 ">
+	    		<div class="col-12 col-md-9  order-1">
+					<h1 class="text-center">Votre espace</h1> 
+				</div>
+		
+	{# sidebar : display all articles in bdd#}
+				<nav class="nav flex-column col-md-3 pl-5 order-3">
+					<div class="col-12 "> 
+						<a href="/connexion/create"> <button class="btn btn-primary"  > Créer un nouvel article </button></a>
+						<div class=" text-center mt-4 "> 
+							<div class="container">
+								<h4 class="mb-4">Tous les articles</h4>
+								<div class="row justify-content-around mt-2 mb-2">
+									{% for key, value in options %}
+										<div class="list-group">
+											<a class="list-group-item {{(value.page)}}" href="/connexion/dashboard/page{{key}}">{{key}} </a>
+										</div>
+									{% endfor %}
+								</div>
+							</div>
+							<div>
+								{% for key, value in results %}
+									{% if key matches '/[0-9]/'%}  
+										<div class="card mt-4">
+											<div class="card-block text-center">
+												<div >
+													<a class="no-gutters showArticle {% if key == 0 %} active {% endif %} "  id={{value.id}} href="#article{{value.id}}">
+														<h5 class="card-title mt-2 ">{{value.title |title }}</h5>
+													</a>
+													<div class="card-body py-1 px-1">
+														<p class="mb-1">{{value.description |title }}</p>
+													</div>
+												</div>
+												<div class="row card-body justify-content-between py-1">
+													<div class="px-2">
+														<form method="POST" >
+															<button class="btn btn-info btn-sm text-align" type="submit" name="Update" value={{value.id}}>Modifier</button>
+														</form>
+													</div>
+													<div class="px-2">
+														<form method="POST" class="text-right">
+															<button class="btn btn-info btn-sm confirmClose" type="submit" name="Delete" value={{value.id}}>Supprimer</button>
+														</form>
+													</div>
+												</div>
+											</div>
+										</div>
+									{% endif %}
+								{% endfor %}
+							</div>
+						</div>
+					</div>
+				</nav>
+					
+
+	{# display one article with its comments.  #}
+				<div class="col-md-9 showOneArticle order-2">
+					{% for key, value in results %}
+						{% if key matches '/[0-9]/'%}  
+							{% if key == 0 %}
+								<div class="active" id="article{{value.id}}"> 
+							{% endif %}
+							{% if key != 0 %}
+								<div class="d-none" id="article{{value.id}}"> 
+							{% endif %}
+									<div class="mt-4 ml-3">
+										<div class="card px-5 my-3 text-center">
+											<div class="card-title  my-3">
+												<h2 class="text-center ">{{ value.title}}</h2>
+											</div>
+										</div>				
+										<div class="card px-5">
+											<div class="card-block text-center my-5">
+												<h3 class="card-text">{{ value.description |raw}}</h3>
+											</div>
+											<div class="card-block text-center mb-5">
+												<p class="card-text">{{ value.content |striptags('<br><p>')|raw}}'</p>
+											</div>
+											<div class="card-block text-center mb-4">
+												<div class="d-flex justify-content-between ">
+													<form method="POST" class="pl-3">
+														<button class="btn btn-primary text-align" type="submit" name="Update" value={{value.id}}>Modifier l'article</button>
+													</form>
+													<form method="POST" class="text-right pr-3">
+														<button class="btn btn-primary " type="submit" name="Delete" value={{value.id}}>Supprimer l'article</button>
+													</form>
+												</div>
+											</div>
+										</div>
+										<div class="my-2 m card-body">
+											<form method="GET" action="/connexion/comment/{{value.id}}" class="text-right pr-3">
+												<button class="btn btn-primary " type="submit" > Voir les commentaires.</button>
+											</form>
+										</div>
+									</div>
+								</div>
+						{% endif %}
+					{% endfor %}
+				</div>
+		
+{# end block article #}
+
+{# block commentaires #}
+				<div class="col-md-10 no-gutters order-4">
+					<div class="col-md-11 ">
+						{% for key, value in results %}
+ 
+						{% if value.comment != empty %}
+							{% if key == 0 %}
+								<div class="showComment" id="commentArticle{{value.id}}"> 
+							{% endif %}
+							{% if key != 0 %}
+								<div class="showComment d-none" id="commentArticle{{value.id}}"> 
+							{% endif %}
+					{% for key2, value2 in value.comment %}
+							<div class="col-md-11 mt-4 ml-5" id="comment{{value2.id}}">
+									<div class="card px-5 my-3 text-center">
+										<div class="card-title  my-3">
+											<h2 class="text-center ">{{value2.login}}</h2>
+										</div>
+									</div>				
+									<div class="card px-5">
+										<div class="card-block text-center my-5">
+											<h3 class="card-text">{{ value2.comment |raw}}</h3>
+										</div>
+									</div>
+									<div class="card-block text-center mb-4">
+											<div class="d-flex justify-content-between ">
+												<form method="POST" class="pl-3">
+													<button class="btn btn-primary text-align" type="submit" name="Update" value="comment#{{value.id}}">Modifier le commentaire</button>
+												</form>
+												<form method="POST" class="text-right pr-3">
+													<button class="btn btn-primary " type="submit" name="Delete" value="comment#{{value.id}}">Supprimer le commentaire</button>
+												</form>
+												<form>
+													
+													<div class="col-md-12">
+														<label for="published">non</label>
+														<input type="radio" name="published" value="non" checked>
+														<label for="published">oui</label>
+														<input type="radio" id="Published" name="published" value="oui" >
+													</div>
+													<button class="btn btn-primary" type="submit">Publier</button>
+												</form>
+											</div>
+										</div>
+							</div>
+					
+
+
+				{% endfor %}
+						
+				{% endif %}
+
+
+						
+			
+				{% endfor %} 
+						
+			</div>
+			
+
+
+
+
+			</div>
+		</div>
+	  	</div>
+	</section>
+
+</main>
+
+{% endblock %}
+
+
+
+
+
+
+

@@ -1,0 +1,87 @@
+{% extends "layoutBack.twig" %}
+
+{% block title %}Commentaires {% endblock %}
+
+{% import 'macro.twig' as form %}
+{% block content %}
+	<div class="articles">
+		<div class="">
+			<div class="col-md-12 row no-gutters">
+				<div class=" col-md-2 align-self-start">
+					<button class="btn btn-primary backButton"> Retour</button>
+				</div>
+				<div class="col-md-9">
+					<h1 class="text-center m-lg-5">Tableau de bord des commentaires </h1> 
+				</div>
+				<div class="col-md-12 ">
+				
+					<div class="col-md-12 text-center">		
+						{%if display.success.1 %}
+			                <div class="alert alert-success"> {{display.success.1}}
+			            	</div>
+			            {%endif%}
+			            {%if display.success.2 %}
+			                <div class="alert alert-danger"> {{display.success.2}}
+			                	<ul class="text-left">
+			                		{% for key, value in results.errors %}
+			                			
+			                				<li>{{value}}</li>
+			                			
+			                		{% endfor %}
+			                	</ul>
+			            	</div>
+			            {%endif%}
+			            <div class="col-md-12 text-justify">
+			            	<div class="col-md-12">
+			            		<div class="col-md-6 h3">
+			            			{{results.article.title}} 
+			            			<p class="h5">{{results.article.description}}
+			            			</p>
+			            		</div>
+			            		
+			            	</div>
+			            	<div class="col-md-12">
+			            		{{results.article.content|striptags('<br><p>')|raw}}
+			            	</div>
+			            </div>
+						<div class="row col-md-12 text-justify my-5">
+							{% for comment in results.comments %} 
+								<div class="col-md-7 mb-4 card px-4 pt-3">
+									<p>Auteur : {{comment.author}}</p>
+									<p>Commentaire : {{comment.comment}}</p>
+									<p>Date de publication : {{comment.date_comment}}</p>
+									<form method="POST">
+										<div class="text-center row">
+											<div class="col-md-6 text-left">
+												<p >Publier ? </p>
+											
+												<label for="published">non</label>
+												<input type="radio" name="published" value='0' {% if comment.publicated == 0 %}checked {% endif %}>
+												<label for="published">oui</label>
+												<input type="radio" id="Published" name="published" value="1" {% if comment.publicated == 1 %}checked {% endif %}>
+											</div>
+											<div class="col-md-6 text-left mb-3 mt-4">
+												<label class="mx-3"> Cliquer pour supprimer le commentaire</label>
+												<input class="text-center" type="checkbox"  name="delete" value={{comment.id}}></input>
+											</div>
+										</div>
+									
+								</div>
+								<div class="col-md-5"> 
+									
+										{{ form.textarea ('adminAnswer', 'Répondre au commentaire', {value:comment.admin_answer, class:'tinyMCE'})}}
+									</div>
+										<div class="col-md-12 text-center">
+											<button class="btn btn-primary btn-lg" type="submit" name="id" value={{comment.id}}>Valider</button>
+										</div>
+									</form>
+							
+								</div>
+							{% endfor %}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

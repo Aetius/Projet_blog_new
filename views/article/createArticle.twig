@@ -1,0 +1,85 @@
+
+{% extends "layoutBack.twig" %}
+
+{% block title %}{% if results.title != null and display.success.2 == null %}Modification de l'article : {{results.title}} {% else %} Création de l'article {% endif %}{% endblock %}
+
+{% import 'macro.twig' as form %}
+{% block content %}
+	<div class="articles">
+		<div class="container">
+			<div class="col-md-12 row">
+			<div class=" col-md-2 align-self-start">
+				<button class="btn btn-primary backButton"> Retour</button>
+			</div>
+			<div class="col-md-9">
+			<h1 class="text-center m-lg-5">{% if results.title != null and display.success.2 == null %}Modification de l'article : {{results.title}} {% else %} Création de l'article {% endif %}</h1> 
+			</div>
+			<div class="col-md-12 row">
+				
+				<div class="col-md-12 text-center">
+						<form method="post">
+							<div class="text-center"> 
+							{%if display.success.1 %}
+				                <div class="alert alert-success"> {{display.success.1}}
+				            	</div>
+				            {%endif%}
+				            {%if display.success.2 %}
+				                <div class="alert alert-danger"> {{display.success.2}}
+				                	<ul class="text-left">
+				                		{% for key, value in results.errors %}
+				                			
+				                				<li>{{value}}</li>
+				                			
+				                		{% endfor %}
+				                	</ul>
+				            	</div>
+				            {%endif%}
+							<div class="row">
+								<div class="col-md-5 text-right">	
+									{{ form.input ('Title', 'Titre de l\'article', {value:results.title})}}
+								</div>
+								<div class="col-md-6 text-left">
+									{{ form.textarea ('Description', 'Résumé de l\'article', {value:results.description} )}}
+
+								</div>
+							</div>
+							<div >
+									{{ form.textarea ('Content', 'Contenu de l\'article', {value:results.content, class:'tinyMCE'})}}
+							</div>
+							<div>
+								<div class="col-md-12 text-center">
+									<p>Publier ?</p>
+									
+										<div class="col-md-12">
+											<label for="published">non</label>
+											<input type="radio" name="published" value="non" checked>
+											<label for="published">oui</label>
+											<input type="radio" id="Published" name="published" value="oui" >
+											<div class="col-md-12 expandable">
+												<a><label for="publishedDate">Date de la publication : </label></a>
+												<input type="date" id="PublishedDate" name="publishedDate" value="2019-08-22" min="2019-07-31">
+											</div>
+										</div>
+								
+
+								</div>		
+								<div class="row">
+									<div class="col-md-4 text-right">
+										<button class="btn btn-primary backButton" type ="button">Retour</button>  
+									</div>
+									<div class="col-md-4 text-center">
+										<button class="btn btn-primary" type="submit">Valider</button>
+									</div>
+									<div class="col-md-4 text-left">
+										<button class="btn btn-primary" type="reset">Réinitialiser</button>
+									</div>
+								</div>
+							</div>
+						</form>
+				
+				</div>
+			</div>
+		</div>
+	</div>
+	</div>
+{% endblock %}

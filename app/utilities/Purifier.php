@@ -2,11 +2,11 @@
 
 namespace App\utilities;
 
-require_once '../vendor/ezyang/htmlpurifier/library/HTMLPurifier.auto.php';
+//require_once '../vendor/ezyang/htmlpurifier/library/HTMLPurifier.auto.php'; pas nécessaire.
 
 class Purifier{
 
-	public static function input($strVerify){
+	/*public static function input($strVerify){
 		$strVerify=htmlspecialchars($strVerify);
 		if (is_numeric($strVerify)){
 			return (intval($strVerify));
@@ -23,15 +23,18 @@ class Purifier{
 		    $replace = array(" ' ", "", "", "", "", "", "", "");
 			return str_replace($search, $replace, $strVerify);
 	}
-
+*/
 
 	public static function htmlPurifier($dirty_html){
-
+		
 		$config = \HTMLPurifier_Config::createDefault();
 		$purifier = new \HTMLPurifier($config);
 		return ($clean_html = $purifier->purify($dirty_html));
 		
 	}
+
+
+
 
 
 

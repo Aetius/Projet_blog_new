@@ -1,4 +1,0 @@
-AuthName "Page d'administration protégée"
-AuthType Basic
-AuthUserFile "C:/wamp64/www/projetOC/P5/Projet_blog/AdminSiteBlog/.htpasswd"
-Require valid-user
