@@ -17,7 +17,10 @@
        "twig/twig":"^2.0",
         "altorouter/altorouter": "^1.2",
         "tinymce/tinymce": ">= 4", 
-        "ezyang/htmlpurifier":">=4"
+        "ezyang/htmlpurifier":">=4", 
+        "psr/http-message": "^1.0",
+        "psr/http-server-middleware":"^1.0.1",
+        "guzzlehttp/guzzle": "^6.3"
     }, 
     "require-dev": {
         "symfony/var-dumper": "^4.2"

@@ -8,8 +8,11 @@
 	<div class="articles">
 		<div class="row col-md-12"> 
 			<div class="  col-md-10 order-2">
-				<div class="intro-text pb-5">
-					<h1>{{results.article.title |title }}</h1>
+				<div class="intro-text pb-5"> 
+					<h1>{{results.article.title |title }}</h1> 
+		{% include 'success.twig'%}
+
+
 				</div>
 			
 				<div class=" col-md-11 text-center mb-5 pb-3 ml-5">
@@ -19,10 +22,12 @@
 						</div>
 						<div class="card-text text-justify pb-2">{{results.article.content | striptags('<br><p>')|raw}}
 						</div> 
+						<div class="text-right"> {{results.article.author | title}}, publié le {{results.article.date_publication}}
+						</div>
 					</div>
 	{# add comment #}				
 					<div class="px-2">
-						<form method="POST" class="text-right">
+						<form method="POST" class="text-right">{{csrf_input()}} 
 							<button class="btn btn-primary btn-md" type="submit" name="articleId" value={{results.article.id}}>Ajouter un commentaire</button>
 						</form>
 					</div>
@@ -30,9 +35,14 @@
 					<div class="card-block text-center py-5">	
 						{% for key, comments in results.comments %} 
 							<div class="card mb-3 px-3 py-2">
-								<p class="text-left">{{comments.author_id | title }} a écrit : </p>
-								<div class="card-text text-justify pb-2">{{comments.comment | striptags('<br><p>')|raw}}
-								<p class="text-right">{{comments.date_comment}}</p>
+								<p class="text-left">{{comments.author | title }} a écrit : </p> 
+								<div class="card-text text-justify pb-y">{{comments.comment | striptags('<br><p>')|raw}}
+								<p class="text-right">{{comments.date_comment}}</p> 
+									{% if comments.admin_answer != "" %}
+									<div class="card mb-3 mx-3 px-3 my-3 pt-3"> Réponse de {{ results.article.author }} :  
+										{{comments.admin_answer | striptags('<br><p>')|raw}}
+									</div>
+									{% endif %}
 								</div> 
 							</div>
 

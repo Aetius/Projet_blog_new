@@ -14,8 +14,13 @@ class TwigController extends twigConfig{
 		if (isset($_SESSION['success'])){
 			$display['success']= $_SESSION['success'];
 			unset($_SESSION['success']);
-		}
-		/*var_dump($page); var_dump($results); die(); */
+		}; 
+		if (isset($_SESSION['errors'])){
+			$results['errors']= $_SESSION['errors'];
+			unset($_SESSION['errors']);
+		}; 
+		 
+		
 			echo $this->twig->render("$page.twig", ['results'=> $results, 'options'=>$options, 'display'=>$display]);
 		
 	}

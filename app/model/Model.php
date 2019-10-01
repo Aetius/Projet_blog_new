@@ -49,8 +49,8 @@ class Model{
  		return $this->prepareRequest("UPDATE {$this->table} SET $sqlParams WHERE id=?", $attributes, true);
 	}
 
-	public function delete($id){
-		return $this->prepareRequest("DELETE FROM {$this->table} WHERE id=:id", [":id"=>$id], true );
+	public function delete($id, $field='id'){
+		return $this->prepareRequest("DELETE FROM {$this->table} WHERE $field=:id", [":id"=>$id], true );
 	}
 
 

@@ -9,12 +9,13 @@ use App\utilities\Validator;
 
 class AppModel extends Model{
 	protected $errors=[]; 
+	private $id='';
 
 	public function hydrate($verifyInputs=[]){
 		$inputs=[]; 
 		if (empty($verifyInputs)){
 			$verifyInputs=$_POST; 
-		}
+		}// à supprimer et à passer en params. 
 		foreach ($verifyInputs as $key => $value) {
 			$key = Purifier::htmlPurifier($key);
 			$value=Purifier::htmlPurifier($value);
@@ -47,7 +48,7 @@ class AppModel extends Model{
 	*launch request 
 	*return bool
 	**/
-	protected function creationSuccess($function, $fields)	{
+	protected function creationSuccess($function, $fields)	{ 
 		if (!empty($this->errors)){
 			$result['errors']=$this->errors;
 			foreach ($fields as $key => $value) {
@@ -58,12 +59,12 @@ class AppModel extends Model{
 
 		if (method_exists($this, 'id')){
 			$id=$this->id();
-		}else{
-			$id =""; 
-		}   
-		/*var_dump($fields); var_dump($function); var_dump($id); die(); */
-		if ($this->$function($fields, $id)!==true){
-			$this->errors[]="l'enregistrement a échoué"; 
+		}/*else{
+			$id =""; à voir si fonctionne. 
+		}   */
+		
+		if ($this->$function($fields, $id)!==true){ 
+			$this->errors[]="L'enregistrement a échoué"; 
 			$result['errors']=$this->errors;
 			return $result; 
 		}else{
@@ -79,13 +80,16 @@ class AppModel extends Model{
 		}
 		$error=($validator->getErrors()); 
 		foreach ($error as $key => $value) {
-			$this->errors[$key]=$value; 
+			array_push($this->errors, $value); 
 		}
-		 
+		
 	}
 /*each class had to redeclare this function getValidator, to define which validation must be done.  */
 	protected function getValidator($inputs){
 	}
 
+	protected function id(){
+		return $this->id; 
+	}
 
 }

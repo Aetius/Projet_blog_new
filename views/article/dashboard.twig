@@ -1,6 +1,6 @@
 {% extends "layoutback.twig" %}
 
-{% block title %}Page Article{% endblock %}
+{% block title %}Tableau de bord{% endblock %}
 
 {% block content %}
 
@@ -12,11 +12,98 @@
 		{% include 'success.twig' %} 
 
 	 	<div class="d-flex align-content-end flex-wrap ">	
-	 		<div class="row col-md-12 ">
-	    		<div class="col-12 col-md-9  order-1">
-					<h1 class="text-center">Votre espace</h1> 
+	 		<div class="col-md-12 ">
+	    		
+					<h1 class="text-center">Tableau de bord</h1> 
+			
+			</div>
+
+
+				{# display the 5 last articles with comments and status.  #}
+			<div class="col-md-12 mt-5 row">
+				<div class="col-md-12 bg-white">
+					<div>voir tous les articles
+					</div>
+					<div>voir tous les commentaires non validés
+					</div>
+					<div>créer un article
+					</div>
+					<div>accéder à l'espace personnel
+					</div>
 				</div>
+				<div class="h2 col-md-12">Les derniers articles
+				</div>
+
+					{% for key, value in results.articles %}
+						{% if key matches '/[0-3]/'%}  
+							<div class="col-md-6 ">
+							
+								<div class="mt-4 px-5 ml-3 text-justify bg-white">
+									<div class=" px-3 my-3 pt-4 d-inline-flex">
+										<div class="h3">{{ value.title}} : 
+										</div>
+										<div class="h3 font-weight-light pl-2">{{ value.description |raw}}
+										</div>
+									</div>
+									<div class=" mb-4">
+										<p class="card-text">{{ value.content |striptags('<br><p>')|raw | slice(0,100)}}...</p>
+									</div>
+									<div>{{dump(value)}}
+									</div>
+									<div> 
+										<h5>Statut de l'article : </h5>
+											<ul>
+												<li>
+													{% if value.publicated == null %}L'article n'est pas publié {% else %}L'article est publié 
+													{% endif %}
+												</li>
+												
+												{% set commentPublished = 0 %}
+												{% set commentNonPublished = 0 %}
+													{% for key2, value2 in results.comments %}
+														{% if value2.publicated == 1 and value.id == value2.article_id %}
+															 {% set commentPublished = (commentPublished+1) %} 
+														{% endif %}
+														{% if value2.publicated == 0 and value.id == value2.article_id %}
+															 {% set commentNonPublished = (commentNonPublished+1) %} 
+														{% endif %}
+														
+													{% endfor %}
+												<li> {{commentPublished}} {% if commentPublished < 2 %} commentaire publié. {% else %} commentaires publiés {% endif %}</li> 
+												<li> {{commentNonPublished}} {% if commentNonPublished < 2 %} commentaire {% else %} commentaires {% endif %} en attente de modération</li> 
+											</ul>
+									</div>
+									<div class="card-block text-center mb-4">
+										<div class="d-flex justify-content-center ">
+											<form method="POST" class="pl-3">{{csrf_input()}} 
+												<button class="btn btn-primary text-align" type="submit" name="Update" value={{value.id}}>Modifier l'article</button>
+											</form>
+										</div>
+									</div>
+								</div>
+							</div>
+						{% endif %}
+					{% endfor %}
+			</div>
+		</div>
 		
+{# end block article #}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	{# sidebar : display all articles in bdd#}
 				<nav class="nav flex-column col-md-3 pl-5 order-3">
 					<div class="col-12 "> 
@@ -67,52 +154,7 @@
 				</nav>
 					
 
-	{# display one article with its comments.  #}
-				<div class="col-md-9 showOneArticle order-2">
-					{% for key, value in results %}
-						{% if key matches '/[0-9]/'%}  
-							{% if key == 0 %}
-								<div class="active" id="article{{value.id}}"> 
-							{% endif %}
-							{% if key != 0 %}
-								<div class="d-none" id="article{{value.id}}"> 
-							{% endif %}
-									<div class="mt-4 ml-3">
-										<div class="card px-5 my-3 text-center">
-											<div class="card-title  my-3">
-												<h2 class="text-center ">{{ value.title}}</h2>
-											</div>
-										</div>				
-										<div class="card px-5">
-											<div class="card-block text-center my-5">
-												<h3 class="card-text">{{ value.description |raw}}</h3>
-											</div>
-											<div class="card-block text-center mb-5">
-												<p class="card-text">{{ value.content |striptags('<br><p>')|raw}}'</p>
-											</div>
-											<div class="card-block text-center mb-4">
-												<div class="d-flex justify-content-between ">
-													<form method="POST" class="pl-3">{{csrf_input()}} 
-														<button class="btn btn-primary text-align" type="submit" name="Update" value={{value.id}}>Modifier l'article</button>
-													</form>
-													<form method="POST" class="text-right pr-3">{{csrf_input()}} 
-														<button class="btn btn-primary " type="submit" name="Delete" value={{value.id}}>Supprimer l'article</button>
-													</form>
-												</div>
-											</div>
-										</div>
-										<div class="my-2 m card-body">
-											<form method="GET" action="/connexion/comment/{{value.id}}" class="text-right pr-3">
-												<button class="btn btn-primary " type="submit" > Voir les commentaires.</button>
-											</form>
-										</div>
-									</div>
-								</div>
-						{% endif %}
-					{% endfor %}
-				</div>
-		
-{# end block article #}
+	
 
 {# block commentaires #}
 				<div class="col-md-10 no-gutters order-4">

@@ -121,7 +121,7 @@
         <div class="row">
           <div class="col-md-9">
             <div class="row">
-              <form method="post">
+              <form method="post">{{csrf_input()}} 
                 <h3 class="section-heading">Formulaire de contact</h3>
                 {%if session.success == 1 %}
                   <div class="alert alert-success"> Le mail a bien été envoyé

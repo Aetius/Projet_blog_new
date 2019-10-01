@@ -108,18 +108,18 @@ class UserModel extends AppModel{
 	}
 
 	public function inscription($inputs){
-		 $this->validation($inputs);
+		$this->validation($inputs); 
+		
 		if ($this->verifUse($this->mail, 'mail')){
 			$this->errors[]="Cette adresse mail existe déjà";
 		};
 		if ($this->verifUse($this->login, 'login')){
 			$this->errors[]="Ce login existe déjà";
 		};
-		if (!empty($this->name)&&!empty($this->lastname)&&!empty($this->mail)&&!empty($this->login)&&!empty($this->password)){
+		if (!$this->errors){
 			return $this->createUser();
-		}else{
-			return false;
 		}
+	
 	}
 
 	public function connexion(){
@@ -184,7 +184,7 @@ class UserModel extends AppModel{
 		if ($this->password === $value){
 				$this->password = password_hash($value, PASSWORD_DEFAULT, ['cost'=>12]);
 		}else{
-			return $this->errors["password"]="La confirmation du mot de passe est invalide";
+			return $this->errors[]="La confirmation du mot de passe est invalide";
 		}
 		
 	}
@@ -216,7 +216,6 @@ class UserModel extends AppModel{
 			->length('Password', 8)
 			->notEmpty($fieldsExist);
 	}
-
 
 
 

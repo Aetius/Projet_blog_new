@@ -15,17 +15,21 @@ class CommentModel extends AppModel{
 	private $publishedDate=null;
 	private $articleId; 
 	private $id; 
-	private $adminAnswer; 
+	private $adminAnswer=null; 
 	 
 
 /*execute in bdd*/
 
-	public function allValidComments($articleId){
-		return $this->prepareRequest("SELECT * FROM comments WHERE article_id=:article_id AND publicated=1 ORDER BY id DESC", [":article_id"=>$articleId]);
+	public function allComments(){
+		return $this->prepareRequest("SELECT * FROM comments ORDER BY id DESC");
 	}
 
-	public function allComments(){
-		return $this->prepareRequest("SELECT * FROM comments WHERE article_id=:article_id ORDER BY id DESC", [":article_id"=>$this->articleId]);
+	public function commentsByPublished($publicated){
+		return $this->prepareRequest("SELECT * FROM comments WHERE publicated=:publicated ORDER BY id DESC", [":publicated"=>$publicated]);
+	}
+
+	public function commentsByArticle($article_id, $publicated=1){  
+		return $this->prepareRequest("SELECT * FROM comments WHERE article_id=:article_id AND publicated=:publicated ORDER BY id DESC", [":article_id"=>$article_id, ":publicated"=>$publicated]);
 	}
 	
 	public function updateComment(){
@@ -120,6 +124,8 @@ class CommentModel extends AppModel{
 	public function setAdminAnswer($input){
 		return $this->adminAnswer=$input; 
 	}
+
+	
 
 /*getters*/
 	public function articleId(){

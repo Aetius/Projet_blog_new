@@ -1,5 +1,6 @@
 
 {% macro input (name, placeholder, options=[] ) %}
+	{{csrf_input()}} 
 	<div class="{{options.col | default('col-md-6')}}">
 	    <div class="form-group">
 	    	<input type="{{options.type | default('text')}}" value="{{options.value | default('')}}" class="form-control"  id="{{name}}" name="{{name}}"  placeholder="{{placeholder}}"  required="required" data-validation-required-message="Merci d'entrer {{placeholder}}">
@@ -10,6 +11,7 @@
 
 
 {% macro textarea (name, placeholder, options=[] ) %}  
+	
 		<div class="form-group">
 				<textarea type="text"  class="form-control {{options.class}}"  id="{{name}}" name="{{name}}" placeholder="{{placeholder}}" rows="{{options.rows | default("4")}}" cols="{{options.cols | default("100")}}" data-validation-required-message="Merci d'écrire {{placeholder}}">{{options.value}}</textarea>
 		</div>
@@ -17,14 +19,15 @@
 
 
 {% macro skillBar (name, value, options=[]) %}
-<div class="{{options.class | default ('col-sm-12')}}">
-	<div class="lead"> {{name}}
-	</div>
-	<div class ="progress">
-		<div class ="progress-bar wow fadeInLeft" data-progress="90%" style ="width:{{value}}; visibility: visible;  animation-name: fadeInLeft" >
+	
+	<div class="{{options.class | default ('col-sm-12')}}">
+		<div class="lead"> {{name}}
+		</div>
+		<div class ="progress">
+			<div class ="progress-bar wow fadeInLeft" data-progress="90%" style ="width:{{value}}; visibility: visible;  animation-name: fadeInLeft" >
+			</div>
 		</div>
 	</div>
-</div>
 {% endmacro%}
 
 

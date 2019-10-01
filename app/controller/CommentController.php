@@ -32,20 +32,20 @@ class CommentController extends Controller{
 	}*/
 
 	public function create(){
-		$inputs = $this->modelComment->hydrate(); 
-		$result= $this->modelComment->createComment($inputs);
-		if ($result===true){
+		$inputs = $this->modelComment->hydrate($_POST); 
+		$results= $this->modelComment->createComment($inputs); 
+		if ($results === true){ var_dump($results); die(); 
 			$_SESSION['success']['1']='Le commentaire a été ajouté et est en attente pour modération.';
-			header("location:/articles/".$this->modelComment->articleId()); 
 		}else{
 			$_SESSION['success']['2']="Echec lors de l'ajout du commentaire"; 
-			$this->show('createComment'); 
+			$_SESSION['errors']=$results['errors']; 
 		}
-
+		header("location:/articles/".$this->modelComment->articleId()); 
+		
 	}
 
 	public function showComments($articleId){ 
-		return $this->modelComment->allValidComments($articleId); 
+		return $this->modelComment->allComments($articleId); 
 	}
 
 	public function dashboard($idArticle){
@@ -58,30 +58,42 @@ class CommentController extends Controller{
 		$inputs=$_POST; 
 		$inputs['articleId']=$idArticle; 
 		$this->modelComment->hydrate($inputs);
-		
+		 
 		if (array_key_exists("delete", $inputs)){
 			$this->delete($inputs); 
-		}elseif (array_key_exists("Update", $inputs)) {
-			header("location:/connexion/update/".$inputs['Update']);
-		}else{
-			header("location:/connexion/dashboard"); 
+		}else {
+			$this->update('inputs'); 
 		}
 	}
+
+	/**
+	*array @inputs
+	*
+	*/
 	
-	public function delete($inputs){
-		$delete = $this->modelComment->delete($inputs['delete']);
-		if ($delete === true){
-			$_SESSION['success']['1']='Le commentaire est supprimé.';
-		}else{
-			$_SESSION['success']['2']="Echec de la suppression."; 
+	public function delete ($inputs){ 
+		if (!is_null(intval($inputs['delete']))){
+			if ($this->modelComment->delete($inputs['delete']) === true){
+				$_SESSION['success']['1']='Le commentaire est supprimé.';
+			}else{
+				$_SESSION['success']['2']="Echec de la suppression."; 
+			}
 		}
 		$id="/connexion/comment/".$this->modelComment->articleId(); 
 		header("location:$id"); 
 	}
 
 
+	public function deleteComments(){
+		$postValue = $this->modelComment->hydrate(); 
+		if (!is_null(intval($postValue['Delete']))){
+			return $this->modelComment->delete($postValue['Delete'], "article_id");
+		}; 
+	}
 
-	public function update(){ 
+
+
+	public function update(){  
 		$result=$this->modelComment->updateComment(); 
 		if ($result===true){
 			if ($this->modelComment->published()==1){

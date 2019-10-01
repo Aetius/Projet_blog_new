@@ -23,7 +23,7 @@ class PostConnexionController extends Controller{
 		sessionController::getSession();
 	}
 	
-	public function dashboard($idArticle){
+	public function dashboard($idArticle){ 
 		$results['article'] = $this-> controllerArticle->oneArticlePage($idArticle);
 		$results['comments'] = $this->controllerComment->dashboard($idArticle); 
 
@@ -33,6 +33,30 @@ class PostConnexionController extends Controller{
 			$this->show('dashboardComments', $results);
 		}
 	}
+
+	public function routes(){
+		if (array_key_exists("Delete", $_POST)){
+			$this->deleteArticle();
+		}elseif (array_key_exists("Update", $postValue)) {
+			header("location:/connexion/update/".$postValue['Update']);
+		}else{
+			header("location:/connexion/dashboard"); 
+		}
+	}
+	
+
+	public function deleteArticle(){  
+		$article = $this->controllerArticle->deleteArticle();
+		$comments = $this->controllerComment->deleteComments(); 
+		if ($article === true && $comments === true){
+			$_SESSION['success'][1]="L'article et les commentaires associés ont bien été supprimés.";
+		}else{
+			$_SESSION['success'][2]="Echec lors de la suppression!!";
+		}
+		header("location:/connexion/dashboard"); 
+	}
+		
+
 
 
 	

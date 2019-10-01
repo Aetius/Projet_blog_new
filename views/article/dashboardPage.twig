@@ -9,16 +9,7 @@
 <main>
 {# alert success or not if update or creation are donne #}
 	<section class="bg-light page-section text-center" role="alert">
-		{% for key, value in display.success%}
-		    {%if key == 1 %}
-		        <div class="alert alert-success"> {{value}}
-		    	</div>
-		    {%endif%}
-		    {%if key == 2 %}
-		        <div class="alert alert-danger"> {{value}}
-		    	</div>
-		    {%endif%}
-		{% endfor %}
+		{% include 'success.twig' %} 
 
 	 	<div class="d-flex align-content-end flex-wrap ">	
 	 		<div class="row col-md-12 ">
@@ -48,10 +39,10 @@
 											</div>
 											<div class="card-block text-center mb-4">
 												<div class="d-flex justify-content-between ">
-													<form method="POST" class="pl-3">
+													<form method="POST" class="pl-3">{{csrf_input()}} 
 														<button class="btn btn-primary text-align" type="submit" name="Update" value={{value.id}}>Modifier l'article</button>
 													</form>
-													<form method="POST" class="text-right pr-3">
+													<form method="POST" class="text-right pr-3"> {{csrf_input()}} 
 														<button class="btn btn-primary " type="submit" name="Delete" value={{value.id}}>Supprimer l'article</button>
 													</form>
 												</div>
@@ -115,12 +106,12 @@
 												</div>
 												<div class="row card-body justify-content-between py-1">
 													<div class="px-2">
-														<form method="POST" >
+														<form method="POST" >{{csrf_input()}} 
 															<button class="btn btn-info btn-sm text-align" type="submit" name="Update" value={{value.id}}>Modifier</button>
 														</form>
 													</div>
 													<div class="px-2">
-														<form method="POST" class="text-right">
+														<form method="POST" class="text-right">{{csrf_input()}} 
 															<button class="btn btn-info btn-sm confirmClose" type="submit" name="Delete" value={{value.id}}>Supprimer</button>
 														</form>
 													</div>
@@ -163,10 +154,10 @@
 									</div>
 									<div class="card-block text-center mb-4">
 											<div class="d-flex justify-content-between ">
-												<form method="POST" class="pl-3">
+												<form method="POST" class="pl-3">{{csrf_input()}} 
 													<button class="btn btn-primary text-align" type="submit" name="Update" value="comment#{{value.id}}">Modifier le commentaire</button>
 												</form>
-												<form method="POST" class="text-right pr-3">
+												<form method="POST" class="text-right pr-3">{{csrf_input()}} 
 													<button class="btn btn-primary " type="submit" name="Delete" value="comment#{{value.id}}">Supprimer le commentaire</button>
 												</form>
 												<form>

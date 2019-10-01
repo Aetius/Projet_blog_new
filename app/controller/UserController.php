@@ -1,7 +1,7 @@
 <?php
 namespace App\controller; 
 
-use App\controller\abstractController;
+
 use App\controller\ArticleController;
 use App\model\UserModel;
 use App\utilities\Purifier;
@@ -26,22 +26,23 @@ class UserController extends Controller{
 			if (($_SESSION['access']['auth'])==='valide'){
 				header('Location:/connexion/dashboard');
 			}	
-		}else {
-			$this->show("connexionPage");
 		}
+		$this->show("connexionPage");
 	}
 
 	public function showInscription(){ 
 		$this->show("inscriptionPage");
 	}
 
-	public function showDashboard($id=0){
-		$id=Purifier::htmlPurifier($id); 
-		if ($this->admin('dashboard')===true){
+
+/*
+	public function showDashboard(){
+		
+	
 			$articleController=new ArticleController();
-			$articleController->showDashboard($id);
-		}
-	}
+			$articleController->showDashboard();
+		
+	}*/
 
 	public function showSettings(){	
 		if ($this->admin() ===true){
@@ -56,6 +57,10 @@ class UserController extends Controller{
 
 	}
 
+
+/*
+* verify user's access in the auth utilities.
+**/
 	public function admin(){
 		if (array_key_exists('access', $_SESSION)) {
 			if ($_SESSION['access']['auth'] ==='valide'){
@@ -71,19 +76,17 @@ class UserController extends Controller{
 
 
 /*creation update and delete users*/
-	public function inscription(){
-		$inputs= $this->modelUser->hydrate();
-		if (empty($this->modelUser->errors())){
-			if($this->modelUser->inscription($inputs)=== true){ 
-				header('Location:/connexion');
+	public function inscription(){ 
+		$inputs= $this->modelUser->hydrate($_POST);
 		
-			};
+		if($this->modelUser->inscription($inputs)=== true){ 
+			$_SESSION['success'][1]="L'inscription est effectuée !";
+			header('Location:/connexion');
 		};
-		$errorResult['saveInputUser']=$this->modelUser->saveInput();
-		$errorResult['errors'] = $this->modelUser->errors();
-		$this->show("inscriptionPage", $errorResult);
-		$errorResult=[];		
 		
+		$results['saveInputUser']=$this->modelUser->saveInput();
+		$results['errors'] = $this->modelUser->errors();
+		$this->show("inscriptionPage", $results);		
 	}
 
 

@@ -8,40 +8,42 @@
 
 
 <main>
-<section class="bg-light page-section">
+	<section class="bg-light page-section">
    
-    <div class="container"> 
+    	<div class="container"> 
    
-		 <div class="intro-text col-12 row justify-content-center">
-		 
-        <h1 class="intro-heading text-uppercase p-5">Page connexion</h1>
-		
-		</div>
-
-			<form method="post" action="">
-		<div class="text-center col-lg-12 row justify-content-center ">
-				<div class="row  mb-4 pb-2">
-				{{ form.input ('Login', 'Votre login', {autofocus:'autofocus'} )}}
-				{{ form.input ('Password', 'Votre mot de passe', {type: 'password'} )}}
+			 <div class="intro-text col-12 row justify-content-center">
+			 
+	        	<h1 class="intro-heading text-uppercase p-5">Page connexion</h1>
 			</div>
-		</div>
-		<div class="row justify-content-center">
-				<div class="pr-3">
-				<button type="submit" >Envoyer</button>
+			{% include 'success.twig' %}
+
+			<form method="post" action="">{{csrf_input()}} 
+				<div class="text-center col-lg-12 row justify-content-center ">
+					<div class="row  mb-4 pb-2">
+						{{ form.input ('Login', 'Votre login', {autofocus:'autofocus'} )}}
+						{{ form.input ('Password', 'Votre mot de passe', {type: 'password'} )}}
+					</div>
 				</div>
-				<div class="pl-3">
-				<button type="reset">Réinitialiser</button>
-			</div>
-		</div>
+				<div class="row justify-content-center my-5">
+					<div class="pr-3">
+						<button class='btn btn-primary' type="submit" >Envoyer</button>
+					</div>
+					<div class="pl-3">
+						<button class='btn btn-primary'  type="reset">Réinitialiser</button>
+					</div>
+				</div>
 			</form>
-			<div class="text-center m-lg-5">
-			<p>Pas encore inscrit ?</p>
-				<form action="/inscription">
-					<button type="submit">S'inscrire</button>
-				</form>
-			
+			<div class="col-md-12 mt-5 d-flex  justify-content-around">
+				<div class="text-center m-lg-5 row">
+					<p class="mr-3"> Pas encore inscrit ?</p>
+					<div>
+						<form action="/inscription">{{csrf_input()}} 
+							<button class='btn btn-primary'  type="submit">S'inscrire</button>
+						</form>
+					</div>
+				</div>
 			</div>
-
 		</div>
 
 	</section>

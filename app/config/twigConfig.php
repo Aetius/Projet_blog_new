@@ -15,7 +15,8 @@ class twigConfig{
 	    	/*ne pas oublier de réactiver le cache lors de la mise en production.*/
 		]);
 		$this->twig->addExtension(new \Twig\Extension\DebugExtension());
-		
+		$tokenAdd = new CsrfExtension(); 
+		$this->twig->addExtension($tokenAdd); 
 		if (isset($_SESSION)){
 			$this->twig->addGlobal('session', $_SESSION);
 		}

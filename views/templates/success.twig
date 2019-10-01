@@ -1,0 +1,19 @@
+
+
+{% for key, value in display.success%}
+    {%if key == 1 %}
+        <div class="alert alert-success"> {{value}}
+    	</div>
+    {%endif%}
+    {%if key == 2 %}
+        <div class="alert alert-danger"> {{value}}
+        	<ul class="text-left">
+        		{% for key, value in results.errors %}
+        			
+        				<li>{{value}}</li>
+        			
+        		{% endfor %}
+        	</ul>
+    	</div>
+    {%endif%}
+{% endfor %}

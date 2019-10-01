@@ -1,85 +1,120 @@
 
 {% extends "layoutFront.twig" %}
 
-{% block title %}{% if results.title != null and display.success.2 == null %}Modification du commentaire : {{results.title}} {% else %} Création d'un commentaire {% endif %}{% endblock %}
+{% block title %}Création d'un commentaire{% endblock %}
 
 {% import 'macro.twig' as form %}
 
 {% block content %}
 
+		
 	<div class="articles">
-		<div class="container">
-			<div class="col-md-12 row">
-				<div class=" col-md-2 align-self-start">
-					<button class="btn btn-primary backButton"> Retour</button>
-				</div>
+			{% include 'success.twig' %}		
+		<div class="col-md-12 row  pb-5">
+			
 
-				<div class="col-md-9">
-					<h1 class="text-center m-lg-5">{% if results.comment != null and display.success.2 != null %}Modification du commentaire.<br/> Titre de l'article associé : {{results.title}} {% else %} Création d'un commentaire {% endif %}</h1> 
-				</div>
-				<div class="col-md-12 row">
-				
-					<div class="col-md-12 text-center"> 
 						
-						
-						{%if display.success.1 %}
-			                <div class="alert alert-success"> {{display.success.1}}
-			            	</div>
-			            {%endif%}
-			            {%if display.success.2 %}
-			                <div class="alert alert-danger"> {{display.success.2}}
-			                	<ul class="text-left">
-			                		{% for key, value in results %}
-			                			{% if key == "errors" %}
-			                				<li>{{value}}</li>
-			                			{% endif %}
-			                		{% endfor %}
-			                	</ul>
-			            	</div>
-			            {%endif%}
-						<div class="row col-md-12">
-							<div class="h2 text-center card-title col-md-12">	
-								{{ results.oneArticle.title |title}}
-							</div>
-							<div class="card-body text-justify">
-								{{ results.oneArticle.description }}
-
-							</div>
-						</div>
-						<div class="card-body text-justify">
-							{{ results.oneArticle.content |striptags('<br><p>')|raw }}
-						</div>
-
-						<div class="mt-5">
-							<form method="post" >
-								<div class="d-flex justify-content-center my-5"> 
-									{{ form.input ('author', 'Votre pseudo')}}
-								</div>
-								<div >
-										{{ form.textarea ('comment', 'Votre commentaire', { class:'tinyMCE'})}}
-								</div>
-								
-
-
-									
-									<div class="row">
-										<div class="col-md-4 text-right">
-											<button class="btn btn-primary backButton" type ="button">Retour</button>  
-										</div>
-										<div class="col-md-4 text-center">
-											<button class="btn btn-primary" type="submit" name="articleId" value={{results.oneArticle.id}}>Valider</button>
-										</div>
-										<div class="col-md-4 text-left">
-											<button class="btn btn-primary" type="reset">Réinitialiser</button>
+		{# sidebar : display all articles in bdd#}
+			<nav class="nav flex-column col-md-2 ">
+				<div class="col-12 "> 
+					<div class=" text-center mt-4 "> 
+						<h4 class="mb-4">Tous les articles</h4>
+						{% for key, value in options %}
+							{% if key matches '/[0-9]/'%}  
+								<div class="card mt-4">
+									<div class="card-block text-center">
+										<div>
+											<a class="no-gutters " href="/articles/{{value.id}}" id="{{value.id}}">
+												<h5 class="card-title mt-2">{{value.title |title }}</h5>
+											</a>
+											<div class="card-body py-1 px-1">
+												<p class="mb-1">{{value.description|title|striptags('<br><p>')|raw }}</p>
+											</div>
 										</div>
 									</div>
 								</div>
-							</form>
-						</div>
+							{% endif %}
+						{% endfor %}
 					</div>
 				</div>
+			</nav>
+
+
+
+
+		<div class="d-flex flex-column col-md-10">
+			<div class="  text-center pb-3 ">
+	{# articles #}				
+				<div class="card-block text-center px-5">		
+					<div class ="h2 card-text pb-5">{{results.article.description}}
+					</div>
+					<div class="card-text text-justify pb-2">{{results.article.content | striptags('<br><p>')|raw}}
+					</div> 
+					<div class="text-right text-muted"> {{results.article.author | title}}, publié le {{results.article.date_publication}}
+					</div>
+				</div>
+
+{# comments #}
+				<div class="card-block text-center pt-5 ">	
+					{% for key, comments in results.comments %} 
+						<div class="card mb-3 px-3 py-2">
+							<p class="text-left">{{comments.author | title }} a écrit : </p> 
+							<div class="card-text text-justify pb-y">{{comments.comment | striptags('<br><p>')|raw}}
+							<p class="text-right">{{comments.date_comment}}</p> 
+								{% if comments.admin_answer != "" %}
+								<div class="card mb-3 mx-3 px-3 my-3 pt-3"> Réponse de {{ results.article.author }} :  
+									{{comments.admin_answer | striptags('<br><p>')|raw}}
+								</div>
+								{% endif %}
+							</div> 
+						</div>
+
+					{% endfor %} 
+				</div>
 			</div>
+		
+
+{# add comment #}	
+		
+				<div class="d-flex justify-content-end mt-4 text-center">
+					<div class="col-md-4">
+						<h4 class="title">Ajouter un commentaire : </h4>
+					</div>
+
+					<div class="col-md-8">
+						<form method="post" >{{csrf_input()}} 
+							<div class="d-flex justify-content-center mt-3 mb-2"> 
+								{{ form.input ('author', 'Votre pseudo')}}
+							</div>
+							<div >
+								{{ form.textarea ('comment', 'Votre commentaire', { class:'tinyMCE'})}}
+							</div>
+							
+
+
+								
+							<div class="row ">
+								<div class="col-md-4">
+									<button class="btn btn-primary backButton" type ="button">Retour</button>  
+								</div>
+								<div class="col-md-4">
+									<button class="btn btn-primary" type="submit" name="articleId" value={{results.article.id}}>Valider le commentaire</button>
+								</div>
+								<div class="col-md-4">
+									<button class="btn btn-primary" type="reset">Réinitialiser</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			
 		</div>
 	</div>
+
 	</div>
+
+
+				
+	
 {% endblock %}
+

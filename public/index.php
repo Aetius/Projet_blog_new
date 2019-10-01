@@ -3,22 +3,53 @@
 require '../vendor/autoload.php';
 require '../app/config/routes.php';
 
+use function Http\Response\send;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use GuzzleHttp\Psr7\ServerRequest; 
+use GuzzleHttp\Psr7\Response; 
+use \App\utilities\Dispatcher;
+use \App\utilities\Auth;
+use \App\utilities\TrailingSlash;  
+use \App\utilities\CsrfMiddleware; 
+
 $router = new AltoRouter();
-/*var_dump(realpath('../vendor/tinymce/tinymce/tinymce.min.js'));
-die();*/
-//$router->map('GET', '/articles/', 'Articles#show', 'test');
 
-
-//////////ajouter un push array pour mettre la fin de l'url dans match params. 
-///obj : récupérer create, ou inscription... pour pouvoir le passer en paramètres et créer une fonction show générique, qui prendra un id pour appeler le bon twig.
 
 $router->addRoutes($routes);
 
 
 $match = $router->match();
+
+
+
+
+/*
+*Middleware avec Psr7
+**/
+
+$request = ServerRequest::fromGlobals(); //permet de créer une requête à partir des variables globales
+
+$response = new Response(); 
+
+$dispatcher = new Dispatcher();
+$dispatcher
+	->pipe(new TrailingSlash())
+	->pipe(new CsrfMiddleware())
+	->pipe(new Auth());
+
+send($dispatcher->process($request, $response)); 
+
+
+
+
 $page=new \App\controller\TwigController();
 
-if(is_array($match)){
+/*
+*routeur altorouteur. 
+**/
+
+if(is_array($match)){ 
 	if (preg_match('/#/', $match['target'])){ 
 		$params = explode('#', $match['target']);
 		$controller = '\App\controller\\'.$params[0]."Controller"; 
@@ -37,21 +68,6 @@ if(is_array($match)){
 
 
 
-///////var_dump($_SERVER['REQUEST_URI']); die(); 
 
 
 
-
-/*
-if(is_array($match)){
-    if (is_callable($match['target'])){
-        call_user_func_array($match['target'],$match['params']); // Cette ligne executes les fonctions anonymes des test 1 & 2
-    }else{
-        $params = $match['params'];
-       require  "../Views/{$match['target']}.php"; // Cette ligne execute le test 3.  A noter que la page php se situe dans le dossier "Views"
-    }
-
-}else{
-    die('Erreur 404');
-}
-*/

@@ -64,7 +64,7 @@ class ArticleModel extends AppModel{
 			'publicated'=>($this->published),
 			'date_publication'=>($this->publishedDate), 
 			'date_creation'=>($this->setDate()),
-			'author'=>("6")
+			'author_id'=>("6")
 		);
 		
 		return $this->creationSuccess('create', $fields);
