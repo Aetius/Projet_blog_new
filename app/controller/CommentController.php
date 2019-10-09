@@ -3,8 +3,9 @@ namespace App\controller;
 
 use App\controller\Controller;
 use App\Model\CommentModel;
-use App\controller\UserController; 
-use App\controller\ArticleController;
+/*use App\controller\UserController; 
+use App\Model\ArticleModel;*/
+ 
 
 
 class CommentController extends Controller{
@@ -13,7 +14,8 @@ class CommentController extends Controller{
 
 	public function __construct(){
 		$this->modelComment = new CommentModel(); 
-		sessionController::getSession();
+		//$this->modelArticle = new ArticleModel(); 
+		parent::__construct(); 
 	}
 		
 		/*$this->modelComment = new CommentModel(); 
@@ -31,10 +33,15 @@ class CommentController extends Controller{
 	
 	}*/
 
-	public function create(){
+	public function test($id){
+		var_dump($_POST); var_dump($id); die(); 
+	}
+
+
+	public function create(){ 
 		$inputs = $this->modelComment->hydrate($_POST); 
 		$results= $this->modelComment->createComment($inputs); 
-		if ($results === true){ var_dump($results); die(); 
+		if ($results === true){ 
 			$_SESSION['success']['1']='Le commentaire a été ajouté et est en attente pour modération.';
 		}else{
 			$_SESSION['success']['2']="Echec lors de l'ajout du commentaire"; 
@@ -48,23 +55,59 @@ class CommentController extends Controller{
 		return $this->modelComment->allComments($articleId); 
 	}
 
+
+
+	public function showDashboard(){
+		$comments = $this->modelComment->allComments();
+		$modelArticle = $this->factory->getModel('Article'); 
+		foreach ($comments as $key => $value) {
+			$results= $modelArticle->one('id', $comments[$key]['article_id']); 
+			$comments[$key]['article_title'] = $results['title']; 
+		}
+		
+		$results['comments']= $comments; 
+		$this->show('dashboardComments', $results); 
+	}
+
+
+
+
 	public function dashboard($idArticle){
 		$input['articleId']= $idArticle; 
 		$this->modelComment->hydrate($input); 
 		return $this->modelComment->allComments();  
 	}
 
-	public function manager($idArticle){
-		$inputs=$_POST; 
-		$inputs['articleId']=$idArticle; 
-		$this->modelComment->hydrate($inputs);
-		 
-		if (array_key_exists("delete", $inputs)){
-			$this->delete($inputs); 
-		}else {
-			$this->update('inputs'); 
-		}
+
+	public function managerArticlePage($idArticle){
+		$inputsVerif=$_POST; 
+		$inputsVerif['articleId']=$idArticle; 
+		$inputs = $this->manager($inputsVerif); 
+		$page = $inputs['articleId']; 
+		header("location:/admin/articles/$page");
 	}
+
+
+	public function managerCommentsPage(){
+		$inputsVerif=$_POST; 
+		$this->manager($inputsVerif); 
+
+		header("location:/admin/comments"); 
+	}
+
+
+	public function manager($inputsVerif){ 
+		$inputs = $this->modelComment->hydrate($inputsVerif);
+		
+		if (array_key_exists("delete", $inputs)){
+			 $this->delete($inputs); 
+		}elseif (array_key_exists("update", $inputs)) {  
+			 $this->update('inputs');			
+		};
+		return $inputs; 
+	}
+
+
 
 	/**
 	*array @inputs
@@ -72,41 +115,34 @@ class CommentController extends Controller{
 	*/
 	
 	public function delete ($inputs){ 
-		if (!is_null(intval($inputs['delete']))){
-			if ($this->modelComment->delete($inputs['delete']) === true){
-				$_SESSION['success']['1']='Le commentaire est supprimé.';
-			}else{
-				$_SESSION['success']['2']="Echec de la suppression."; 
-			}
-		}
-		$id="/connexion/comment/".$this->modelComment->articleId(); 
-		header("location:$id"); 
+		if ($this->modelComment->delete($inputs['id']) === true){
+			$_SESSION['success']['1']='Le commentaire est supprimé.';
+		}else{
+			$_SESSION['success']['2']="Echec de la suppression."; 
+		}		
 	}
 
 
-	public function deleteComments(){
+	/*public function deleteComments(){
 		$postValue = $this->modelComment->hydrate(); 
 		if (!is_null(intval($postValue['Delete']))){
 			return $this->modelComment->delete($postValue['Delete'], "article_id");
 		}; 
 	}
-
+*/
 
 
 	public function update(){  
 		$result=$this->modelComment->updateComment(); 
 		if ($result===true){
-			if ($this->modelComment->published()==1){
-				$_SESSION['success']['1']='Le commentaire est publié.';
-			}else{
-				$_SESSION['success']['1']="Le commentaire n'est plus publié.";
-			}
+			$_SESSION['success']['1']='Le commentaire a été modifié.';	
 		}else{
 			$_SESSION['success']['2']="Echec de l'enregistrement."; 
 		}
-		$id="/connexion/comment/".$this->modelComment->articleId(); 
-		header("location:$id"); 
+		
 	}
+
+
 
 	public function readComments(){
 		return $this->modelComment->read();
@@ -114,14 +150,14 @@ class CommentController extends Controller{
 
 	
 
-
+/*
 	private function restrictedAccess(){
 		$this->controllerUser = new UserController();
 		 sessionController::getSession(); 
 		if (!$this->controllerUser->admin()){ 
 			return header("location:/connexion");
 		}
-	}
+	}*/
 }
 /*
 les commentaires sont affichés avec les articles : 

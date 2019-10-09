@@ -18,18 +18,18 @@ class CommentModel extends AppModel{
 	private $adminAnswer=null; 
 	 
 
-/*execute in bdd*/
-
+/*execute in bdd*/ 
+	
 	public function allComments(){
 		return $this->prepareRequest("SELECT * FROM comments ORDER BY id DESC");
 	}
-
-	public function commentsByPublished($publicated){
+// à virer
+	/*public function commentsByPublished($publicated){
 		return $this->prepareRequest("SELECT * FROM comments WHERE publicated=:publicated ORDER BY id DESC", [":publicated"=>$publicated]);
-	}
+	}*/
 
-	public function commentsByArticle($article_id, $publicated=1){  
-		return $this->prepareRequest("SELECT * FROM comments WHERE article_id=:article_id AND publicated=:publicated ORDER BY id DESC", [":article_id"=>$article_id, ":publicated"=>$publicated]);
+	public function commentsSearch($fieldName, $field){  
+		return $this->prepareRequest("SELECT * FROM comments WHERE $fieldName=:fieldName ORDER BY id DESC", [":fieldName"=>$field]);
 	}
 	
 	public function updateComment(){

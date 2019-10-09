@@ -1,0 +1,65 @@
+{% extends "layoutback.twig" %}
+
+{% block title %}Page Article{% endblock %}
+
+{% block content %}
+
+{% import 'macro.twig' as form %}
+
+<main>
+{# alert success or not if update or creation are donne #}
+	<section class="bg-light page-section text-center" role="alert">
+
+		<div class=" col-md-2 align-self-start">
+			<button class="btn btn-primary backButton"> Retour</button>
+		</div>
+{% include 'success.twig' %} 
+
+	 	<div class="d-flex align-content-end flex-wrap ">	
+	 		<div class="row col-md-12 ">
+	    		<div class="col-md-12">
+					<h1 class="text-center mb-4 pb-5 pt-3">Tous les articles</h1> 
+				</div>
+
+				<div class="col-md-12 d-flex align-content-end ">
+				<ul class="col-md-12 d-flex justify-content-between ">
+					<div>
+						<div {% if results.page.num < 2 %} hidden="true" {% endif %} >
+
+							{% set test = results.page.num - 1 %}
+							<a href="/admin/articles/page/{{test}}">
+								Page précédente 
+							</a>
+						</div>
+					</div>
+					<div>
+						<div {% if results.articles|length / 10 < results.page.num  %} hidden="true" {% endif %} >
+							{% set test2 = results.page.num + 1 %}
+							<a href="/admin/articles/page/{{test2}}">
+								Page suivante 
+							</a>
+						</div>
+					</div>
+				</ul>
+			</div>
+
+			{% set max = results.page.max  %}	
+			{% set min = results.page.min %}	
+
+{% include "/template/displayArticlesComments.twig" %}
+
+			
+
+			</div>
+		</div>
+	 
+	</section>
+
+</main>
+
+{% endblock %}
+
+
+
+
+

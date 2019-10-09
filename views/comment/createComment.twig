@@ -82,7 +82,7 @@
 					</div>
 
 					<div class="col-md-8">
-						<form method="post" >{{csrf_input()}} 
+						<form method="post" action='/articles/{{results.article.id}}/comments' >{{csrf_input()}} 
 							<div class="d-flex justify-content-center mt-3 mb-2"> 
 								{{ form.input ('author', 'Votre pseudo')}}
 							</div>
@@ -100,9 +100,7 @@
 								<div class="col-md-4">
 									<button class="btn btn-primary" type="submit" name="articleId" value={{results.article.id}}>Valider le commentaire</button>
 								</div>
-								<div class="col-md-4">
-									<button class="btn btn-primary" type="reset">Réinitialiser</button>
-								</div>
+								
 							</div>
 						</form>
 					</div>

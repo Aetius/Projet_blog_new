@@ -1,0 +1,46 @@
+<nav class="navbar navbar-expand-lg  fixed-top bg-light shadow col col-sm-12 " id="backNav">
+            
+      <div>
+            <a class="" href="/">Accueil</a>
+      </div>
+
+<!-- Topbar Navbar -->
+          <ul class="navbar-nav ml-auto">
+            <div class="topbar-divider "></div>
+
+            <!-- Nav Item - User Information -->
+            <li class="nav-item dropdown ">
+              <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="mr-2">{{session.access.login|capitalize}}</span>
+                <img class="img-profile rounded-circle" src="">
+              </a>
+              <!-- Dropdown - User Information -->
+              <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                <a class="dropdown-item" href="/admin/dashboard">
+                  <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Tableau de bord
+                </a>
+
+                <a class="dropdown-item" href="/admin/comments">
+                  <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Commentaires
+                </a>
+                <a class="dropdown-item" href="/admin/articles">
+                  <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Articles
+                </a>
+                <a class="dropdown-item" href="/admin/settings">
+                  <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Paramètres
+                </a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#logoutModal" data-toggle="modal" >
+                  <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Se déconnecter
+                </a>
+              </div>
+            </li>
+
+          </ul>
+
+        </nav>

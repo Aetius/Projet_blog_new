@@ -4,16 +4,18 @@
 	<div class="{{options.col | default('col-md-6')}}">
 	    <div class="form-group">
 	    	<input type="{{options.type | default('text')}}" value="{{options.value | default('')}}" class="form-control"  id="{{name}}" name="{{name}}"  placeholder="{{placeholder}}"  required="required" data-validation-required-message="Merci d'entrer {{placeholder}}">
-	    	<p class="help-block text-danger"></p>
+	    	
+	    	<p class="help-block text-danger"> </p>
 		</div>
 	</div>
 {% endmacro %}
 
 
+
 {% macro textarea (name, placeholder, options=[] ) %}  
 	
 		<div class="form-group">
-				<textarea type="text"  class="form-control {{options.class}}"  id="{{name}}" name="{{name}}" placeholder="{{placeholder}}" rows="{{options.rows | default("4")}}" cols="{{options.cols | default("100")}}" data-validation-required-message="Merci d'écrire {{placeholder}}">{{options.value}}</textarea>
+				<textarea type="text"  class="form-control {{options.class}}"  id="{{name}}" name="{{name}}" placeholder="{{placeholder}}" rows="{{options.rows | default("2")}}" cols="{{options.cols | default("100")}}" data-validation-required-message="Merci d'écrire {{placeholder}}">{{options.value}}</textarea>
 		</div>
 {% endmacro %}
 

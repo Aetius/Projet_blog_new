@@ -27,17 +27,18 @@ class AppModel extends Model{
 			if(method_exists(get_class($this), $function)){
 				$this->$function($input); 
 			} 
-		}return $inputs; 
+		} 
+		return $inputs; 
 	}
 	
 
-	public function verifUse($field, $id){
-		$request=$this->db->prepare("SELECT * FROM {$this->table} WHERE $id=:field");
+	public function verifUse($label, $input ){  
+		$request=$this->db->prepare("SELECT * FROM {$this->table} WHERE $label=:label");
 		$request->execute(array(
-			':field'=>"$field"
-		));
+			':label'=>"$input"
+		)); 
 		$result=$request->fetch(PDO::FETCH_ASSOC);
-		$request->closeCursor();   
+		$request->closeCursor();  
 		return $result;
 	}
 
@@ -49,6 +50,7 @@ class AppModel extends Model{
 	*return bool
 	**/
 	protected function creationSuccess($function, $fields)	{ 
+		
 		if (!empty($this->errors)){
 			$result['errors']=$this->errors;
 			foreach ($fields as $key => $value) {
@@ -56,14 +58,13 @@ class AppModel extends Model{
 			}
 			return $result; 
 		}
-
 		if (method_exists($this, 'id')){
 			$id=$this->id();
 		}/*else{
 			$id =""; à voir si fonctionne. 
 		}   */
-		
-		if ($this->$function($fields, $id)!==true){ 
+
+		if (($this->$function($fields, $id)!==true)){ 
 			$this->errors[]="L'enregistrement a échoué"; 
 			$result['errors']=$this->errors;
 			return $result; 
@@ -73,8 +74,8 @@ class AppModel extends Model{
 	}
 
 
-	public function validation($inputs){
-		$validator = $this->getValidator($inputs); 
+	public function validation($inputs, $validatorName="getValidator"){
+		$validator = $this->$validatorName($inputs);  
 		if ($validator->isValid()){
 			return true; 
 		}
@@ -85,8 +86,8 @@ class AppModel extends Model{
 		
 	}
 /*each class had to redeclare this function getValidator, to define which validation must be done.  */
-	protected function getValidator($inputs){
-	}
+	/*protected function getValidator($inputs){
+	}*/
 
 	protected function id(){
 		return $this->id; 

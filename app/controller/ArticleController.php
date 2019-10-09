@@ -3,24 +3,24 @@ namespace App\controller;
 
 use App\controller\Controller;
 use App\Model\ArticleModel;
-use App\Model\UserModel; 
-use App\controller\TwigController; 
-use App\Model\CommentModel; 
+
+
 
 
 
 class ArticleController extends Controller{
 	private $modelArticles;
-	private $modelUser;
-	private $modelComment; 
+	//private $modelUser;
+	//private $modelComment; 
+ 
 
 
 	public function __construct(){
 		$this->modelArticles = new ArticleModel(); 
-		$this->modelUser = new UserModel(); 
-		$this->modelComment = new CommentModel(); 
-	
-		sessionController::getSession(); 
+		//$this->modelUser = new UserModel(); 
+		/*$this->modelComment = new CommentModel(); */
+		parent::__construct(); 
+		
 	}
 
 ///////////show functions to call the pages article. /////////////
@@ -35,34 +35,71 @@ class ArticleController extends Controller{
 	}*/
 
 
-	public function showAll(){ 
-		$results = $this->allArticles(); 
-		$this->show("articlePage", $results);
+	public function showAll($idPage){  	
+		$results['articles'] = $this->allArticles(); 
+		$results = $this->articleDisplay($results, $idPage); 
+
+		$this->show("/public/dashboard", $results);
 	}
 	
 
 
 
-public function showOne($id){
+public function showOne($id){ 
 		$results['article']= $this->oneArticle($id);  
 		if (!$results['article']){
 			header("location:/articles");
 		}else{
 			$articles= $this->allArticles(); 
 			$results["comments"] = $this->commentsByArticle($this->modelArticles->id());
-			$this->show("createComment", $results, $articles);
+			$this->show("/createComment", $results, $articles);
 		};
 		
 	}
 
 
 	public function showDashboard(){
-		$results['articles']=$this->modelArticles->allArticles();
+		$results['articles']=$this->allArticles();
 		$results['comments']=$this->allComments(); 
 		//$pagination = $this->definePagination($result, $id);
 		//$showResult = $this->defineArticlesShow($result, $pagination); var_dump($showResult); die(); 
-		$this->show('dashboard', $results);
+		$this->show('/admin/dashboard', $results);
 	}
+
+	public function showAllAdmin($idPage){   
+		$results['articles']=$this->allArticles();
+		$results = $this->articleDisplay($results, $idPage); 
+		$results['comments']=$this->allComments(); 
+		$this->show('/admin/articles', $results);
+	}
+
+
+	public function showOneAdmin($id){
+		$results['article']= $this->oneArticle($id);  
+		if (!$results['article']){
+			header("location:/admin/articles");
+		}else{
+			$articles= $this->allArticles();  
+			$results["comments"] = $this->commentsByArticle($this->modelArticles->id());
+			$this->show("/admin/article", $results, $articles);
+		};
+		
+	}
+
+		
+	public function showCreate(){
+		$this->show("/admin/create");
+	}
+
+	/*public function showUpdate($idArticle){  
+		$results = $this->oneArticlePage($idArticle); 
+		$this->show("/admin/create",$results);
+	}*/
+
+/*	public function showCreateComment($idArticle){
+		$results = $this->oneArticlePage($idArticle);
+		$this->show('createComment', $results);
+	}*/
 
 
 
@@ -78,7 +115,8 @@ public function showOne($id){
 
 
 	private function allArticles(){
-		return $this->modelArticles->all(); 
+		$allArticles=$this->defineAllUsers($this->modelArticles->all()); 
+		return $allArticles; 
 	}
 
 
@@ -93,26 +131,29 @@ public function showOne($id){
 	}
 
 	private function allComments(){
-		return $this->modelComment->allComments();
+		$modelComment = $this->factory->getModel('Comment'); 
+		return $modelComment->allComments();
 	}
 
 	private function commentsByArticle($idArticle){
-		return $this->defineUserComment($this->modelComment->commentsByArticle($idArticle)); 		
+		$modelComment = $this->factory->getModel('Comment');  
+		return $modelComment->commentsSearch( "article_id", $idArticle); 		
 	}
 
 
-	private function defineUserComment($comments){ 
+	private function defineAllUsers($articles){ 
 		//$comments = $this->modelComment->allComments($published, $idArticle, $request); 
-		foreach ($comments as $key => $value) {   
-		$user = $this->defineUser($value["author"]);
-			$comments[$key]["author_id"]= $user; 			
-		} var_dump($comments); die(); 
-		return $comments;
+		foreach ($articles as $key => $value) {    
+		$user = $this->defineUser($value["author_id"]);
+			$articles[$key]["author_name"]= $user; 			
+		}  
+		return $articles;
 	}
 
 	
 	private function defineUser($userId){ 
-		$userParams = $this->modelUser->one('id', $userId); 
+		$modelUser = $this->factory->getModel('User'); 
+		$userParams = $modelUser->one('id', $userId); 
 		$user=$userParams['login']; 
 		return $user; 
 	}
@@ -129,24 +170,6 @@ public function showOne($id){
 
 
 
-		/*show functions with restricted access*/
-	public function showCreate(){
-		
-		$this->show("createArticle");
-	}
-
-	public function showUpdate($idArticle){
-		  
-		$results = $this->oneArticlePage($idArticle); 
-		
-		$this->show("createArticle",$results);
-	}
-
-	public function showCreateComment($idArticle){
-		 
-		$results = $this->oneArticlePage($idArticle);
-		$this->show('createComment', $results);
-	}
 
 	
 
@@ -174,7 +197,7 @@ public function showOne($id){
 		return($displayResult);		
 	}*/
 
-	private function definePagination($result, $id){
+/*	private function definePagination($result, $id){
 		$page=[]; 
 		$nbArticles=6;
 		$min=0; 
@@ -198,7 +221,7 @@ public function showOne($id){
 			}	
 		return ($page); 
 	}
-
+*/
 
 
 
@@ -217,55 +240,149 @@ public function showOne($id){
 	}*/
 
 
-	public function create(){
-		
-		$inputs = $this->modelArticles->hydrate(); 
+	public function create(){ 
+		$user["authorId"]=$_SESSION['user']['id'];
+		$this->modelArticles->hydrate($user); 
+		$inputs = $this->modelArticles->hydrate($_POST); 
 		//$this->modelArticles->validation($inputs); 
 		$result = $this->modelArticles->createArticle($inputs);
 		if ($result===true){
 			$_SESSION["success"][1]= "L'article est crée";
-			header("location:/connexion/dashboard");
-		};
-		
-		$_SESSION["success"][2]="Impossible de créer l'article";
-		$this->show('createArticle', $result);	
-	}
-
-
-	public function update($idArticle){
-		
-		$this->modelArticles->setId($idArticle);
-		$inputs = $this->modelArticles->hydrate(); 
-		//$this->modelArticles->validation($inputs); 
-		$result = $this->modelArticles->updateArticle(); 
-
-		if ($result===true){
-			$_SESSION["success"][1]="Mise à jour de l'article effectuée";
-			header("location:/connexion/dashboard");
+			header("location:/admin/dashboard");
 		}else{
-			$_SESSION["success"][2]="La mise à jour de l'article a échoué";
-			$result['errors']= $this->modelArticles->error();
-			$this->show('createArticle',$result);
+			$_SESSION["success"][2]="Impossible de créer l'article";
+			$this->show('/admin/create', $result);	
 		}
 	}
 
-	public function delete(){
-		$delete = $this->deleteArticle(); 
+	public function articlesPage($idPage){
+		return $this->showAll($this->articleDisplay($idPage)); 
+	}
+
+	public function updatePublication(){
+		
+		/*if (isset($_POST['page'])){
+			return $this->showAllAdmin($this->articleDisplay());  */
+		if (isset($_POST['published'])){
+			$this->update($_POST, 'updatePublished'); 
+		}else{
+			header("location:/admin/articles");
+		}
+	}
+
+
+	private function articleDisplay($results, $idPage){
+		$articlesByPage = 10; 
+		$lenArticles = count($results['articles']); 
+
+		$input['num']=$idPage; 
+		$results['page'] = $this->modelArticles->hydrate($input);
+		
+		if ((!isset($results['page']['num'])) || (empty($results['page']['num'])) || ($results['page']['num'] < 1 )){
+			$results['page']['num'] = 1; 
+		}; 
+		if ((($lenArticles/10)+1)< $results['page']['num']){
+			$page = ceil($lenArticles/10); 
+			header("location:/admin/articles/page/$page");
+		} 
+
+		$results['page']['min'] = ($results['page']['num'] -1) * $articlesByPage;
+		$results['page']['max'] = (($results['page']['num'] * $articlesByPage)-1);
+
+		return $results; 
+	}
+
+
+	/*private function articleDisplay($idPage){  var_dump($id); die(); 
+		$articlesByPage = 10; 
+		$results = []; 
+		$inputs = $this->modelArticles->hydrate($_POST);
+		
+		
+		if (!isset($inputs['pageNumber']) || (!is_numeric($inputs['pageNumber']))) {
+			$inputs['pageNumber'] = 1; 
+		}
+		if ($inputs['page'] === 'Page précédente'){
+			if ($inputs['pageNumber'] > 1) {
+				$results['page']= $inputs['pageNumber'] - 1; 
+			}else{
+				$results['page'] = $inputs['pageNumber'];
+			}
+		}elseif ($inputs['page'] === 'Page suivante'){
+			$lenArticles = count($this->allArticles());  
+			if ($inputs['pageNumber']*$articlesByPage < ($lenArticles - $articlesByPage0)) {
+				$results['page']= $inputs['pageNumber'] + 1; 
+			}else {
+				$results['page'] = $inputs['pageNumber']; 
+			}
+		}
+		
+		return ($results); 
+	}*/
+
 	
-		if ($delete===true){
+
+/*
+	public function updatePublished(){
+		$inputs = $_POST; 
+		$this->update($inputs, __function__); 
+	}*/
+
+
+	public function updateArticle($idArticle){ 
+		$inputs = $_POST;
+		$inputs["id"]=$idArticle; 
+		
+		$this->update($inputs, __function__); 
+	}
+
+
+	private function update($inputsVerif, $method){ 
+		$inputs= $this->modelArticles->hydrate($inputsVerif); 
+		$result = $this->modelArticles->$method($inputs); 
+
+		if ($result===true){  
+			$_SESSION["success"][1]="Mise à jour de l'article effectuée";
+			header("location:/admin/articles");
+		}else{
+			$_SESSION["success"][2]="La mise à jour de l'article a échoué";
+			$result['errors']= $this->modelArticles->errors(); 
+			$this->showAllAdmin($result);
+		}
+	}
+
+
+	public function managerArticle($id){
+ var_dump($_POST); var_dump($id); die(); 
+		if (isset($_POST['delete'])){
+			$this->delete(); 
+		}elseif (isset($_POST['update'])) {
+			$this->updateArticle($id); 
+		}elseif (isset($_POST['updateComment'])) {
+
+			# code...
+		}
+	}
+
+
+	private function delete(){
+		$inputs = $this->modelArticles->hydrate($_POST); 
+		if (!is_null(intval($inputs['delete']))){
+			$modelComment = $this->factory->getModel('comment'); 
+
+			$delete["article"]=$this->modelArticles->delete($inputs['delete']);
+			$delete["comments"]=$modelComment->delete($inputs['delete'], 'article_id'); 
+		}; 
+ 
+		if (($delete["article"]===true) && ($delete["comments"]===true)) {
 			$_SESSION['success'][1]="L'article a bien été supprimé.";
 		}else{
 			$_SESSION['success'][2]="Echec de la suppression!!";
 		}
-		header("location:/connexion/dashboard");
+		header("location:/admin/articles");
 	}
 
-	public function deleteArticle(){
-		$postValue = $this->modelArticles->hydrate(); 
-		if (!is_null(intval($postValue['Delete']))){
-			return $this->modelArticles->delete($postValue['Delete']);
-		}; 
-	}
+	
 
 
 

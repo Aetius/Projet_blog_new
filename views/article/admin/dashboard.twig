@@ -1,0 +1,122 @@
+{% extends "layoutback.twig" %}
+
+{% block title %}Tableau de bord{% endblock %}
+
+{% block content %}
+
+{% import 'macro.twig' as form %}
+
+<main>
+{# alert success or not if update or creation are donne #}
+	<section class="bg-light page-section text-center" role="alert">
+{% include 'success.twig' %} 
+
+	 	<div class="d-flex align-content-end flex-wrap ">	
+	 		<div class="col-md-12 ">
+					<h1 class="text-center">Tableau de bord
+					</h1> 
+			</div>
+			<div class="my-5">
+			</div>
+
+				{# display the 5 last articles with comments and status.  #}
+			<div class="col-md-12 mt-5 row">
+				<div class="col-md-12  ml-3 mb-5 ">
+					<div class="d-flex justify-content-around row">
+						<div class='col-md-8 my-4 '>
+							<div class="bg-white card card-body">
+								<h4 class="my-3">Les articles</h4>
+								<div class=" text-left pb-0">
+									<div class="row d-flex justify-content-around">
+										<div>
+											<p>{{results.articles | length}} {% if results.articles|length < 2 %} article créé.  {% else %} articles créés. {% endif %}
+											</p>
+										</div>
+										<div>
+											{% set i=0%}
+											{% for key, value in results.articles %}
+												{% if value.publicated == 1 %}
+													{% set i = i+1 %}
+												{% endif %}
+											{% endfor %}
+											<p>{{i}} {% if i < 2 %} article publié. {% else %} articles publiés. {% endif %}  
+											</p>
+										</div>
+									</div>
+									<div class="d-flex justify-content-between py-3">
+										<a href="/admin/articles/create"> <button class="btn btn-primary"  > Créer un nouvel article </button></a>
+										<a href="/admin/articles"> <button class="btn btn-primary"  > Voir tous les articles </button></a>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class='col-md-8  my-4 '>
+							<div class="bg-white card card-body">
+								<h4 class="my-3">Les commentaires</h4>
+								<div class=" text-left pb-0">
+									<div class="row d-flex justify-content-around">
+										<div>
+											<p>{{results.comments | length}} {% if results.comments|length < 2 %} commentaire.  {% else %} commentaires. {% endif %}
+											</p>
+										</div>
+										<div>
+											{% set i=0%}
+											{% for key, value in results.comments %}
+												{% if value.publicated == 1 %}
+													{% set i = i+1 %}
+												{% endif %}
+											{% endfor %}
+											<p>{{i}} {% if i < 2 %} commentaire publié. {% else %} commentaires publiés. {% endif %}  
+											</p>
+										</div>
+									</div>
+									<div class="d-flex justify-content-center py-3">
+										<a href="/admin/comments"> <button class="btn btn-primary">Voir les commentaires. </button></a>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class='col-md-8  mt-4'>
+							<div class="bg-white card card-body">
+								<h4 class="my-3">Espace personnel de {{ session.user.name|title }}</h4>
+								<div class=" text-left pb-0">
+									<div class="row d-flex justify-content-around">
+										<div>
+											<p>Login : {{session.user.login}}
+											</p>
+										</div>
+										<div>
+											<p>Email : {{ session.user.email}}
+											</p>
+										</div>
+										<div>
+											<p>Rôle : {{ session.user.role}} 
+											</p>
+										</div>
+									</div>
+									<div class="d-flex justify-content-center py-3">
+										<a href="/admin/settings"> <button class="btn btn-primary">Accéder à l'espace personnel </button></a>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			
+				
+			</div>
+		</div>
+	</section>
+
+</main>
+
+{% endblock %}
+
+
+
+
+
+
+

@@ -15,7 +15,7 @@ class Auth{
 		//var_dump(isset($partsTarget[2])); die(); 
 		if (($partsTarget[1]==="connexion")&& isset($partsTarget[2])) { 
 			$auth= new UserController(); 
-			if (!$auth->admin()){ var_dump("ici"); die();
+			if (!$auth->admin()){ 
 				return $response
 					->withHeader('Location', $url)
 					->withStatus(302); 

@@ -1,8 +1,8 @@
 <?php
 namespace App\model;
 
-use PDO;
-use App\controller\UsersController;
+//use PDO;
+//use App\controller\UsersController;
 use App\model\AppModel;
 use App\utilities\Validator;
 
@@ -12,13 +12,14 @@ class UserModel extends AppModel{
 	
 	private $name;
 	private $lastname;
-	private $mail;
+	private $email;
 	private $login ;
 	private $password; 
 	private $passwordConnexion;
 	private $connexion;
 	private $dataBdd;
 	private $oldPassword;
+	private $passwordDecrypt;
 
 
 /*	public function __construct(){
@@ -33,11 +34,11 @@ class UserModel extends AppModel{
 /*private functions seaching datas in the bdd */
 /*	public function create(){		
 		
-		$request=$this->bdd->prepare('INSERT INTO users(name, last_name, mail, login, password, role) VALUES(:name, :last_name, :mail, :login, :password, :role)');
+		$request=$this->bdd->prepare('INSERT INTO users(name, last_name, email, login, password, role) VALUES(:name, :last_name, :email, :login, :password, :role)');
 		$request->execute(array(
 			'name'=>($this->name), 
 			'last_name'=>($this->lastname),
-			'mail'=>($this->mail),
+			'email'=>($this->email),
 			'login'=>($this->login),
 			'password'=>($this->password),
 			'role'=>("editor")
@@ -47,7 +48,7 @@ class UserModel extends AppModel{
 
 /*	public function readUser($login){
 		
-		$request=$this->bdd->prepare("SELECT name, mail, role FROM users WHERE login =:login");
+		$request=$this->bdd->prepare("SELECT name, email, role FROM users WHERE login =:login");
 		$request->execute(array(':login'=> $login));
 		$result=$request->fetch(PDO::FETCH_ASSOC);
 		$request->closeCursor(); 
@@ -99,7 +100,7 @@ class UserModel extends AppModel{
 		$fields=array(
 			'name'=>($this->name), 
 			'last_name'=>($this->lastname),
-			'email'=>($this->mail),
+			'email'=>($this->email),
 			'login'=>($this->login),
 			'password'=>($this->password),
 			'role'=>("editor")
@@ -107,11 +108,12 @@ class UserModel extends AppModel{
 		return $this->creationSuccess('create', $fields);
 	}
 
+
 	public function inscription($inputs){
-		$this->validation($inputs); 
+		$this->validation($inputs, 'validatorInscription'); 
 		
-		if ($this->verifUse($this->mail, 'mail')){
-			$this->errors[]="Cette adresse mail existe déjà";
+		if ($this->verifUse($this->email, 'email')){
+			$this->errors[]="Cette adresse email existe déjà";
 		};
 		if ($this->verifUse($this->login, 'login')){
 			$this->errors[]="Ce login existe déjà";
@@ -125,28 +127,63 @@ class UserModel extends AppModel{
 	public function connexion(){
 		if (password_verify($this->password, $this->one('login', $this->login)['password'])){
 			return true;  
+		}else{
+
+			return false; 
 		}
 	}
 
-	public function oldPasswordConfirm($login){
-		try {
-			if ((password_verify($this->oldPassword, $this->one('login', $login)['password']))!=true){
-				throw new ErrorException("L'ancien mot de passe n'est pas valide");
-			}
-		}catch (ErrorException $exception){
-			$this->errors['password']= ($exception); 
-		}
-	}
 
 
 	public function saveInput(){
-		return $saveInput=["Name"=>$this->name, "Lastname"=>$this->lastname, "Mail"=>$this->mail, "Login"=>$this->login];
+		return $saveInput=["name"=>$this->name, "lastname"=>$this->lastname, "email"=>$this->email, "login"=>$this->login];
 	}
 
-	public function updateUser($id, $label){
-		$fields[$label]=$this->label;  
-		return($this->update($fields, $id));
+
+
+	public function updatePassword($id, $label){ 
+		if ($this->oldPasswordConfirm($id)!==true){
+			return $this->errors; 
+		}else{
+			$fields[$label]= $this->passwordDecrypt;
+			return $this->successUpdate($id, $label, $fields); 
+		}
 	}
+
+	public function updateEmail($id, $label){ 
+		if ($this->verifUse($label, $this->$label)){
+			array_push($this->errors, "Le champ $label existe déjà"); 
+		}
+		$fields[$label]=$this->email;
+		return $this->successUpdate($id, $label, $fields);  
+	}
+
+
+	private function successUpdate($id, $label, $fields){ 
+		$this->validation($fields, 'validatorUpdate'); 
+
+		$update[$label]=$this->$label; 
+		if(!$this->errors){
+			return($this->update($update, $id));
+		}else{
+			return $this->errors; 
+		}
+
+	}
+
+	
+
+
+	private function oldPasswordConfirm($id){ 
+		if (!password_verify($this->oldPassword, $this->one('id', $id)['password'])){
+			$this->errors[]="L'ancien mot de passe n'est pas valide";
+		}else{
+			return true; 
+		}
+	
+	}
+		
+	
 
 
 
@@ -162,8 +199,8 @@ class UserModel extends AppModel{
 		return $this->lastname = $value;
 	}
 
-	public function setMail($value){
-		return $this->mail = $value;
+	public function setEmail($value){
+		return $this->email = $value;
 	}
 
 	public function setLogin($value){
@@ -183,6 +220,7 @@ class UserModel extends AppModel{
 	public function setPasswordConfirm($value){
 		if ($this->password === $value){
 				$this->password = password_hash($value, PASSWORD_DEFAULT, ['cost'=>12]);
+				$this->passwordDecrypt = $value; 
 		}else{
 			return $this->errors[]="La confirmation du mot de passe est invalide";
 		}
@@ -205,15 +243,34 @@ class UserModel extends AppModel{
 	}
 
 
-	protected function getValidator($inputs){
-		$fieldsExist= ['Name', 'Lastname', 'Mail', 'Login', 'Password', 'PasswordConfirm']; 
+
+
+
+
+	/*protected function getValidator($inputs, $key, $value){
+			return (new Validator($inputs))
+				->$key($value); 
+		
+	}*/
+
+	protected function validatorUpdate($inputs){
+		$key = array_key_first($inputs);
 		return(new Validator($inputs))
-			->name('Name')
-			->name('Lastname')
-			->mail('Mail')
-			->password('Password')
-			->password('PasswordConfirm')
-			->length('Password', 8)
+			->$key($key);
+	}
+
+	
+
+	protected function validatorInscription($inputs){
+		$fieldsExist= ['name', 'lastname', 'email', 'login', 'password', 'passwordConfirm']; 
+		return(new Validator($inputs))
+			->name('name')
+			->name('lastname')
+			->email('email')
+			->login('login')
+			->password('password')
+			->password('passwordConfirm')
+			->length('password', 8)
 			->notEmpty($fieldsExist);
 	}
 

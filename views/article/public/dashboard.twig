@@ -1,0 +1,46 @@
+
+{% extends "layoutFront.twig" %}
+
+{% block title %}Les articles{% endblock %}
+
+
+{% block content %}
+	<div class="articles">
+		<div class="intro-text h1 pb-5">
+			<h1>Les articles</h1>
+		</div>
+		<div class="contenair">
+
+
+			<div class="col-md-12 d-flex align-content-end ">
+				<ul class="col-md-12 d-flex justify-content-between ">
+					<div>
+						<div {% if results.page.num < 2 %} hidden="true" {% endif %} >
+
+							{% set test = results.page.num - 1 %}
+							<a href="/articles/page/{{test}}">
+								Page précédente 
+							</a>
+						</div>
+					</div>
+					<div>
+						<div {% if results.articles|length / 10 < results.page.num  %} hidden="true" {% endif %} >
+							{% set test2 = results.page.num + 1 %}
+							<a href="/articles/page/{{test2}}">
+								Page suivante 
+							</a>
+						</div>
+					</div>
+				</ul>
+			</div>
+
+			{% set max = results.page.max  %}	
+			{% set min = results.page.min %}	
+{% include "/template/displayArticles.twig" %}	
+		</div>
+
+
+	</div>
+
+		
+{% endblock %}

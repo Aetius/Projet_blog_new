@@ -2,7 +2,7 @@
 
 namespace App\Model; 
 
-use PDO;
+//use PDO;
 /*use App\utilities\Purifier;*/
 use App\utilities\Validator;
 use App\model\AppModel; 
@@ -19,6 +19,7 @@ class ArticleModel extends AppModel{
 	private $published=null; 
 	private $publishedDate=null; 
 	private $title; 
+	private $authorId; 
 
 
 /*functions calling*/
@@ -28,13 +29,24 @@ class ArticleModel extends AppModel{
 			if (array_key_exists("content",$value)){
 				($articles[$key]['content'] = htmlspecialchars_decode($value['content'])); 
 			}
-		} return $articles; 
+		}
+		return $articles; 
 	}
 
 
-	public function updateArticle(){
-		$dataBdd=$this->verifUse($this->title, 'title'); 
-		if ((strtoupper($dataBdd['title'])===strtoupper($this->title))&&($dataBdd['id']!==$this->id)){
+	public function updatePublished(){ 
+		$fields=array(
+			'publicated'=>$this->published,
+			'date_publication'=>$this->publishedDate
+		);
+		return $this->creationSuccess('update', $fields);
+	}
+
+
+	public function updateArticle($inputs){
+		 $this->validation($inputs);
+		$dataBdd=$this->verifUse($this->title, 'title');  
+		if ((($dataBdd['title'])===($this->title))&&($dataBdd['id']!==$this->id)){
 			$this->errors="Le titre de cet article existe déjà!";
 		};
 
@@ -51,10 +63,10 @@ class ArticleModel extends AppModel{
 	}
 
 
-	public function createArticle($inputs){
+	public function createArticle($inputs){ 
 		 $this->validation($inputs);
-		$dataBdd=$this->verifUse($this->title, 'title');
-		if ((strtoupper($dataBdd['title'])===strtoupper($this->title))){
+		$dataBdd=$this->verifUse('title',$this->title);  
+		if ((($dataBdd['title'])===($this->title))){ 
 			$this->errors[]="Le titre de cet article existe déjà!";
 		} 
 		$fields = array(
@@ -64,11 +76,13 @@ class ArticleModel extends AppModel{
 			'publicated'=>($this->published),
 			'date_publication'=>($this->publishedDate), 
 			'date_creation'=>($this->setDate()),
-			'author_id'=>("6")
+			'author_id'=>($this->authorId)
 		);
 		
 		return $this->creationSuccess('create', $fields);
 	}
+
+
 
 
 
@@ -126,16 +140,16 @@ class ArticleModel extends AppModel{
 	public function setPublished($name){
 		
 		//$name = $this->setVerification($name);
-		if(preg_match("#oui|non#", $name)){
-			return $this->published; 
+		if(preg_match("#0|1#", $name)){
+			return $this->published=$name; 
 		}
 	}
 
 	public function setPublishedDate($name){
 		//$name=htmlentities($name);
 		$nameVerify=explode("-", $name);
-		if (checkdate($nameVerify["2"], $nameVerify["1"], $nameVerify["0"])){
-			if ($this->published ==="oui"){
+		if (checkdate($nameVerify["1"], $nameVerify["2"], $nameVerify["0"])){
+			if ($this->published === "1"){ 
 				return $this->publishedDate = $name; 
 			}else{
 				return $this->publishedDate =NULL; 
@@ -143,22 +157,30 @@ class ArticleModel extends AppModel{
 		}
 	}
 
-	public function setId($name){ 
-		if ($this->verifUse( $name,'id')){
+	public function setId($name){
+		if ($this->verifUse( 'id', $name)){
 			return $this->id = $name; 
 		}
 		//$name = $this->setVerification($name);
+	}
+
+	public function setAuthorId($name){
+		if (is_numeric($name)){
+			$this->authorId = $name; 
+		}
 	}
 
 
 	
 
 	protected function getValidator($inputs){
+		
 		return(new Validator($inputs))
-			->length('Content', 1)
-			->length('Description', 1)
-			->length('Title', 1)
-			->name('Title'); 
+			->length('content', 1)
+			->length('description', 1)
+			->length('title', 1)
+			->name('title');
+			
 	}
 
 }

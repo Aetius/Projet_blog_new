@@ -16,21 +16,19 @@
 				<div class="col-md-12 ">
 				
 					<div class="col-md-12 text-center">		
-						{%if display.success.1 %}
-			                <div class="alert alert-success"> {{display.success.1}}
-			            	</div>
-			            {%endif%}
-			            {%if display.success.2 %}
-			                <div class="alert alert-danger"> {{display.success.2}}
-			                	<ul class="text-left">
-			                		{% for key, value in results.errors %}
-			                			
-			                				<li>{{value}}</li>
-			                			
-			                		{% endfor %}
-			                	</ul>
-			            	</div>
-			            {%endif%}
+						
+
+						{% include 'success.twig' %} 
+
+
+			            <div class="col-md-12 d-flex justify-content-end pl-5">
+			            	<button type="button" class="btn btn-primary" id="visibilityComments" data-toggle="button" aria-pressed="false" autocomplete="off">
+							 Afficher les commentaires publiés.
+							</button>
+			            </div>
+
+
+
 			            <div class="col-md-12 text-justify">
 			            	<div class="col-md-12">
 			            		<div class="col-md-6 h3">
@@ -47,39 +45,44 @@
 						
 						<div class=""> 
 						{% for comment in results.comments %} 
-							
-							<form method="POST"> 
-								<div class="row col-md-12 text-justify my-5">
-									<div class="col-md-7 mb-4 card px-4 pt-3">
-										<p>Auteur : {{comment.author}}</p>
-										<p>Commentaire : {{comment.comment}}</p>
-										<p>Date de publication : {{comment.date_comment}}</p>
-											{{csrf_input()}}
-											<div class="text-center row">
-												<div class="col-md-6 text-left">
-													<p >Publier ? </p>
-												
-													<label for="published">non</label>
-													<input type="radio" name="published" value='0' {% if comment.publicated == 0 %}checked {% endif %}>
-													<label for="published">oui</label>
-													<input type="radio" id="Published" name="published" value="1" {% if comment.publicated == 1 %}checked {% endif %}>
-												</div>
-												<div class="col-md-6 text-left mb-3 mt-4">
-													<label class="mx-3"> Cliquer pour supprimer le commentaire</label>
-													<input class="text-center" type="checkbox"  name="delete" value={{comment.id}}></input>
-												</div>
+							<div class="commentsVisibility {% if comment.publicated == 1 %} d-none {% endif %} ">
+								<form method="post"> {{csrf_input()}}
+									<div class="row col-md-12 text-justify my-5">
+										<div class="col-md-7 mb-4 card px-4 pt-3">
+											<div class='text-center'>
+												<a href="/admin/articles/{{comment.article_id}}"><h5>Article : {{comment.article_title}}</h5></a>
 											</div>
-										
+											<h5>Commentaire : </h5>
+											<p>Auteur : {{comment.author}}</p>
+											<p>Commentaire : {{comment.comment}}</p>
+											<p>Date de publication : {{comment.date_comment}}</p>
+												
+												<div class="text-center row">
+													<div class="col-md-6 text-left">
+														<p >Publier ? </p>
+													
+														<label for="published">non</label>
+														<input type="radio" name="published" value='0' {% if comment.publicated == 0 %}checked {% endif %}>
+														<label for="published">oui</label>
+														<input type="radio" id="Published" name="published" value="1" {% if comment.publicated == 1 %}checked {% endif %}>
+													</div>
+													<div class="col-md-6 text-left mb-3 mt-4">
+														<label class="mx-3"> Cliquer pour supprimer le commentaire</label>
+														<input class="text-center" type="checkbox"  name="delete" value={{comment.id}}></input>
+													</div>
+												</div>
+											
+										</div>
+										<div class="col-md-5"> 
+											<h5 class="mb-3">Répondre au commentaire :</h5> 
+											{{ form.textarea ('adminAnswer', 'Répondre au commentaire', {value:comment.admin_answer, class:'tinyMCE'})}}
+										</div>
+										<div class="col-md-12 text-center">
+											<button class="btn btn-primary btn-lg" type="submit" name="id" value={{comment.id}}>Valider</button>
+										</div>
 									</div>
-									<div class="col-md-5"> 
-										
-										{{ form.textarea ('adminAnswer', 'Répondre au commentaire', {value:comment.admin_answer, class:'tinyMCE'})}}
-									</div>
-									<div class="col-md-12 text-center">
-										<button class="btn btn-primary btn-lg" type="submit" name="id" value={{comment.id}}>Valider</button>
-									</div>
-								</div>
-							</form>
+								</form>
+							</div>
 							
 						{% endfor %}
 						</div>

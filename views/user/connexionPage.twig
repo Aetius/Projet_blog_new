@@ -16,8 +16,9 @@
 			 
 	        	<h1 class="intro-heading text-uppercase p-5">Page connexion</h1>
 			</div>
-			{% include 'success.twig' %}
-
+			<div class="text-center mb-5">
+				{% include 'success.twig' %} 
+			</div >
 			<form method="post" action="">{{csrf_input()}} 
 				<div class="text-center col-lg-12 row justify-content-center ">
 					<div class="row  mb-4 pb-2">
@@ -29,7 +30,7 @@
 					<div class="pr-3">
 						<button class='btn btn-primary' type="submit" >Envoyer</button>
 					</div>
-					<div class="pl-3">
+					<div class="pl-5">
 						<button class='btn btn-primary'  type="reset">Réinitialiser</button>
 					</div>
 				</div>

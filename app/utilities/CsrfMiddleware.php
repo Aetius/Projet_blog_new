@@ -26,7 +26,7 @@ class CsrfMiddleware{
 
 	}
 
-	public function process($request, $delegate){
+	public function process($request, $delegate){  
 		if (in_array($request->getMethod(), ['POST', 'DELETE'])){  
 			$params = $request->getParsedBody() ?:[];  
 			
@@ -74,8 +74,6 @@ class CsrfMiddleware{
 	}
 
 	private function limitTokens(){
-		
-
 		$tokens = $this->session ?? []; 
 		while (count($tokens) > $this->limit) {
 			array_shift($tokens); 

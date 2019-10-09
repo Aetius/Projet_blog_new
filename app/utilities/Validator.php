@@ -33,30 +33,38 @@ class Validator{
 	}
 
 
-	public function name($key){
-		 $value = $this->getValue($key);
-        if(!preg_match("#[a-zA-Z0-9]{2,}#", $value)){
+	public function name($key){  
+		 $value = $this->getValue($key); 
+        if(!preg_match("#[^0-9]?[a-zA-Z]{2,}#", $value)){
 			$this->addError($key, 'regex');
 		}return $this; 
 	}
 
-	public function mail($key){
-         $value = $this->getValue($key);
-		if (preg_match("#^[a-zA-Z0-9._-]{2,}@[a-z0-9]{2,20}\.[a-z]{2,6}$#", $key)){
-			$this->addError($key, 'regex');
 
+    public function login($key){ 
+         $value = $this->getValue($key);
+        if(!preg_match("#[a-zA-Z0-9]{2,}#", $value)){
+            $this->addError($key, 'regex');
+        }return $this; 
+    }
+
+
+	public function email($key){ 
+         $value = $this->getValue($key);   
+		if (!preg_match("#^[a-zA-Z0-9._-]{2,}@[a-z0-9]{2,20}\.[a-z]{2,6}$#", $value)){
+			$this->addError($key, 'regex');
 		}return $this;
 	}
 
-	public function password($key){ 
-         $value = $this->getValue($key);
+	public function password($key){  
+         $value = $this->getValue($key); 
         if (!preg_match("#^\S*(?=\S{8,})(?=\S*[a-z])(?=\S*[,?;.:/!%@])(?=\S*[\d])\S*$#", $value)){
 			$this->addError($key, 'password'); 
 		}return $this;
 	}
 
 
-	public function notEmpty($keys) {
+	public function notEmpty($keys) {  
         foreach ($keys as $key) { 
             $value = $this->getValue($key); 
             if (is_null($value) || empty($value)) {

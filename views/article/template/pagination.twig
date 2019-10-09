@@ -1,0 +1,28 @@
+
+
+<div class="col-md-12 d-flex align-content-end ">
+	<form method="get" class="col-md-12" action="articles/page" >
+	
+	<ul class="col-md-12 d-flex justify-content-between ">
+			
+		<fieldset>
+			{# <div {% if results.page == 0 or results.page == "" %} hidden="true" {% endif %} > #}
+{% set test = results.page - 1 %}
+			<a href="/../../page/{{test}}">coucou </a>
+				{# <input type="hidden" name="pageNumber" value="{{results.page}}">
+				<input class="btn btn-outline-info btn-light btn-sm " type="submit" name="page" value="Page précédente"> #}
+			{# </div> #}
+		</fieldset>
+		<fieldset>
+{% set test = results.page + 1 %}
+			<div {% if results.articles|length < results.page + 10 %} hidden="true" {% endif %} >
+				 {# <a action="articles/page/{{test}}">coucou </a>  #}
+				{# <input class="btn btn-outline-info" type="submit"name="page" value="{{test}}"> #}
+
+			 <input type="hidden" name="pageNumber" value="{{results.page}}">
+			<input class="btn btn-outline-info btn-light btn-sm" type="submit" name="page" value="Page suivante"> 
+		</div>
+		</fieldset>
+	</ul>
+</form>
+</div>

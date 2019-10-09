@@ -15,7 +15,7 @@ class PostConnexionController extends Controller{
 	private $controllerArticle; 
 	private $controllerUser; 
 
-
+/*
 	public function __construct(){
 		$this->controllerArticle = new ArticleController(); 
 		$this->controllerComment = new CommentController(); 
@@ -58,7 +58,7 @@ class PostConnexionController extends Controller{
 		
 
 
-
+*/
 	
 
 
