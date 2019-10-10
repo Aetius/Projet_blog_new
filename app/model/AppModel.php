@@ -64,6 +64,7 @@ class AppModel extends Model{
 			$id =""; à voir si fonctionne. 
 		}   */
 
+		 
 		if (($this->$function($fields, $id)!==true)){ 
 			$this->errors[]="L'enregistrement a échoué"; 
 			$result['errors']=$this->errors;

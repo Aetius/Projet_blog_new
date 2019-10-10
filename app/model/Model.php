@@ -73,7 +73,7 @@ class Model{
 				$result = $request->fetchAll(PDO::FETCH_ASSOC); 
 			}
 		};		
-		$request->closeCursor();
+		$request->closeCursor(); 
 		return $result; 
 
 	

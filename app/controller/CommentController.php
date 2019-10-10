@@ -83,7 +83,7 @@ class CommentController extends Controller{
 		$inputsVerif=$_POST; 
 		$inputsVerif['articleId']=$idArticle; 
 		$inputs = $this->manager($inputsVerif); 
-		$page = $inputs['articleId']; 
+		$page = $inputs['articleId'];  
 		header("location:/admin/articles/$page");
 	}
 
@@ -96,13 +96,13 @@ class CommentController extends Controller{
 	}
 
 
-	public function manager($inputsVerif){ 
+	public function manager($inputsVerif){  
 		$inputs = $this->modelComment->hydrate($inputsVerif);
 		
 		if (array_key_exists("delete", $inputs)){
 			 $this->delete($inputs); 
 		}elseif (array_key_exists("update", $inputs)) {  
-			 $this->update('inputs');			
+			 $this->update();			
 		};
 		return $inputs; 
 	}
@@ -139,7 +139,7 @@ class CommentController extends Controller{
 		}else{
 			$_SESSION['success']['2']="Echec de l'enregistrement."; 
 		}
-		
+		return $result;
 	}
 
 

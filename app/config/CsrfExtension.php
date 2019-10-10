@@ -29,4 +29,6 @@ class CsrfExtension extends \Twig_Extension
             'name="' . $this->csrfMiddleware->getFormKey() . '" ' .
             'value="' . $this->csrfMiddleware->generateToken() . '"/>';
     }
+
+    
 }

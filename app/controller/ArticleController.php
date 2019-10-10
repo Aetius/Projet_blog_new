@@ -240,9 +240,16 @@ public function showOne($id){
 	}*/
 
 
-	public function create(){ 
-		$user["authorId"]=$_SESSION['user']['id'];
-		$this->modelArticles->hydrate($user); 
+	public function create(){  
+	/*	if (!isset($_SESSION['user']['id']){
+			$userModel = $this->factory->getModel('user');
+			$user["authorId"] = $userModel->one($_SESSION['access']['login'], 'login'); 
+		}else{
+			$user["authorId"]=$_SESSION['user']['id'];
+		}
+
+			
+		$this->modelArticles->hydrate($user);*/ 
 		$inputs = $this->modelArticles->hydrate($_POST); 
 		//$this->modelArticles->validation($inputs); 
 		$result = $this->modelArticles->createArticle($inputs);
@@ -353,7 +360,7 @@ public function showOne($id){
 
 
 	public function managerArticle($id){
- var_dump($_POST); var_dump($id); die(); 
+ 
 		if (isset($_POST['delete'])){
 			$this->delete(); 
 		}elseif (isset($_POST['update'])) {

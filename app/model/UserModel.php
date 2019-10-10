@@ -124,7 +124,7 @@ class UserModel extends AppModel{
 	
 	}
 
-	public function connexion(){
+	public function connexion(){ 
 		if (password_verify($this->password, $this->one('login', $this->login)['password'])){
 			return true;  
 		}else{

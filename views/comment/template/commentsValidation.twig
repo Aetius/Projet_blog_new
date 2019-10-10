@@ -1,0 +1,54 @@
+
+	{% if results.comments == null %}
+		<div class="col-md-12 text-left h5 mt-5">
+			Aucun commentaire. 
+		</div>
+	{% endif %}
+	{% for key, comment in results.comments %}
+		<div class="commentsVisibility {% if comment.publicated == 1 %} d-none {% endif %} ">
+		
+			<div class="row col-md-12 text-justify my-5 card">
+				<div class="col-md-12 mb-5  px-4 pt-3">
+					<div class="col-md-12 text-center">
+						<a href="/admin/articles/{{comment.article_id}}"><h5>Article : {{comment.article_title}}</h5></a>
+						<h5>Commentaire : {{comment.comment}}</h5>
+						<p>Auteur : {{comment.author}}</p>
+						<p>Date de création : {{comment.date_comment}}</p>
+					</div>
+					<div class="col-md-12">
+						<div class="d-flex align-items-center row">
+							<div class="col-md-6 text-left row">
+								<p class="col-md-3">Publier ? </p>
+								<form method="post"  class="col-md-6"> {{csrf_input()}}
+									<label for="published">non</label>
+									<input type="radio" name="published" value='0' {% if comment.publicated == 0 %}checked {% endif %}>
+									<label for="published">oui</label>
+									<input type="radio" id="Published" name="published" value="1" {% if comment.publicated == 1 %}checked {% endif %}>
+									<input type="hidden" name="id" value="{{comment.id}}">
+									<button class="btn btn-primary btn-sm col-md-6 mt-3" type="submit" name="update" value="published">Valider</button>
+								</form>
+							</div>
+							<div class="col-md-6 text-center mb-3 mt-4">
+								<form method="post" >{{csrf_input()}}
+									
+									<input type="hidden" name="id" value="{{comment.id}}">
+									<button class="btn btn-primary " type="submit"  name="delete">Supprimer le commentaire</button>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-12 mb-3 text-center"> 
+					<form method="post" action="/admin/articles/{{results.article.id}}/comments">{{csrf_input()}}
+						<h5 class="mb-3">Répondre au commentaire :</h5> 
+						{{ form.textarea ('adminAnswer', 'Répondre au commentaire', {value:comment.admin_answer, class:'tinyMCE'})}}
+							<input type="hidden" name="published" value="{{comment.publicated}}">
+							<input type="hidden" name="id" value="{{comment.id}}">
+							<button class="btn btn-primary btn-md" type="submit" name="update" value="answer">Valider</button>
+						
+					</form>
+				</div>
+			</div>
+		</div>
+	{% endfor %}
+</div>

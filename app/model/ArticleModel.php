@@ -6,6 +6,7 @@ namespace App\Model;
 /*use App\utilities\Purifier;*/
 use App\utilities\Validator;
 use App\model\AppModel; 
+use App\utilities\AppFactory;
 
 
 
@@ -64,7 +65,21 @@ class ArticleModel extends AppModel{
 
 
 	public function createArticle($inputs){ 
-		 $this->validation($inputs);
+
+		if (isset($_SESSION['user']['id'])){
+			$result = $this->hydrate($_SESSION['user']);
+			$this->setAuthorId($result['id']);
+			
+		}else{
+			$factory = AppFactory::getInstance(); 
+			$userModel = $factory->getModel('user');
+			$result = $this->hydrate($_SESSION['access']);
+			$id = $userModel->one('login', $result['login']); 
+			$this->setAuthorId($id['id']); 
+		}
+
+			
+		$this->validation($inputs);
 		$dataBdd=$this->verifUse('title',$this->title);  
 		if ((($dataBdd['title'])===($this->title))){ 
 			$this->errors[]="Le titre de cet article existe déjà!";
@@ -78,7 +93,7 @@ class ArticleModel extends AppModel{
 			'date_creation'=>($this->setDate()),
 			'author_id'=>($this->authorId)
 		);
-		
+		 
 		return $this->creationSuccess('create', $fields);
 	}
 
@@ -164,7 +179,7 @@ class ArticleModel extends AppModel{
 		//$name = $this->setVerification($name);
 	}
 
-	public function setAuthorId($name){
+	public function setAuthorId($name){ 
 		if (is_numeric($name)){
 			$this->authorId = $name; 
 		}
