@@ -20,6 +20,8 @@ class UserModel extends AppModel{
 	private $dataBdd;
 	private $oldPassword;
 	private $passwordDecrypt;
+	private $id; 
+	private $activate; 
 
 
 /*	public function __construct(){
@@ -140,6 +142,11 @@ class UserModel extends AppModel{
 	}
 
 
+	public function desactivate(){
+		$update['activate']= $this->activate; 
+		$results = $this->update($update, $this->id); 
+		return $results; 
+	}
 
 	public function updatePassword($id, $label){ 
 		if ($this->oldPasswordConfirm($id)!==true){
@@ -157,6 +164,7 @@ class UserModel extends AppModel{
 		$fields[$label]=$this->email;
 		return $this->successUpdate($id, $label, $fields);  
 	}
+
 
 
 	private function successUpdate($id, $label, $fields){ 
@@ -190,6 +198,10 @@ class UserModel extends AppModel{
 
 
 	/*setters*/
+
+	public function setId($value){
+		return $this->id = $value; 
+	}
 
 	public function setName($value){
 		return $this->name = $value;
@@ -225,6 +237,10 @@ class UserModel extends AppModel{
 			return $this->errors[]="La confirmation du mot de passe est invalide";
 		}
 		
+	}
+
+	public function setActivate($value){
+		return $this->activate = $value; 
 	}
 
 

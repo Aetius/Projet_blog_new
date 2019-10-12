@@ -22,29 +22,18 @@
 			<form method="post" action="">{{csrf_input()}} 
 				<div class="text-center col-lg-12 row justify-content-center ">
 					<div class="row  mb-4 pb-2">
-						{{ form.input ('Login', 'Votre login', {autofocus:'autofocus'} )}}
-						{{ form.input ('Password', 'Votre mot de passe', {type: 'password'} )}}
+						{{ form.input ('login', 'Votre login', {autofocus:'autofocus'} )}}
+						{{ form.input ('password', 'Votre mot de passe', {type: 'password'} )}}
 					</div>
 				</div>
 				<div class="row justify-content-center my-5">
 					<div class="pr-3">
 						<button class='btn btn-primary' type="submit" >Envoyer</button>
 					</div>
-					<div class="pl-5">
-						<button class='btn btn-primary'  type="reset">Réinitialiser</button>
-					</div>
+					
 				</div>
 			</form>
-			<div class="col-md-12 mt-5 d-flex  justify-content-around">
-				<div class="text-center m-lg-5 row">
-					<p class="mr-3"> Pas encore inscrit ?</p>
-					<div>
-						<form action="/inscription">{{csrf_input()}} 
-							<button class='btn btn-primary'  type="submit">S'inscrire</button>
-						</form>
-					</div>
-				</div>
-			</div>
+			
 		</div>
 
 	</section>

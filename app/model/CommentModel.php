@@ -28,7 +28,7 @@ class CommentModel extends AppModel{
 		return $this->prepareRequest("SELECT * FROM comments WHERE publicated=:publicated ORDER BY id DESC", [":publicated"=>$publicated]);
 	}*/
 
-	public function commentsSearch($fieldName, $field){  
+	public function search($fieldName, $field){  
 		return $this->prepareRequest("SELECT * FROM comments WHERE $fieldName=:fieldName ORDER BY id DESC", [":fieldName"=>$field]);
 	}
 	

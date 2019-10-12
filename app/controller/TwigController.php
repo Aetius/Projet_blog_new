@@ -9,7 +9,7 @@ class TwigController extends twigConfig{
 		$this->config();
 	}
 	
-	public function show($page, $results=[], $options=[]){ 
+	public function show($page, $results=[], $options=[]){ //var_dump($_SESSION); die(); 
 		$display=[]; //var_dump($_SESSION); die(); 
 		if (isset($_SESSION['success'])){
 			$display['success']= $_SESSION['success'];

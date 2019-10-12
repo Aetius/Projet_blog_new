@@ -39,6 +39,9 @@ $routes=(array(
 
  
 //pour les update, c'est un put
+array('POST', '/admin/users', 'user#dashboardAdmin'), 
+    array('GET', '/admin/users', 'user#showDashboardAdmin'),
+
     array('POST', '/admin/articles/[i:id]/comments', 'comment#managerArticlePage'), 
     array('POST', '/admin/articles/[i:id]', 'article#managerArticle'), 
     array('GET', '/admin/articles/[i:id]', 'article#showOneAdmin'),
@@ -55,8 +58,8 @@ $routes=(array(
     array('GET', '/admin/dashboard', 'article#showDashboard'),
     array('GET', '/admin', 'user#showConnexion'),
     array('POST', '/admin', 'user#connexion'),
-    array('GET', '/inscription', 'user#showInscription'),
-    array('POST', '/inscription', "user#inscription"),
+    array('GET', '/admin/settings/inscription', 'user#showInscription'),
+    array('POST', '/admin/settings/inscription', "user#inscription"),
     array('GET', '/articles/[i:id]', 'article#showOne'),
     array('POST', '/articles/[i:id]/comments', 'comment#create'),
     array('GET', '/articles[/page/]?[i:id]?', 'article#showAll'),  

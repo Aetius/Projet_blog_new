@@ -1,17 +1,16 @@
 <?php
 namespace App\controller; 
 
-
-//use App\controller\ArticleController;
 use App\model\UserModel;
-//use App\utilities\Purifier;
-//use App\controller\TwigController; 
 use App\controller\Controller; 
 
+
+
+
 class UserController extends Controller{
+	
 	private $modelUser; 
-	//private $session; 
-	//private $errors=[];
+
 
 	public function __construct(){
 		$this->modelUser= new UserModel();
@@ -45,25 +44,37 @@ class UserController extends Controller{
 		$parts = explode("::", __METHOD__);
 		$page = $parts[1]; 
 		$this->show($page."Page");
-
 	}
 
+
+	public function showDashboardAdmin(){
+		$results['users']=$this->modelUser->all(); 
+		$this->show('dashboardAdmin', $results); 
+	}
 
 
 /*
 * verify user's access in the auth utilities.
 **/
-	public function admin(){
+	public function editorAccess(){ 
 		if (array_key_exists('access', $_SESSION)) {
 			if ($_SESSION['access']['auth'] ==='valide'){
 				$login = $_SESSION['access']['login'];
 				($_SESSION['user']=$this->modelUser->one('login', $login)); 
 				return true;
 			}
-		}else{
-			header('Location:/admin');
 		}
 	}
+
+
+	public function adminAccess(){
+		if (array_key_exists('user', $_SESSION)){
+			if ($_SESSION['user']['is_admin']==="1"){
+				return true; 
+			}
+		}
+	}
+	
 
 
 
@@ -82,7 +93,6 @@ class UserController extends Controller{
 
 
 	public function settings(){ 
-		/*$login = $_SESSION['access']['login'];*/
 		$id = $_SESSION['user']['id']; 
 		$inputs = $this->modelUser->hydrate($_POST); 
 
@@ -90,8 +100,8 @@ class UserController extends Controller{
 			$this->update('email', $id);
 		}elseif (array_key_exists("password", $inputs)) {
 			$this->update('password', $id);
-		}elseif (array_key_exists("delete", $inputs)) {
-			$this->delete($id);		
+		}elseif (array_key_exists("activate", $inputs)) {  
+			$this->desactivate($id);		
 		}else{
 			header('Location:/admin/settings');
 		}
@@ -108,6 +118,7 @@ class UserController extends Controller{
 			$this->show('settingsPage', $results);
 		} else{
 			$_SESSION['success'][1]="La modification a bien été prise en compte"; 
+			$this->admin(); 
 			header('location:/admin/settings');
 		}
 	}
@@ -125,11 +136,23 @@ class UserController extends Controller{
 	}*/
 
 
-	private function delete($login){
-		if ($this->modelUser->delete($login)){
+	public function dashboardAdmin(){
+		var_dump("expression"); die(); 
+	}
+
+
+
+	private function desactivate($id){ 
+		$input = $_POST; 
+		$input['id']=$id;  
+		$this->modelUser->hydrate($input); 
+		if ($this->modelUser->desactivate($id)){
 			unset ($_SESSION['access']);
 			unset ($_SESSION['user']);
-			$_SESSION['success'][1]="La modification a bien été prise en compte"; 
+			$_SESSION['success'][1]="La désactivation du compte a bien été prise en compte. Pour le réactiver ou le supprimer, merci de contacter l'administrateur du site. "; 
+			header('location:/admin');
+		}else{
+			$_SESSION['success'][2]="Erreur lors de la désactivation. Merci de contacter l'administrateur du site.";
 			header('location:/admin/settings');
 		}
 	}
@@ -140,12 +163,15 @@ class UserController extends Controller{
 		$this->modelUser->hydrate($_POST);
 		$result = $this->modelUser->connexion();
 		if ($result === true){
-			$_SESSION['access']=['auth'=>'valide', 'login'=>$this->modelUser->login()];
-			header('location: admin/dashboard');
-		}else{
-			$_SESSION['success'][2]= "Le couple identifiant/mot de passe est incorrect"; 
-			$this->show('connexionPage');
+			$_SESSION['user']=$this->modelUser->one('login', $this->modelUser->login());  
+			if ($_SESSION['user']['activate'] == 1){
+				$_SESSION['access']=['auth'=>'valide', 'login'=>$this->modelUser->login()];
+				$_SESSION['success'][1]= "Vous êtes connecté"; 
+				return header('location: admin/dashboard');
+			}
 		}
+		$_SESSION['success'][2]= "Le couple identifiant/mot de passe est incorrect"; 
+		$this->show('connexionPage');
 	}
 
 

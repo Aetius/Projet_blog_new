@@ -137,7 +137,7 @@ public function showOne($id){
 
 	private function commentsByArticle($idArticle){
 		$modelComment = $this->factory->getModel('Comment');  
-		return $modelComment->commentsSearch( "article_id", $idArticle); 		
+		return $modelComment->search( "article_id", $idArticle); 		
 	}
 
 

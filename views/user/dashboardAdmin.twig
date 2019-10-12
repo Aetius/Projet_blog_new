@@ -1,0 +1,153 @@
+{% extends "layoutback.twig" %}
+
+{% block title %}Espace d'administration{% endblock %}
+
+{% block content %}
+
+{% import 'macro.twig' as form %}
+
+<main>
+
+	<section class="bg-light page-section text-center">
+	    <div class=" col-md-2 align-self-start">
+			<button class="btn btn-primary backButton"> Retour</button>
+		</div>
+
+	    <div class="container col-lg-12 m-lg-3">
+			<h1 class="text-center">Espace d'administration des utilisateurs</h1> 
+		</div>
+	 	<div class="">	
+	 		<div class=" col-md-12 my-5">
+				<div class="col-md-12 text-center">
+					{% include 'success.twig' %} 
+				</div>
+				
+
+
+				<div class="col-md-12 mt-5 d-flex  justify-content-around bg-white">
+					<div class="text-center m-lg-5 row">
+						<p class="mr-3"> Procéder à une inscription : </p>
+						<div>
+							<form action="/admin/settings/inscription">
+								<button class='btn btn-primary'  type="submit">Inscrire</button>
+							</form>
+						</div>
+					</div>
+				</div>
+				
+
+
+
+{% set csrf = csrf_input() %}
+				<div class="col-md-12  my-5 py-3 bg-white"> 
+					<h2 class="text-center">Les Editeurs
+					</h2>
+					{% for key, user in results.users %}
+						{% if user.is_admin == 0 %}
+					
+							<div class="col-md-12 bg-light row my-5 pt-5">
+								<div class="col-md-4 text-center ">
+									<h4 class="mb-4">Informations utilisateur</h4>
+									<p>Nom : {{user.last_name}}</p>
+									<p>Prénom : {{user.name}}</p>
+									<p>Email : {{user.email}}</p>
+									<p>Login : {{user.login}}</p>
+
+								</div>
+								<div class="col-md-8 text-center">
+									<h4>Informations compte</h4>
+									<div class="my-5">
+										<form method="post" class="col-md-12 row">{{ csrf|raw }}
+											<div class="col-md-6">
+												<h5>Role de l'utilisateur</h5>
+												<div class="btn-group btn-group-toggle my-4" data-toggle="buttons">
+													<label class="btn btn-info mr-3 {% if user.is_admin == 0 %} active {% endif %}">
+														<input type="radio" name="is_admin">Editeur
+													</label>
+													<label class="btn btn-info {% if user.is_admin == 1 %} active {% endif %}">
+														<input type="radio" name="is_admin">Administrateur
+													</label>
+												</div>
+											</div>
+											<div class="col-md-6">
+												<h5>Utilisateur actif ? </h5>
+												<div class="btn-group btn-group-toggle my-4" data-toggle="buttons">
+													<label class="btn btn-info mr-3 {% if user.activate == 1 %} active {% endif %}">
+														<input type="radio" name="activate">Utilisateur actif
+													</label>
+													<label class="btn btn-info {% if user.activate == 0 %} active {% endif %}">
+														<input type="radio" name="activate">Utilisateur inactif
+													</label>
+												</div>
+											</div>
+											<div class="col-md-12 text-center my-5">
+												<button class="btn btn-primary text-center" type="submit" >Valider les modifications</button>
+											</div>
+										</form>
+									</div>
+								</div>
+							</div>
+						{% endif %}
+					{% endfor %}
+				</div>
+
+<!-- admin section  -->
+				<div class="col-md-12  my-5 py-3 bg-white"> 
+					<h2 class="text-center">Les Administrateurs
+					</h2>
+					{% for key, user in results.users %}
+						{% if user.is_admin == 1 %}
+					
+							<div class="col-md-12 bg-light row my-5 pt-5">
+								<div class="col-md-4 text-center ">
+									<h4 class="mb-4">Informations utilisateur</h4>
+									<p>Nom : {{user.last_name}}</p>
+									<p>Prénom : {{user.name}}</p>
+									<p>Email : {{user.email}}</p>
+									<p>Login : {{user.login}}</p>
+
+								</div>
+								<div class="col-md-8 text-center">
+									<h4>Informations compte</h4>
+									<div class="my-5">
+										<form method="post" class="col-md-12 row">{{ csrf|raw }}
+											<div class="col-md-6">
+												<h5>Role de l'utilisateur</h5>
+												<div class="btn-group btn-group-toggle my-4" data-toggle="buttons">
+													<label class="btn btn-info mr-3 {% if user.is_admin == 0 %} active {% endif %}">
+														<input type="radio" name="is_admin">Editeur
+													</label>
+													<label class="btn btn-info {% if user.is_admin == 1 %} active {% endif %}">
+														<input type="radio" name="is_admin">Administrateur
+													</label>
+												</div>
+											</div>
+											<div class="col-md-6">
+												<h5>Utilisateur actif ? </h5>
+												<div class="btn-group btn-group-toggle my-4" data-toggle="buttons">
+													<label class="btn btn-info mr-3 {% if user.activate == 1 %} active {% endif %}">
+														<input type="radio" name="activate">Utilisateur actif
+													</label>
+													<label class="btn btn-info {% if user.activate == 0 %} active {% endif %}">
+														<input type="radio" name="activate">Utilisateur inactif
+													</label>
+												</div>
+											</div>
+											<div class="col-md-12 text-center my-5">
+												<button class="btn btn-primary text-center" type="submit" >Valider les modifications</button>
+											</div>
+										</form>
+									</div>
+								</div>
+							</div>
+						{% endif %}
+					{% endfor %}
+				</div>
+
+			</div>
+	  	</div>
+	</section>
+
+</main>
+
+{% endblock %}
