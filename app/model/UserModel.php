@@ -22,6 +22,7 @@ class UserModel extends AppModel{
 	private $passwordDecrypt;
 	private $id; 
 	private $activate; 
+	private $isAdmin; 
 
 
 /*	public function __construct(){
@@ -153,7 +154,7 @@ class UserModel extends AppModel{
 			return $this->errors; 
 		}else{
 			$fields[$label]= $this->passwordDecrypt;
-			return $this->successUpdate($id, $label, $fields); 
+			return $this->successUpdate($id, $fields); 
 		}
 	}
 
@@ -161,18 +162,27 @@ class UserModel extends AppModel{
 		if ($this->verifUse($label, $this->$label)){
 			array_push($this->errors, "Le champ $label existe déjà"); 
 		}
-		$fields[$label]=$this->email;
-		return $this->successUpdate($id, $label, $fields);  
+		$fields['email']=$this->email;
+		return $this->successUpdate($id, $fields);  
+	}
+
+	public function updateAccount($id, $label){
+		$fields['is_admin']=$this->isAdmin; 
+		$fields['activate']=$this->activate; 
+
+		return $this->successUpdate($id, $fields);
 	}
 
 
-
-	private function successUpdate($id, $label, $fields){ 
-		$this->validation($fields, 'validatorUpdate'); 
-
-		$update[$label]=$this->$label; 
+	private function successUpdate($id, $fields){  
+		foreach ($fields as $key => $value) {
+			$input[$key]=$value; 
+			$this->validation($input, 'validatorUpdate'); 
+			$input=[]; 
+		}
+ 
 		if(!$this->errors){
-			return($this->update($update, $id));
+			return($this->update($fields, $id));
 		}else{
 			return $this->errors; 
 		}
@@ -243,6 +253,10 @@ class UserModel extends AppModel{
 		return $this->activate = $value; 
 	}
 
+	public function setIs_admin($value){
+		return $this->isAdmin = $value; 
+	}
+
 
 	
 			/*getters*/
@@ -269,7 +283,7 @@ class UserModel extends AppModel{
 		
 	}*/
 
-	protected function validatorUpdate($inputs){
+	protected function validatorUpdate($inputs){  
 		$key = array_key_first($inputs);
 		return(new Validator($inputs))
 			->$key($key);

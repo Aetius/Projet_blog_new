@@ -36,7 +36,7 @@ class Model{
 		return $this->prepareRequest("SELECT * FROM {$this->table} WHERE $fieldName=:field", [":field"=>$field], true);
 	}
 
-	public function update($fields, $id){  
+	public function update($fields, $id){ 
 		$sqlParams=[]; 
 		$attributes=[];
 		foreach ($fields as $key => $value) {

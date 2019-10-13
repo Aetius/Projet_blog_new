@@ -35,7 +35,7 @@ class UserController extends Controller{
 
 
 	public function showSettings(){	
-		$this->show('settingsPage');
+		$this->show('settings');
 	}
 
 
@@ -49,7 +49,12 @@ class UserController extends Controller{
 
 	public function showDashboardAdmin(){
 		$results['users']=$this->modelUser->all(); 
-		$this->show('dashboardAdmin', $results); 
+		$this->show('users', $results); 
+	}
+
+
+	public function showLost(){
+		$this->show('password');
 	}
 
 
@@ -98,9 +103,9 @@ class UserController extends Controller{
 
 		if (array_key_exists("email", $inputs)){
 			$this->update('email', $id);
-		}elseif (array_key_exists("password", $inputs)) {
+		}elseif (array_key_exists("password", $inputs, "settings")) {
 			$this->update('password', $id);
-		}elseif (array_key_exists("activate", $inputs)) {  
+		}elseif (array_key_exists("activate", $inputs, "settings")) {  
 			$this->desactivate($id);		
 		}else{
 			header('Location:/admin/settings');
@@ -108,38 +113,30 @@ class UserController extends Controller{
 		
 	}
 
-	private function update($label, $id){
+
+	public function dashboardAdmin(){
+		$id = $_POST['id']; 
+		$inputs = $this->modelUser->hydrate($_POST);
+		$this->update('account', $id, "users"); 
+
+
+	}
+
+
+	private function update($label, $id, $page){
 		$method = "update".(ucfirst($label)); 
 		$result = $this->modelUser->$method($id, $label);  
 		
 		if( $result !== true){
 			$_SESSION['success'][2]= "La modification a échouée"; 
 			$results["errors"]=$result;
-			$this->show('settingsPage', $results);
+			$this->show($page, $results);
 		} else{
 			$_SESSION['success'][1]="La modification a bien été prise en compte"; 
-			$this->admin(); 
-			header('location:/admin/settings');
+			$this->editorAccess(); 
+			header("location:/admin/$page");
 		}
 	}
-
-/*	
-	private function updateError(){
-		if (empty($this->modelUser->errors())){
-			return false;
-		}elseif (!(empty($this->modelUser->errors()))) {	
-			$_SESSION['success']=2;
-			$errorResult['errors'] = $this->modelUser->errors();
-			$this->show("settingsPage", $errorResult);
-			$errorResult=[];		
-		}
-	}*/
-
-
-	public function dashboardAdmin(){
-		var_dump("expression"); die(); 
-	}
-
 
 
 	private function desactivate($id){ 
@@ -158,6 +155,23 @@ class UserController extends Controller{
 	}
 
 
+/*	
+	private function updateError(){
+		if (empty($this->modelUser->errors())){
+			return false;
+		}elseif (!(empty($this->modelUser->errors()))) {	
+			$_SESSION['success']=2;
+			$errorResult['errors'] = $this->modelUser->errors();
+			$this->show("settingsPage", $errorResult);
+			$errorResult=[];		
+		}
+	}*/
+
+
+
+
+
+
 /*connexion, logout and verification of login and password*/
 	public function connexion(){ 
 		$this->modelUser->hydrate($_POST);
@@ -174,6 +188,15 @@ class UserController extends Controller{
 		$this->show('connexionPage');
 	}
 
+
+	public function lostPassword(){
+		$inputs=$this->modelUser->hydrate($_POST); 
+		var_dump("en profiter pour refaire la fonction email. vérifier le mail et le login. une fois ok => on génère un nouveau mot de passe dans le model user et on envoie sur le model email pour envoyer le nouveau mot de passe. 
+			en profiter pour refaire le modelmail. 
+			pour le login : je ne sais pas quel niveau de sécu je mets. mais même logique. donc faire une fonction récup password générique.")
+		var_dump($inputs); die(); 
+
+	}
 
 
 	public function logout(){

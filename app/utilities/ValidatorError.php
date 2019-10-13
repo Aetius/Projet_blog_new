@@ -17,6 +17,7 @@ class ValidatorError{
         'betweenLength' => 'Le champ %s doit contenir entre %d et %d caractères.',
         'datetime' => 'Le champ %s doit être une date valide (%s).',
         'regex'=>'Le champ %s est incorrect.', 
+        'number'=>'Le champ %s doit être un nombre.',
         'password' => "Le champ %s doit contenir 8 caractères, 1 lettre, 1 chiffre et un des caractères spéciaux (,?;.:/!@')."
 	]; 
 

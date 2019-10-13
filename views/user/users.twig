@@ -62,10 +62,10 @@
 												<h5>Role de l'utilisateur</h5>
 												<div class="btn-group btn-group-toggle my-4" data-toggle="buttons">
 													<label class="btn btn-info mr-3 {% if user.is_admin == 0 %} active {% endif %}">
-														<input type="radio" name="is_admin">Editeur
+														<input type="radio" name="is_admin" value="0" {% if user.is_admin == 0 %} checked {% endif %}>Editeur
 													</label>
 													<label class="btn btn-info {% if user.is_admin == 1 %} active {% endif %}">
-														<input type="radio" name="is_admin">Administrateur
+														<input type="radio" name="is_admin" value="1" {% if user.is_admin == 1 %} checked {% endif %}>Administrateur
 													</label>
 												</div>
 											</div>
@@ -73,14 +73,15 @@
 												<h5>Utilisateur actif ? </h5>
 												<div class="btn-group btn-group-toggle my-4" data-toggle="buttons">
 													<label class="btn btn-info mr-3 {% if user.activate == 1 %} active {% endif %}">
-														<input type="radio" name="activate">Utilisateur actif
+														<input type="radio" name="activate" value="1" {% if user.activate == 1 %} checked {% endif %}>Utilisateur actif
 													</label>
 													<label class="btn btn-info {% if user.activate == 0 %} active {% endif %}">
-														<input type="radio" name="activate">Utilisateur inactif
+														<input type="radio" name="activate" value="0" {% if user.activate == 0 %} checked {% endif %}>Utilisateur inactif
 													</label>
 												</div>
 											</div>
 											<div class="col-md-12 text-center my-5">
+												<input type="hidden" name="id" value="{{user.id}}">
 												<button class="btn btn-primary text-center" type="submit" >Valider les modifications</button>
 											</div>
 										</form>
@@ -97,49 +98,51 @@
 					</h2>
 					{% for key, user in results.users %}
 						{% if user.is_admin == 1 %}
-					
-							<div class="col-md-12 bg-light row my-5 pt-5">
-								<div class="col-md-4 text-center ">
-									<h4 class="mb-4">Informations utilisateur</h4>
-									<p>Nom : {{user.last_name}}</p>
-									<p>Prénom : {{user.name}}</p>
-									<p>Email : {{user.email}}</p>
-									<p>Login : {{user.login}}</p>
+							{% if user.id != session.user.id %}
+							
+								<div class="col-md-12 bg-light row my-5 pt-5">
+									<div class="col-md-4 text-center ">
+										<h4 class="mb-4">Informations utilisateur</h4>
+										<p>Nom : {{user.last_name}}</p>
+										<p>Prénom : {{user.name}}</p>
+										<p>Email : {{user.email}}</p>
+										<p>Login : {{user.login}}</p>
 
-								</div>
-								<div class="col-md-8 text-center">
-									<h4>Informations compte</h4>
-									<div class="my-5">
-										<form method="post" class="col-md-12 row">{{ csrf|raw }}
-											<div class="col-md-6">
-												<h5>Role de l'utilisateur</h5>
-												<div class="btn-group btn-group-toggle my-4" data-toggle="buttons">
-													<label class="btn btn-info mr-3 {% if user.is_admin == 0 %} active {% endif %}">
-														<input type="radio" name="is_admin">Editeur
-													</label>
-													<label class="btn btn-info {% if user.is_admin == 1 %} active {% endif %}">
-														<input type="radio" name="is_admin">Administrateur
-													</label>
+									</div>
+									<div class="col-md-8 text-center">
+										<h4>Informations compte</h4>
+										<div class="my-5">
+											<form method="post" class="col-md-12 row">{{ csrf|raw }}
+												<div class="col-md-6">
+													<h5>Role de l'utilisateur</h5>
+													<div class="btn-group btn-group-toggle my-4" data-toggle="buttons">
+														<label class="btn btn-info mr-3 {% if user.is_admin == 0 %} active {% endif %}">
+															<input type="radio" name="is_admin">Editeur
+														</label>
+														<label class="btn btn-info {% if user.is_admin == 1 %} active {% endif %}">
+															<input type="radio" name="is_admin">Administrateur
+														</label>
+													</div>
 												</div>
-											</div>
-											<div class="col-md-6">
-												<h5>Utilisateur actif ? </h5>
-												<div class="btn-group btn-group-toggle my-4" data-toggle="buttons">
-													<label class="btn btn-info mr-3 {% if user.activate == 1 %} active {% endif %}">
-														<input type="radio" name="activate">Utilisateur actif
-													</label>
-													<label class="btn btn-info {% if user.activate == 0 %} active {% endif %}">
-														<input type="radio" name="activate">Utilisateur inactif
-													</label>
+												<div class="col-md-6">
+													<h5>Utilisateur actif ? </h5>
+													<div class="btn-group btn-group-toggle my-4" data-toggle="buttons">
+														<label class="btn btn-info mr-3 {% if user.activate == 1 %} active {% endif %}">
+															<input type="radio" name="activate">Utilisateur actif
+														</label>
+														<label class="btn btn-info {% if user.activate == 0 %} active {% endif %}">
+															<input type="radio" name="activate">Utilisateur inactif
+														</label>
+													</div>
 												</div>
-											</div>
-											<div class="col-md-12 text-center my-5">
-												<button class="btn btn-primary text-center" type="submit" >Valider les modifications</button>
-											</div>
-										</form>
+												<div class="col-md-12 text-center my-5">
+													<button class="btn btn-primary text-center" type="submit" >Valider les modifications</button>
+												</div>
+											</form>
+										</div>
 									</div>
 								</div>
-							</div>
+							{% endif %}	
 						{% endif %}
 					{% endfor %}
 				</div>

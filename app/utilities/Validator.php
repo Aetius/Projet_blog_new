@@ -63,6 +63,20 @@ class Validator{
 		}return $this;
 	}
 
+    public function is_admin($key){
+         $value = $this->getValue($key); 
+         if (!preg_match("#[0|1]#", $value)){
+            $this->addError($key, 'number'); 
+        }return $this; 
+    }
+
+       public function activate($key){
+         $value = $this->getValue($key); 
+         if (!preg_match("#[0|1]#", $value)){
+            $this->addError($key, 'number'); 
+        }return $this; 
+    }
+
 
 	public function notEmpty($keys) {  
         foreach ($keys as $key) { 
