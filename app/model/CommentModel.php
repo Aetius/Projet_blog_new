@@ -18,30 +18,33 @@ class CommentModel extends AppModel{
 	private $adminAnswer=null; 
 	 
 
-	 public function getTable(){
-	 	return 'comments'; 
-	 }
 
 /*execute in bdd*/ 
 	
-	public function allComments(){
-		return $this->prepareRequest("SELECT * FROM comments ORDER BY id DESC");
-	}
+	/*public function allComments(){
+		return $this->executeRequest("SELECT * FROM comments ORDER BY id DESC");
+	}*/
 // à virer
 	/*public function commentsByPublished($publicated){
 		return $this->prepareRequest("SELECT * FROM comments WHERE publicated=:publicated ORDER BY id DESC", [":publicated"=>$publicated]);
 	}*/
 
-	public function search($fieldName, $field){  
-		return $this->prepareRequest("SELECT * FROM comments WHERE $fieldName=:fieldName ORDER BY id DESC", [":fieldName"=>$field]);
-	}
+
 	
-	public function updateComment(){
+	public function PrepareUpdate($inputs){ 
+		$validationInput['isBool']['published']=$inputs['published']; 
+		$this->validation($validationInput, "getValidatorUpdate");   
+		
+		if (!isset($this->errors)){
+			return $this->isErrors($inputs); 
+		};
+
+
 		$fields=array(
 			'publicated'=>$this->published, 
 			'admin_answer'=>$this->adminAnswer
 		);
-
+		
 		return $this->creationSuccess('update', $fields);
 	}
 /*functions calling*/
@@ -82,10 +85,13 @@ class CommentModel extends AppModel{
 
 /*verification if all inputs are here, and start the request. */
 
-	public function createComment($inputs){
+	public function prepareCreate($inputs){
 		$date= $this->setDate(); 
-		$this->validation($inputs); 
-		
+		$this->validation($inputs);   
+		if (!isset($this->errors)){
+			return $this->isErrors($inputs); 
+		};
+
 		$fields = array(
 			'article_id'=>($this->articleId),
 			'author'=>($this->author), 
@@ -149,7 +155,6 @@ class CommentModel extends AppModel{
 	protected function getValidator($inputs){
 		return(new Validator($inputs))
 			->length('comment', 5)
-			
 			->length('author', 3)
 			->required(['author', 'comment', 'articleId']);
 	}

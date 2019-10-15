@@ -70,18 +70,26 @@ class Validator{
 		}return $this;
 	}
 
-    public function is_admin($key){
+    public function isBool/*is_admin*/($key){ 
          $value = $this->getValue($key); 
          if (!preg_match("#[0|1]#", $value)){
             $this->addError($key, 'number'); 
         }return $this; 
     }
 
-       public function activate($key){
+     /*  public function activate($key){
          $value = $this->getValue($key); 
          if (!preg_match("#[0|1]#", $value)){
             $this->addError($key, 'number'); 
         }return $this; 
+    }*/
+
+    public function isInt($key){
+         $value = $this->getValue($key); 
+         if (!is_numeric($value)){
+            $this->addError($key, 'number'); 
+         }
+         return $this; 
     }
 
 
@@ -176,8 +184,7 @@ class Validator{
         //echo $this->errors[$key];die(); pour pouvoir lire les données. __toString convertit l'objet en chaine, et met les params. 
     }
 
-    private function getValue(string $key)
-    {
+    private function getValue(string $key){ 
         if (array_key_exists($key, $this->params)) {
             return $this->params[$key];
         }

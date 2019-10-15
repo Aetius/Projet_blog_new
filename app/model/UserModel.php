@@ -115,10 +115,10 @@ class UserModel extends AppModel{
 	public function inscription($inputs){
 		$this->validation($inputs, 'validatorInscription'); 
 		
-		if ($this->verifUse($this->email, 'email')){
+		if ($this->one( 'email', $this->email)){
 			$this->errors[]="Cette adresse email existe déjà";
 		};
-		if ($this->verifUse($this->login, 'login')){
+		if ($this->one('login', $this->login)){
 			$this->errors[]="Ce login existe déjà";
 		};
 		if (!$this->errors){
@@ -159,7 +159,7 @@ class UserModel extends AppModel{
 	}
 
 	public function updateEmail($id, $label){ 
-		if ($this->verifUse($label, $this->$label)){
+		if ($this->one($label, $this->$label)){
 			array_push($this->errors, "Le champ $label existe déjà"); 
 		}
 		$fields['email']=$this->email;
@@ -304,15 +304,15 @@ class UserModel extends AppModel{
 		
 	}*/
 
-	protected function validatorUpdate($inputs){  
+/*	protected function validatorUpdate($inputs){  
 		$key = array_key_first($inputs);
 		return(new Validator($inputs))
 			->$key($key);
-	}
+	}*/
 
 	
 
-	protected function validatorInscription($inputs){
+	protected function getValidator($inputs){
 		$fieldsExist= ['name', 'lastname', 'email', 'login', 'password', 'passwordConfirm']; 
 		return(new Validator($inputs))
 			->name('name')

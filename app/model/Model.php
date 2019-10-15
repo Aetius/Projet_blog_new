@@ -33,19 +33,31 @@ class Model{
 			$attributes[]= $value;
 		}
 		$sqlParams = implode(',', $sqlParams);
-		return $this->prepareRequest("INSERT INTO {$this->table} SET $sqlParams", $attributes, true);
+		return $this->executeRequest("INSERT INTO {$this->table} SET $sqlParams", $attributes, true);
 	}
 
 
-	public function all(){
-		return $this->prepareRequest("SELECT * FROM {$this->table} ORDER BY id DESC");
+	public function all(){ 
+		return $this->executeRequest("SELECT * FROM {$this->table} ORDER BY id DESC");
 	}
 
 	public function one($fieldName, $field){ 
-		return $this->prepareRequest("SELECT * FROM {$this->table} WHERE $fieldName=:field", [":field"=>$field], true);
+		return $this->executeRequest("SELECT * FROM {$this->table} WHERE $fieldName=:field", [":field"=>$field], true);
 	}
 
-	public function update($fields, $id){ 
+
+	public function search($fieldName, $field){  
+		return $this->executeRequest("SELECT * FROM comments WHERE $fieldName=:fieldName ORDER BY id DESC", [":fieldName"=>$field]);
+	}
+
+
+
+/*	public function verifUse($label, $input ){  
+		return $this->executeRequest("SELECT * FROM {$this->table} WHERE $label=:label", [':label'=>"$input"]);
+	}
+	*/
+
+	public function update($fields, $id){  
 		$sqlParams=[]; 
 		$attributes=[];
 		foreach ($fields as $key => $value) {
@@ -55,15 +67,15 @@ class Model{
  		$sqlParams = implode(',', $sqlParams);
  	
  		$attributes[]=$id;
- 		return $this->prepareRequest("UPDATE {$this->table} SET $sqlParams WHERE id=?", $attributes, true);
+ 		return $this->executeRequest("UPDATE {$this->table} SET $sqlParams WHERE id=?", $attributes, true);
 	}
 
 	public function delete($id, $field='id'){
-		return $this->prepareRequest("DELETE FROM {$this->table} WHERE $field=:id", [":id"=>$id], true );
+		return $this->executeRequest("DELETE FROM {$this->table} WHERE $field=:id", [":id"=>$id], true );
 	}
 
 
-	protected function prepareRequest($statement, $attributes=null, $one=false){ 
+	protected function executeRequest($statement, $attributes=null, $one=false){ 
 		if ($attributes){
 			$request= $this->db->prepare(
 				$statement

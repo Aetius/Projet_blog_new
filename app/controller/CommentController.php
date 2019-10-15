@@ -36,27 +36,16 @@ class CommentController extends Controller{
 
 
 
-	public function create(){ 
-		$inputs = $this->modelComment->hydrate($_POST); 
-		$results= $this->modelComment->createComment($inputs); 
-		if ($results === true){ 
-			$_SESSION['success']['1']='Le commentaire a été ajouté et est en attente pour modération.';
-		}else{
-			$_SESSION['success']['2']="Echec lors de l'ajout du commentaire"; 
-			$_SESSION['errors']=$results['errors']; 
-		}
-		header("location:/articles/".$this->modelComment->articleId()); 
-		
-	}
+	
 
-	public function showComments($articleId){ 
-		return $this->modelComment->allComments($articleId); 
-	}
+/*	public function showComments($articleId){ var_dump($this->modelComment->search('id', $articleId)); die(); 
+		return $this->modelComment->search('id', $articleId); 
+	}*/
 
 
 
 	public function showDashboard(){
-		$comments = $this->modelComment->allComments();
+		$comments = $this->modelComment->all();
 		$modelArticle = $this->factory->getModel('Article'); 
 		foreach ($comments as $key => $value) {
 			$results= $modelArticle->one('id', $comments[$key]['article_id']); 
@@ -73,14 +62,15 @@ class CommentController extends Controller{
 	public function dashboard($idArticle){
 		$input['articleId']= $idArticle; 
 		$this->modelComment->hydrate($input); 
-		return $this->modelComment->allComments();  
+		return $this->modelComment->all();  
 	}
 
 
-	public function managerArticlePage($idArticle){
+	/*public function managerArticlePage($idArticle){
 		$inputsVerif=$_POST; 
 		$inputsVerif['articleId']=$idArticle; 
 		$inputs = $this->manager($inputsVerif); 
+		
 		$page = $inputs['articleId'];  
 		header("location:/admin/articles/$page");
 	}
@@ -94,7 +84,7 @@ class CommentController extends Controller{
 	}
 
 
-	public function manager($inputsVerif){  
+	public function manager($inputsVerif){  var_dump("expression"); die(); 
 		$inputs = $this->modelComment->hydrate($inputsVerif);
 		
 		if (array_key_exists("delete", $inputs)){
@@ -103,21 +93,50 @@ class CommentController extends Controller{
 			 $this->update();			
 		};
 		return $inputs; 
+	}*/
+
+	public function create(){ 
+		$inputs = $this->modelComment->hydrate($_POST); 
+		$results= $this->modelComment->prepareCreate($inputs); 
+		if ($results == null){ 
+			$_SESSION['success']['1']='Le commentaire a été ajouté et est en attente pour modération.';
+		}else{
+			$_SESSION['success']['2']="Echec lors de l'ajout du commentaire"; 
+			$_SESSION['errors']=$results['errors']; 
+		}
+		header("location:/articles/".$this->modelComment->articleId()); 
+		
 	}
 
+	public function update(){  
+		$page = $_SERVER['HTTP_REFERER'];
+		$inputs = $this->modelComment->hydrate($_POST); 
+
+		$result=$this->modelComment->prepareUpdate($inputs); 
+		if ($result== null){
+			$_SESSION['success']['1']='Le commentaire a été modifié.';	
+		}else{
+			$_SESSION['success']['2']="Echec de l'enregistrement."; 
+		}
+		header("location:$page"); 
+	}
 
 
 	/**
 	*array @inputs
 	*
 	*/
-	
-	public function delete ($inputs){ 
-		if ($this->modelComment->delete($inputs['id']) === true){
+
+	public function delete (){ 
+		$page = $_SERVER['HTTP_REFERER'];
+		$inputs = $this->modelComment->hydrate($_POST);
+		$result = $this->modelComment->delete($inputs['id']); 
+		if ( $result == null){
 			$_SESSION['success']['1']='Le commentaire est supprimé.';
 		}else{
 			$_SESSION['success']['2']="Echec de la suppression."; 
-		}		
+		}
+		header("location:$page"); 
 	}
 
 
@@ -130,21 +149,13 @@ class CommentController extends Controller{
 */
 
 
-	public function update(){  
-		$result=$this->modelComment->updateComment(); 
-		if ($result===true){
-			$_SESSION['success']['1']='Le commentaire a été modifié.';	
-		}else{
-			$_SESSION['success']['2']="Echec de l'enregistrement."; 
-		}
-		return $result;
-	}
+	
 
 
 
-	public function readComments(){
+/*	public function readComments(){
 		return $this->modelComment->read();
-	}
+	}*/
 
 	
 

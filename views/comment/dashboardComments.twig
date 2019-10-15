@@ -58,12 +58,13 @@
 										<label for="published">oui</label>
 										<input type="radio" id="Published" name="published" value="1" {% if comment.publicated == 1 %}checked {% endif %}>
 										<input type="hidden" name="id" value="{{comment.id}}">
+										<input type="hidden" name="adminAnswer" value="{{comment.admin_answer}}">
 									</div>
 									<button class="btn btn-primary btn-sm col-md-6 mt-3" type="submit" name="update" value="published">Valider</button>
 								</form>
 							</div>
 							<div class="col-md-6 text-center mb-3 mt-4">
-								<form method="post">
+								<form method="post" action="/admin/comments/delete">
 									{{ csrf|raw }}
 									
 									<input type="hidden" name="id" value="{{comment.id}}">

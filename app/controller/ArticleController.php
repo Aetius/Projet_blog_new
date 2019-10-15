@@ -13,9 +13,7 @@ class ArticleController extends Controller{
 	//private $modelUser;
 	//private $modelComment; 
  
-	public function testDelete(){
-		die(123); 
-	}
+	
 
 	public function __construct(){
 		$this->modelArticles = new ArticleModel(); 
@@ -68,7 +66,7 @@ public function showOne($id){
 		$this->show('/admin/dashboard', $results);
 	}
 
-	public function showAllAdmin($idPage){   
+	public function showAllAdmin($idPage){  
 		$results['articles']=$this->allArticles();
 		$results = $this->articleDisplay($results, $idPage); 
 		$results['comments']=$this->allComments(); 
@@ -76,13 +74,14 @@ public function showOne($id){
 	}
 
 
-	public function showOneAdmin($id){
+	public function showOneAdmin($id, $inputsError=[]){ 
 		$results['article']= $this->oneArticle($id);  
 		if (!$results['article']){
 			header("location:/admin/articles");
 		}else{
 			$articles= $this->allArticles();  
 			$results["comments"] = $this->commentsByArticle($this->modelArticles->id());
+			$results = $results + $inputsError; 
 			$this->show("/admin/article", $results, $articles);
 		};
 		
@@ -134,7 +133,7 @@ public function showOne($id){
 
 	private function allComments(){
 		$modelComment = $this->factory->getModel('Comment'); 
-		return $modelComment->allComments();
+		return $modelComment->all();
 	}
 
 	private function commentsByArticle($idArticle){
@@ -243,18 +242,13 @@ public function showOne($id){
 
 
 	public function create(){  
-	/*	if (!isset($_SESSION['user']['id']){
-			$userModel = $this->factory->getModel('user');
-			$user["authorId"] = $userModel->one($_SESSION['access']['login'], 'login'); 
-		}else{
-			$user["authorId"]=$_SESSION['user']['id'];
-		}
-
-			
-		$this->modelArticles->hydrate($user);*/ 
-		$inputs = $this->modelArticles->hydrate($_POST); 
+		$input['authorId']= $_SESSION['user']['id']; 
+		$inputs = $this->modelArticles->hydrate($input); 
+		$inputs = $inputs + $this->modelArticles->hydrate($_POST);
+		
 		//$this->modelArticles->validation($inputs); 
-		$result = $this->modelArticles->createArticle($inputs);
+		$result = $this->modelArticles->prepareCreate($inputs);
+		var_dump($result); die(); 
 		if ($result===true){
 			$_SESSION["success"][1]= "L'article est crée";
 			header("location:/admin/dashboard");
@@ -268,12 +262,12 @@ public function showOne($id){
 		return $this->showAll($this->articleDisplay($idPage)); 
 	}
 
-	public function updatePublication(){
+	public function updatePublication(){  
 		
 		/*if (isset($_POST['page'])){
 			return $this->showAllAdmin($this->articleDisplay());  */
 		if (isset($_POST['published'])){
-			$this->update($_POST, 'updatePublished'); 
+			$this->update($_POST, 'prepareUpdatePublished'); 
 		}else{
 			header("location:/admin/articles");
 		}
@@ -342,7 +336,7 @@ public function showOne($id){
 		$inputs = $_POST;
 		$inputs["id"]=$idArticle; 
 		
-		$this->update($inputs, __function__); 
+		$this->update($inputs, "prepareUpdate"); 
 	}
 
 
@@ -350,35 +344,31 @@ public function showOne($id){
 		$inputs= $this->modelArticles->hydrate($inputsVerif); 
 		$result = $this->modelArticles->$method($inputs); 
 
-		if ($result===true){  
+		if (is_null($result)){ 
 			$_SESSION["success"][1]="Mise à jour de l'article effectuée";
-			header("location:/admin/articles");
+			return header("location:/admin/articles");
 		}else{
-			$_SESSION["success"][2]="La mise à jour de l'article a échoué";
+			$_SESSION["success"][2]="La mise à jour de l'article a échoué"; 
 			$result['errors']= $this->modelArticles->errors(); 
-			$this->showAllAdmin($result);
+			return $this->showOneAdmin($result['inputsError']['id'], $result); 
 		}
 	}
 
-
-	public function managerArticle($id){
+/*
+	public function managerArticle($id){  
  
 		if (isset($_POST['delete'])){
 			$this->delete(); 
 		}elseif (isset($_POST['update'])) {
 			$this->updateArticle($id); 
-		}elseif (isset($_POST['updateComment'])) {
-
-			# code...
 		}
-	}
+	}*/
 
 
-	private function delete(){
+	public function delete(){ 
 		$inputs = $this->modelArticles->hydrate($_POST); 
 		if (!is_null(intval($inputs['delete']))){
 			$modelComment = $this->factory->getModel('comment'); 
-
 			$delete["article"]=$this->modelArticles->delete($inputs['delete']);
 			$delete["comments"]=$modelComment->delete($inputs['delete'], 'article_id'); 
 		}; 

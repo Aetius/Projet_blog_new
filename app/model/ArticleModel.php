@@ -35,7 +35,14 @@ class ArticleModel extends AppModel{
 	}
 
 
-	public function updatePublished(){ 
+	public function prepareUpdatePublished($inputs){ 
+		$validationInput['isBool']['published']=$inputs['published']; 
+		$this->validation($validationInput, 'getValidatorUpdate'); 
+
+		if (!empty($this->errors)){
+			return $this->isErrors($inputs); 
+		}
+
 		$fields=array(
 			'publicated'=>$this->published,
 			'date_publication'=>$this->publishedDate
@@ -44,12 +51,16 @@ class ArticleModel extends AppModel{
 	}
 
 
-	public function updateArticle($inputs){
-		 $this->validation($inputs);
-		$dataBdd=$this->verifUse($this->title, 'title');  
-		if ((($dataBdd['title'])===($this->title))&&($dataBdd['id']!==$this->id)){
-			$this->errors="Le titre de cet article existe déjà!";
+	public function prepareUpdate/*updateArticle*/($inputs){ 
+		$this->validation($inputs);
+		$article=$this->one('title', $this->title);  
+		if ( ((($article['title'])===($this->title))&&($article['id']!==$this->id))){
+			array_push($this->errors, "Le titre de cet article existe déjà!");
 		};
+
+		if (!empty($this->errors)){
+			return $this->isErrors($inputs); 
+		}
 
 		$fields=array(
 			'title'=>$this->title, 
@@ -59,13 +70,12 @@ class ArticleModel extends AppModel{
 			'publicated'=>$this->published,
 			'date_publication'=>$this->publishedDate
 		);
-
 		return $this->creationSuccess('update', $fields);
 	}
 
 
-	public function createArticle($inputs){ 
-
+	public function prepareCreate($inputs){ 
+/*
 		if (isset($_SESSION['user']['id'])){
 			$result = $this->hydrate($_SESSION['user']);
 			$this->setAuthorId($result['id']);
@@ -76,14 +86,19 @@ class ArticleModel extends AppModel{
 			$result = $this->hydrate($_SESSION['access']);
 			$id = $userModel->one('login', $result['login']); 
 			$this->setAuthorId($id['id']); 
-		}
+		}*/
 
 			
 		$this->validation($inputs);
-		$dataBdd=$this->verifUse('title',$this->title);  
-		if ((($dataBdd['title'])===($this->title))){ 
+		$article=$this->one('title',$this->title);  
+		if ((($article['title'])===($this->title))){ 
 			$this->errors[]="Le titre de cet article existe déjà!";
-		} 
+		};
+
+		if (!is_null($this->errors)){
+			return $this->isErrors($inputs); 
+		};
+
 		$fields = array(
 			'title'=>($this->title), 
 			'description'=>($this->description),
@@ -135,9 +150,8 @@ class ArticleModel extends AppModel{
 	}
 
 
-	public function setTitle($input){
+	public function setTitle($input){  
 		//$name = $this->setVerification($name);
-
 			return $this->title = $input;
 	}
 
@@ -155,9 +169,9 @@ class ArticleModel extends AppModel{
 	public function setPublished($name){
 		
 		//$name = $this->setVerification($name);
-		if(preg_match("#0|1#", $name)){
+		
 			return $this->published=$name; 
-		}
+	
 	}
 
 	public function setPublishedDate($name){
@@ -173,16 +187,14 @@ class ArticleModel extends AppModel{
 	}
 
 	public function setId($name){
-		if ($this->verifUse( 'id', $name)){
+		if ($this->one( 'id', $name)){
 			return $this->id = $name; 
 		}
 		//$name = $this->setVerification($name);
 	}
 
 	public function setAuthorId($name){ 
-		if (is_numeric($name)){
 			$this->authorId = $name; 
-		}
 	}
 
 

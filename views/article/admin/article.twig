@@ -5,10 +5,10 @@
 {% import 'macro.twig' as form %}
 
 
-{% block title %}{% if results.title != null and display.success.2 == null %}Modification de l'article : {{results.title}} {% else %} Création de l'article {% endif %}{% endblock %}
-
+{% block title %}Modification de l'article : {{results.article.title}} {% endblock %}
 
 {% block content %}
+
 	<div class="articles">
 		<div class=" col-md-2 d-flex align-items-start">
 			<button class="btn btn-primary backButton"> Retour</button>
@@ -19,17 +19,16 @@
 			<div class="  col-md-10 order-2">				
 				<div class="col-md-12 row">
 					<div class="col-md-10 mb-5">
-						<h1 class="text-center m-lg-5 ">{% if results.article.title != null and display.success.2 == null %}Modification de l'article : {{results.article.title}} {% else %} Création de l'article {% endif %}</h1> 
+						<h1 class="text-center m-lg-5 ">Modification de l'article : {{results.article.title}} </h1> 
 					</div>
 
-					{% if results.article.title != null and display.success.2 == null %}
+					
 						<div class="col-md-2 d-flex align-items-center text-left">
-							<form method="POST" class="text-right pr-3"> {{csrf_input()}} 
-								<input name="_method" type="hidden" value="DELETE" />
+							<form method="POST" class="text-right pr-3" action="/admin/articles/{{results.article.id}}/delete"> {{csrf_input()}} 
 								<button class="btn btn-primary btn-sm confirmClose" type="submit" name="delete" value={{results.article.id}}>Supprimer l'article</button>
 							</form>
 						</div>
-					{% endif %}
+					
 					<div class="col-md-12 row">
 						<div class="col-md-12 text-center">
 							
@@ -38,6 +37,7 @@
 
 
 <!-- article -->	
+						{% if results.article.title != null and display.success.2 == null %}
 								<form method="post">{{csrf_input()}} 
 									<div class="row">
 										<div class="col-md-5 text-right">	
@@ -62,7 +62,7 @@
 						
 												<div class="col-md-12 justify-content-center mb-2 expandable">
 													<a class="mx-4"><label for="publishedDate">Date de la publication : </label></a>
-													<input type="date" id="PublishedDate" name="publishedDate" value= {% if results.article.date_publication != null %} {{results.article.date_publication}} {% else %}"2019-08-22"  {% endif %} min="2019-07-31">
+													<input type="date" id="PublishedDate" name="publishedDate" value= {% if results.article.date_publication != null %} {{results.article.date_publication}} {% else %} "2019-08-22"  {% endif %} min="2019-07-31">
 												</div>
 											</div>
 										</div>		
@@ -75,6 +75,47 @@
 										</div>
 									</div>
 								</form>
+						{% else %}
+								<form method="post">{{csrf_input()}} 
+									<div class="row">
+										<div class="col-md-5 text-right">	
+											{{ form.input ('title', 'Titre de l\'article', {value:results.inputsError.title, col:"col-md-10"})}}
+										</div>
+										<div class="col-md-6 text-left">
+											{{ form.textarea ('description', 'Résumé de l\'article', {value:results.inputsError.description} )}}
+										</div>
+									</div>
+									<div >
+											{{ form.textarea ('content', 'Contenu de l\'article', {value:results.inputsError.content, rows:"30", class:'tinyMCE'})}}
+									</div>
+									<div class="col-md-12 d-flex justify-content-around row">
+										<div class="col-md-12 d-flex flex-column">
+											<p class="">Publier ?
+											</p>
+											<div  >
+												<label for="published">oui</label>
+												<input type="radio" id="Published" name="published" value="1" {% if results.article.publicated == 1 %} checked {% endif %}>
+												<label for="published">non</label>
+												<input type="radio" name="published" value='0' {% if results.article.publicated == 0  %} checked {% endif %}>
+						
+												<div class="col-md-12 justify-content-center mb-2 expandable">
+													<a class="mx-4"><label for="publishedDate">Date de la publication : </label></a>
+													<input type="date" id="PublishedDate" name="publishedDate" value= {% if results.article.date_publication != null %} {{results.article.date_publication}} {% else %} "2019-08-22"  {% endif %} min="2019-07-31">
+												</div>
+											</div>
+										</div>		
+										<div class="row my-5">
+											
+											<div class="col-md-4 text-center">
+												<button class="btn btn-primary" type="submit" name="update" value="{{results.article.id}}">Valider</button>
+											</div>
+											
+										</div>
+									</div>
+								</form>
+
+						{% endif %}
+
 							</div>
 						</div>
 					
@@ -108,12 +149,13 @@
 															<input type="radio" name="published" value='0' {% if comment.publicated == 0 %}checked {% endif %}>
 															<label for="published">oui</label>
 															<input type="radio" id="Published" name="published" value="1" {% if comment.publicated == 1 %}checked {% endif %}>
+															<input type="hidden" name="adminAnswer" value="{{comment.admin_answer}}">
 															<input type="hidden" name="id" value="{{comment.id}}">
 															<button class="btn btn-primary btn-sm col-md-6 mt-3" type="submit" name="update" value="published">Valider</button>
 														</form>
 													</div>
 													<div class="col-md-6 text-center mb-3 mt-4">
-														<form method="post" action="/admin/articles/{{results.article.id}}/comments">{{csrf_input()}}
+														<form method="post" action="/admin/articles/{{results.article.id}}/comments/delete">{{csrf_input()}}
 															
 															<input type="hidden" name="id" value="{{comment.id}}">
 															<button class="btn btn-primary " type="submit"  name="delete">Supprimer le commentaire</button>
