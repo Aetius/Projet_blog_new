@@ -106,7 +106,7 @@ class UserModel extends AppModel{
 			'email'=>($this->email),
 			'login'=>($this->login),
 			'password'=>($this->password),
-			'role'=>("editor")
+			'is_admin'=>("0")
 		);
 		return $this->creationSuccess('create', $fields);
 	}
@@ -174,11 +174,34 @@ class UserModel extends AppModel{
 	}
 
 
+
+	public function lostPassword(){
+		$result = $this->one('login', $this->login); 
+		if ($result != false){
+			if($result['email'] == $this->email){
+				$newPassword = $this->generatePassword($result); 
+				return $newPassword; 
+			}
+		}
+		return false; 
+	}
+
+
+	private function generatePassword($result){
+		$hex = bin2hex(random_bytes(12)); 
+		$pass = password_hash($hex, PASSWORD_DEFAULT, ['cost'=>12]);
+		$field['password'] = $pass; 
+		$this->update($field, $result['id']); 
+		return $hex; 
+	}
+
+
 	private function successUpdate($id, $fields){  
 		foreach ($fields as $key => $value) {
 			$input[$key]=$value; 
 			$this->validation($input, 'validatorUpdate'); 
 			$input=[]; 
+			$fields[$key]=$this->$key; 
 		}
  
 		if(!$this->errors){
@@ -188,8 +211,6 @@ class UserModel extends AppModel{
 		}
 
 	}
-
-	
 
 
 	private function oldPasswordConfirm($id){ 

@@ -16,6 +16,15 @@ class Model{
 		}
 	}
 
+/*
+*permet de renseigner le nom de la table.
+*/
+/*	abstract public function getTable():String{
+
+	}*/
+
+
+
 	public function create($fields){
 		$sqlParams=[]; 
 		$attributes=[];

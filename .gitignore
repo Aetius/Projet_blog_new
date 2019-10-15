@@ -2,4 +2,5 @@ App/controller/MailController.php
 App/AdminSiteBlog
 vendor
 a lire.txt
-public/tinymce/tinymce
+public/tinymce
+public/images

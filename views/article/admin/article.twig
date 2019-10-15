@@ -25,6 +25,7 @@
 					{% if results.article.title != null and display.success.2 == null %}
 						<div class="col-md-2 d-flex align-items-center text-left">
 							<form method="POST" class="text-right pr-3"> {{csrf_input()}} 
+								<input name="_method" type="hidden" value="DELETE" />
 								<button class="btn btn-primary btn-sm confirmClose" type="submit" name="delete" value={{results.article.id}}>Supprimer l'article</button>
 							</form>
 						</div>

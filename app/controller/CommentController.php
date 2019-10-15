@@ -33,9 +33,7 @@ class CommentController extends Controller{
 	
 	}*/
 
-	public function test($id){
-		var_dump($_POST); var_dump($id); die(); 
-	}
+
 
 
 	public function create(){ 

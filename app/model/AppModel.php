@@ -94,4 +94,8 @@ class AppModel extends Model{
 		return $this->id; 
 	}
 
+	public function errors(){
+		return $this->errors; 
+	}
+
 }

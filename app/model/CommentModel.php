@@ -18,6 +18,10 @@ class CommentModel extends AppModel{
 	private $adminAnswer=null; 
 	 
 
+	 public function getTable(){
+	 	return 'comments'; 
+	 }
+
 /*execute in bdd*/ 
 	
 	public function allComments(){

@@ -99,13 +99,13 @@ class UserController extends Controller{
 
 	public function settings(){ 
 		$id = $_SESSION['user']['id']; 
-		$inputs = $this->modelUser->hydrate($_POST); 
+		$inputs = $this->modelUser->hydrate($_POST);  
 
 		if (array_key_exists("email", $inputs)){
-			$this->update('email', $id);
-		}elseif (array_key_exists("password", $inputs, "settings")) {
-			$this->update('password', $id);
-		}elseif (array_key_exists("activate", $inputs, "settings")) {  
+			$this->update('email', $id, "settings");
+		}elseif (array_key_exists("password", $inputs)) {
+			$this->update('password', $id, "settings");
+		}elseif (array_key_exists("activate", $inputs)) {  
 			$this->desactivate($id);		
 		}else{
 			header('Location:/admin/settings');
@@ -191,9 +191,21 @@ class UserController extends Controller{
 
 	public function lostPassword(){
 		$inputs=$this->modelUser->hydrate($_POST); 
+		$results = $this->modelUser->lostPassword(); 
+		
+		if ($results !== false){
+			$modelEmail = $this->factory->getModel('Email'); 
+			$modelEmail->preparePassword($results, $inputs); 
+			header('location:/admin'); 
+		}else{
+			$_SESSION['success'][2]= "Login ou adresse email invalide"; 
+			header("location:/password"); 
+		}
+
+
 		var_dump("en profiter pour refaire la fonction email. vérifier le mail et le login. une fois ok => on génère un nouveau mot de passe dans le model user et on envoie sur le model email pour envoyer le nouveau mot de passe. 
 			en profiter pour refaire le modelmail. 
-			pour le login : je ne sais pas quel niveau de sécu je mets. mais même logique. donc faire une fonction récup password générique.")
+			pour le login : je ne sais pas quel niveau de sécu je mets. mais même logique. donc faire une fonction récup password générique.");
 		var_dump($inputs); die(); 
 
 	}

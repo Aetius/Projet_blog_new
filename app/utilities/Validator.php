@@ -40,6 +40,13 @@ class Validator{
 		}return $this; 
 	}
 
+    public function empty($key){ 
+         $value = $this->getValue($key); 
+         if (isset($value)){
+            $this->addError($key, 'robot'); 
+         }return $this; 
+    }
+
 
     public function login($key){ 
          $value = $this->getValue($key);

@@ -123,17 +123,10 @@
             <div class="row">
               <form method="post" action="/contact">{{csrf_input()}} 
                 <h3 class="section-heading">Formulaire de contact</h3>
-                {%if session.success == 1 %}
-                  <div class="alert alert-success"> Le mail a bien été envoyé
-                  </div>
-                {%endif%}
-                {%if session.success == 2 %}
-                  <div class="alert alert-danger"> Echec de l'envoi : {{session.errors}}
-                  </div>
-                {%endif%}
+{% include 'success.twig' %}  
                 <div class="row">
-                  {{form.input ('surname', 'votre prénom', {value:session.inputs.surname})}}
-                  {{form.input ('name', 'votre nom', {value:session.inputs.name})}}
+                  {{form.input ('name', 'votre prénom', {value:session.inputs.surname})}}
+                  {{form.input ('lastName', 'votre nom', {value:session.inputs.name})}}
                   {{form.input ('email', 'votre email', {col:'col-md-12', type:'email', value:session.inputs.email})}}
                 </div>
                   {{form.textarea ('message', 'votre message', {value:session.inputs.message})}}

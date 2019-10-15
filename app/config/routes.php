@@ -41,7 +41,7 @@ $routes=(array(
 //pour les update, c'est un put
 array('POST', '/admin/users', 'user#dashboardAdmin'), 
     array('GET', '/admin/users', 'user#showDashboardAdmin'),
-
+    //array('DELETE', '/admin/articles/[i:id]', 'article#testDelete'),
     array('POST', '/admin/articles/[i:id]/comments', 'comment#managerArticlePage'), 
     array('POST', '/admin/articles/[i:id]', 'article#managerArticle'), 
     array('GET', '/admin/articles/[i:id]', 'article#showOneAdmin'),
@@ -66,7 +66,7 @@ array('POST', '/admin/users', 'user#dashboardAdmin'),
     array('GET', '/password', 'user#showLost'), 
     array('POST', '/password', 'user#lostPassword'), 
    // array('GET', '/articles', 'article#showAll'),
-    array('POST', '/contact', 'mail#sendMail'),  
+    array('POST', '/contact', 'email#contact'),  
     array('GET', '/', 'home')
   //array('DELETE','/users/[i:id]', 'users#delete', 'delete_user')
 ));

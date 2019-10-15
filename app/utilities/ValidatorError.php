@@ -18,6 +18,7 @@ class ValidatorError{
         'datetime' => 'Le champ %s doit être une date valide (%s).',
         'regex'=>'Le champ %s est incorrect.', 
         'number'=>'Le champ %s doit être un nombre.',
+        'robot'=>'Je suis un robot', 
         'password' => "Le champ %s doit contenir 8 caractères, 1 lettre, 1 chiffre et un des caractères spéciaux (,?;.:/!@')."
 	]; 
 

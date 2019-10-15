@@ -91,7 +91,7 @@
 											</p>
 										</div>
 										<div>
-											<p>Rôle : {{ session.user.role}} 
+											<p>Rôle : {% if session.user.is_admin == 1 %} Administrateur {% else %} Editeur {% endif %}
 											</p>
 										</div>
 									</div>
@@ -101,6 +101,19 @@
 								</div>
 							</div>
 						</div>
+					{% if session.user.is_admin == 1 %} 
+						<div class='col-md-8  my-4 '>
+							<div class="bg-white card card-body">
+								<h4 class="my-3">Tableau de bord administrateur </h4>
+								<div class=" text-left pb-0">
+									
+									<div class="d-flex justify-content-center py-3">
+										<a href="/admin/users"> <button class="btn btn-primary">Accéder à l'espace utilisateur. </button></a>
+									</div>
+								</div>
+							</div>
+						</div>
+					{% endif %}
 					</div>
 				</div>
 
@@ -113,6 +126,7 @@
 </main>
 
 {% endblock %}
+
 
 
 

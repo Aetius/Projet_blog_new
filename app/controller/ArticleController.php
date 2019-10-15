@@ -13,7 +13,9 @@ class ArticleController extends Controller{
 	//private $modelUser;
 	//private $modelComment; 
  
-
+	public function testDelete(){
+		die(123); 
+	}
 
 	public function __construct(){
 		$this->modelArticles = new ArticleModel(); 

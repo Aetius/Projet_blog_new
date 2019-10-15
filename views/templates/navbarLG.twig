@@ -1,31 +1,36 @@
-<nav class="navbar navbar-expand-lg  fixed-top bg-light shadow col col-sm-12 d-flex justify-content-between " id="backNav">
+<nav class="navbar navbar-expand-lg  fixed-top bg-light shadow col col-sm-12  " id="backNav">
             
-  <div class="col-md-12 row"> 
+  <div class="col-md-12 row container d-flex justify-content-end"> 
     <div>
       <a class="nav-link " href="/">Accueil</a>
     </div>
 
 <!-- Topbar Navbar -->
-    <ul class="navbar-nav ml-auto d-flex justify-content-around ">
-      <div class="topbar-divider ">
-      </div>
-       
 
 
-          <li class="navbar-nav nav-link ml-auto mr-3" >
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        Menu
+          <i class="fas fa-bars"></i>
+        </button>
+      <div class=" collapse navbar-collapse  row " id="navbarResponsive">
+      <ul class="navbar-nav  d-flex justify-content-end" id="navbarResponsive">
+     
+     
+
+          <li class="navbar-nav nav-link  mr-3" >
             <a class="" href="/admin/dashboard">
 
               Tableau de bord
             </a>
           </li>
-          <li class="navbar-nav nav-link ml-auto mr-3">
+          <li class="navbar-nav nav-link  mr-3">
             <a class="" href="/admin/comments">
 
              Commentaires
             </a>
 
           </li>
-          <li class="navbar-nav nav-link ml-auto mr-3">      
+          <li class="navbar-nav nav-link  mr-3">      
             <a class="" href="/admin/articles">
 
               Articles
@@ -33,8 +38,8 @@
           </li>
     <!-- Nav Item - User Information -->
           <li class="nav-item dropdown ">
-            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <span class="mr-2">{{session.access.login|capitalize}}</span>
+            <a class=" navbar-nav nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+             {{session.access.login|capitalize}}
               <img class="img-profile rounded-circle" src="">
             </a>
 <!-- Dropdown - User Information -->
@@ -57,11 +62,11 @@
               </a>
             </div>
           </li>
-        
-
+       
 
     </ul>
           
   </div>
+</div>
 
 </nav>

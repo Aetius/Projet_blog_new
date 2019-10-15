@@ -14,7 +14,7 @@
 		</div>
 
 	    <div class="container col-lg-12 m-lg-3">
-			<h1 class="text-center">Espace personnel {% if session.user.role == admin %} administrateur {% else %} éditeur {% endif %}</h1> 
+			<h1 class="text-center">Espace personnel {% if session.user.is_admin == 1 %} administrateur {% else %} éditeur {% endif %}</h1> 
 		</div>
 	 	<div class="">	
 	 		<div class=" col-md-12 my-5">
