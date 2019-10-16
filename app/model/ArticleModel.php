@@ -16,7 +16,7 @@ class ArticleModel extends AppModel{
 	private $description;
 	private $dateCreation;
 	private $content;
-	private $id;
+	
 	private $published=null; 
 	private $publishedDate=null; 
 	private $title; 
@@ -47,7 +47,7 @@ class ArticleModel extends AppModel{
 			'publicated'=>$this->published,
 			'date_publication'=>$this->publishedDate
 		);
-		return $this->creationSuccess('update', $fields);
+		return $this->recordValid('update', $fields);
 	}
 
 
@@ -70,7 +70,7 @@ class ArticleModel extends AppModel{
 			'publicated'=>$this->published,
 			'date_publication'=>$this->publishedDate
 		);
-		return $this->creationSuccess('update', $fields);
+		return $this->recordValid('update', $fields);
 	}
 
 
@@ -95,7 +95,7 @@ class ArticleModel extends AppModel{
 			$this->errors[]="Le titre de cet article existe déjà!";
 		};
 
-		if (!is_null($this->errors)){
+		if (!empty($this->errors)){
 			return $this->isErrors($inputs); 
 		};
 
@@ -108,8 +108,8 @@ class ArticleModel extends AppModel{
 			'date_creation'=>($this->setDate()),
 			'author_id'=>($this->authorId)
 		);
-		 
-		return $this->creationSuccess('create', $fields);
+		
+		return $this->recordValid('create', $fields);
 	}
 
 

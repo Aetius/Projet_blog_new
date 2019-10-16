@@ -29,12 +29,13 @@ class UserController extends Controller{
 		$this->show("connexionPage");
 	}
 
+
 	public function showInscription(){ 
 		$this->show("inscriptionPage");
 	}
 
 
-	public function showSettings(){	
+	public function showSettings($results=[]){	
 		$this->show('settings');
 	}
 
@@ -47,7 +48,7 @@ class UserController extends Controller{
 	}
 
 
-	public function showDashboardAdmin(){
+	public function showDashboardAdmin($results=[]){
 		$results['users']=$this->modelUser->all(); 
 		$this->show('users', $results); 
 	}
@@ -86,27 +87,30 @@ class UserController extends Controller{
 /*creation update and delete users*/
 	public function inscription(){ 
 		$inputs= $this->modelUser->hydrate($_POST);
-		
-		if($this->modelUser->inscription($inputs)=== true){ 
+		$results = $this->modelUser->prepareInscription($inputs); 
+		if($results == null){ 
 			$_SESSION['success'][1]="L'inscription est effectuée !";
-			header('Location:/admin');
-		};
-		$results['saveInputUser']=$this->modelUser->saveInput();
-		$results['errors'] = $this->modelUser->errors();
-		$this->show("inscriptionPage", $results);		
+			return header('Location:/admin/users');
+		}else{
+			$_SESSION['success'][2]="L'inscription a échoué !";
+			$this->show("inscriptionPage", $results);		
+		}
 	}
 
 
 	public function settings(){ 
-		$id = $_SESSION['user']['id']; 
-		$inputs = $this->modelUser->hydrate($_POST);  
+		$input['id'] = $_SESSION['user']['id']; 
+		$inputs = $this->modelUser->hydrate($input);
+		$inputs = $inputs + $this->modelUser->hydrate($_POST);  
 
 		if (array_key_exists("email", $inputs)){
-			$this->update('email', $id, "settings");
+			$this->update('email', "settings");
+			$this->showSettings($results); 
 		}elseif (array_key_exists("password", $inputs)) {
-			$this->update('password', $id, "settings");
+			$this->update('password', "settings");
+			$this->showSettings($results); 
 		}elseif (array_key_exists("activate", $inputs)) {  
-			$this->desactivate($id);		
+			$this->desactivate();	
 		}else{
 			header('Location:/admin/settings');
 		}
@@ -114,27 +118,26 @@ class UserController extends Controller{
 	}
 
 
-	public function dashboardAdmin(){
-		$id = $_POST['id']; 
-		$inputs = $this->modelUser->hydrate($_POST);
-		$this->update('account', $id, "users"); 
-
-
+	public function dashboardAdmin(){ 
+		$input['id'] = $_SESSION['user']['id']; 
+		$inputs = $this->modelUser->hydrate($input);
+		$inputs = $inputs + $this->modelUser->hydrate($_POST);   
+		$results = $this->update('account', "users");
+		$this->showDashboardAdmin($results); 
 	}
 
 
-	private function update($label, $id, $page){
+	private function update($label, $page){
 		$method = "update".(ucfirst($label)); 
-		$result = $this->modelUser->$method($id, $label);  
+		$results = $this->modelUser->$method($label);  
 		
-		if( $result !== true){
+		if( $results !== null){
 			$_SESSION['success'][2]= "La modification a échouée"; 
-			$results["errors"]=$result;
-			$this->show($page, $results);
+			return $results;
 		} else{
 			$_SESSION['success'][1]="La modification a bien été prise en compte"; 
 			$this->editorAccess(); 
-			header("location:/admin/$page");
+			return header("location:/admin/$page");
 		}
 	}
 

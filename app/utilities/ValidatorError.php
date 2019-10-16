@@ -38,24 +38,28 @@ class ValidatorError{
 
 	private function traduction($key){
 		switch ($key) {
-			case 'Title':
+			case 'title':
 				return 'titre';
-			case 'Name':
+			case 'name':
 				return'nom';
-			case 'Lastname':
+			case 'lastname':
 				return 'prénom';
-			case 'Content':
+			case 'content':
 				return 'contenu';
-			case 'Description':
+			case 'description':
 				return 'description';
-			case 'Mail':
+			case 'email':
 				return 'mail'; 
-			case 'Login' : 
+			case 'login' : 
 				return 'login';
-			case 'Password' : 
+			case 'password' : 
 				return 'mot de passe';
-			case 'PasswordConfirm' : 
+			case 'passwordConfirm' : 
 				return 'confirmation du mot de passe'; 
+			case 'is_admin':
+				return 'administrateur'; 
+			case 'activate':
+				return 'actif'; 
 			default: 
 				return $key;
 		}

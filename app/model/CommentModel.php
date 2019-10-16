@@ -14,7 +14,7 @@ class CommentModel extends AppModel{
 	private $published=null; 
 	private $publishedDate=null;
 	private $articleId; 
-	private $id; 
+	
 	private $adminAnswer=null; 
 	 
 
@@ -45,7 +45,7 @@ class CommentModel extends AppModel{
 			'admin_answer'=>$this->adminAnswer
 		);
 		
-		return $this->creationSuccess('update', $fields);
+		return $this->recordValid('update', $fields);
 	}
 /*functions calling*/
 	
@@ -98,7 +98,7 @@ class CommentModel extends AppModel{
 			'comment'=>($this->comment), 
 			'date_comment'=>($date)
 		);
-		return $this->creationSuccess("create", $fields); 
+		return $this->recordValid("create", $fields); 
 
 	}
 

@@ -32,10 +32,10 @@
 								</div>
 							{%endif%}
 							<div class="row ">
-								{{ form.input ('name', 'Votre prénom',  {autofocus:'autofocus', value:results.saveInputUser.name} )}}
-								{{ form.input ('lastname', 'Votre nom', {value:results.saveInputUser.lastname})}}
-								{{ form.input ('email', 'Votre adresse email', {type:'email', value:results.saveInputUser.email})}}
-								{{ form.input ('login', 'Votre login', {value:results.saveInputUser.login})}}
+								{{ form.input ('name', 'Votre prénom',  {autofocus:'autofocus', value:results.inputsError.name} )}}
+								{{ form.input ('lastname', 'Votre nom', {value:results.inputsError.lastname})}}
+								{{ form.input ('email', 'Votre adresse email', {type:'email', value:results.inputsError.email})}}
+								{{ form.input ('login', 'Votre login', {value:results.inputsError.login})}}
 								{{ form.input ('password', 'Votre mot de passe', {type:'password'} )}}
 								{{ form.input ('passwordConfirm', 'Veuillez confirmer votre mot de passe', {type:'password'} )}}
 								<div class="visibility form-group">

@@ -20,7 +20,7 @@ class UserModel extends AppModel{
 	private $dataBdd;
 	private $oldPassword;
 	private $passwordDecrypt;
-	private $id; 
+
 	private $activate; 
 	private $isAdmin; 
 
@@ -96,10 +96,21 @@ class UserModel extends AppModel{
 	}*/
 
 
-	
-/*functions calling the request, and return the result of this action .*/
 
-	public function createUser(){
+
+	public function prepareInscription($inputs){
+		$this->validation($inputs); 
+		
+		if ($this->one( 'email', $this->email)){
+			$this->errors[]="Cette adresse email existe déjà";
+		};
+		if ($this->one('login', $this->login)){
+			$this->errors[]="Ce login existe déjà";
+		};
+		
+		if (!empty($this->errors)){
+			return $this->isErrors($inputs); 
+		};
 		$fields=array(
 			'name'=>($this->name), 
 			'last_name'=>($this->lastname),
@@ -108,38 +119,55 @@ class UserModel extends AppModel{
 			'password'=>($this->password),
 			'is_admin'=>("0")
 		);
-		return $this->creationSuccess('create', $fields);
-	}
-
-
-	public function inscription($inputs){
-		$this->validation($inputs, 'validatorInscription'); 
-		
-		if ($this->one( 'email', $this->email)){
-			$this->errors[]="Cette adresse email existe déjà";
-		};
-		if ($this->one('login', $this->login)){
-			$this->errors[]="Ce login existe déjà";
-		};
-		if (!$this->errors){
-			return $this->createUser();
-		}
+		return $this->recordValid('create', $fields);
 	
 	}
+
+
+
+	public function updatePassword($label){ 
+		$this->oldPasswordConfirm($this->id); 
+		$fields[$label]= $this->passwordDecrypt;
+		$validationInput['password']=$fields; 	
+
+		return $this->validationUpdate($fields, $validationInput); 
+		
+	}
+
+	public function updateEmail($label){ 
+		$fields['email']=$this->email;
+		$validationInput['email']=$fields; 
+		if ($this->one($label, $this->$label)){
+			array_push($this->errors, "Le champ $label existe déjà"); 
+		}
+		return $this->validationUpdate($fields, $validationInput);  
+	}
+
+	public function updateAccount($label){
+		$fields['is_admin']=$this->isAdmin; 
+		$fields['activate']=$this->activate; 
+		$validationInput['isBool']=$fields; 
+		return $this->validationUpdate($fields, $validationInput);
+	}
+
+
+	private function validationUpdate($inputs, $validationInput){  
+		$this->validation($validationInput, 'getValidatorUpdate'); 
+		if (!empty($this->errors)){
+			return $this->isErrors($inputs); 
+		}
+		return($this->recordValid('update', $inputs));
+	}
+
+
+
 
 	public function connexion(){ 
 		if (password_verify($this->password, $this->one('login', $this->login)['password'])){
 			return true;  
 		}else{
-
 			return false; 
 		}
-	}
-
-
-
-	public function saveInput(){
-		return $saveInput=["name"=>$this->name, "lastname"=>$this->lastname, "email"=>$this->email, "login"=>$this->login];
 	}
 
 
@@ -147,30 +175,6 @@ class UserModel extends AppModel{
 		$update['activate']= $this->activate; 
 		$results = $this->update($update, $this->id); 
 		return $results; 
-	}
-
-	public function updatePassword($id, $label){ 
-		if ($this->oldPasswordConfirm($id)!==true){
-			return $this->errors; 
-		}else{
-			$fields[$label]= $this->passwordDecrypt;
-			return $this->successUpdate($id, $fields); 
-		}
-	}
-
-	public function updateEmail($id, $label){ 
-		if ($this->one($label, $this->$label)){
-			array_push($this->errors, "Le champ $label existe déjà"); 
-		}
-		$fields['email']=$this->email;
-		return $this->successUpdate($id, $fields);  
-	}
-
-	public function updateAccount($id, $label){
-		$fields['is_admin']=$this->isAdmin; 
-		$fields['activate']=$this->activate; 
-
-		return $this->successUpdate($id, $fields);
 	}
 
 
@@ -196,28 +200,10 @@ class UserModel extends AppModel{
 	}
 
 
-	private function successUpdate($id, $fields){  
-		foreach ($fields as $key => $value) {
-			$input[$key]=$value; 
-			$this->validation($input, 'validatorUpdate'); 
-			$input=[]; 
-			$fields[$key]=$this->$key; 
-		}
- 
-		if(!$this->errors){
-			return($this->update($fields, $id));
-		}else{
-			return $this->errors; 
-		}
-
-	}
-
 
 	private function oldPasswordConfirm($id){ 
 		if (!password_verify($this->oldPassword, $this->one('id', $id)['password'])){
 			$this->errors[]="L'ancien mot de passe n'est pas valide";
-		}else{
-			return true; 
 		}
 	
 	}

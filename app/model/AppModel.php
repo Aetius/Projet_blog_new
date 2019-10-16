@@ -9,7 +9,7 @@ use App\utilities\Validator;
 
 class AppModel extends Model{
 	protected $errors=[]; 
-	private $id='';
+	protected $id;
 
 
 
@@ -55,8 +55,8 @@ class AppModel extends Model{
 	*launch request 
 	*return bool
 	**/
-	protected function creationSuccess($function, $fields)	{ 
-		$this->isErrors($fields); //à supprimer et à mettre dans les fonctions mères.
+	protected function recordValid($function, $fields)	{ 
+		/*$this->isErrors($fields);*/ //à supprimer et à mettre dans les fonctions mères.
 		/*if (!empty($this->errors)){
 			$result['errors']=$this->errors;
 			foreach ($fields as $key => $value) {
@@ -64,19 +64,19 @@ class AppModel extends Model{
 			}var_dump($result); die();
 			return $result; 
 		}*/
-		if (method_exists($this, 'id')){
-			$id=$this->id();
-		}/*else{
+		
+			$id=$this->id;
+		/*else{
 			$id =""; à voir si fonctionne. 
 		}   */
 
-		
+ 
 		if (($this->$function($fields, $id)!==true)){ 
 			$this->errors[]="L'enregistrement a échoué"; 
-			$result['errors']=$this->errors;
+			/*$result['errors']=$this->errors; 
 			return $result; 
-		
-		}
+		*/
+		} 
 	}
 
 
@@ -86,7 +86,6 @@ class AppModel extends Model{
 
 	protected function validation($inputs, $validator="getValidator"){
 		$validator = $this->$validator($inputs);  
-		
 		if ($validator->isValid()!= true){
 			return $this->errors =  $validator->getErrors();
 		}	
@@ -96,12 +95,15 @@ class AppModel extends Model{
 *case update : if there's only few inputs to control
 */
 	protected function getValidatorUpdate($inputs){  
+		$validationInputs = array_values($inputs); 
+		$validator = new Validator($validationInputs['0']);
+		
 		foreach ($inputs as $key => $value) {
-			foreach ($value as $key2 =>$value2 ) {
-				return(new Validator($value))
-				->$key($key2);
+			foreach ($value as $key2 =>$value2 ) { 
+				$validator ->$key($key2);
 			}
 		}
+		return $validator;
 	}
 
 /*each class had to redeclare this function getValidator, to define which validation must be done.  */

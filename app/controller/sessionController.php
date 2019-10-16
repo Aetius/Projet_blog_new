@@ -10,7 +10,7 @@ class sessionController{
 			session_start(); 
 		}
 		
-	setcookie(session_name(),session_id(),time()+self::$lifetime);
+		setcookie(session_name(),session_id(),time()+self::$lifetime);
 	
 	}
 }

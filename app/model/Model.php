@@ -25,7 +25,7 @@ class Model{
 
 
 
-	public function create($fields){
+	public function create($fields){ 
 		$sqlParams=[]; 
 		$attributes=[];
 		foreach ($fields as $key => $value) {

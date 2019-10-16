@@ -38,15 +38,15 @@
 							
 							<div class="row">
 								<div class="col-md-5 text-right">	
-									{{ form.input ('title', 'Titre de l\'article', {value:results.title})}}
+									{{ form.input ('title', 'Titre de l\'article', {value:results.inputsError.title})}}
 								</div>
 								<div class="col-md-6 text-left">
-									{{ form.textarea ('description', 'Résumé de l\'article', {value:results.description} )}}
+									{{ form.textarea ('description', 'Résumé de l\'article', {value:results.inputsError.description} )}}
 
 								</div>
 							</div>
 							<div >
-									{{ form.textarea ('content', 'Contenu de l\'article', {value:results.content, class:'tinyMCE'})}}
+									{{ form.textarea ('content', 'Contenu de l\'article', {value:results.inputsError.content, class:'tinyMCE'})}}
 							</div>
 							<div>
 								<div class="col-md-12 text-center">
@@ -54,9 +54,9 @@
 									
 										<div class="col-md-12">
 											<label for="published">non</label>
-											<input type="radio" name="published" value="non" checked>
+											<input type="radio" name="published" value="0" checked>
 											<label for="published">oui</label>
-											<input type="radio" id="Published" name="published" value="oui" >
+											<input type="radio" id="Published" name="published" value="1" >
 											<div class="col-md-12 expandable">
 												<a><label for="publishedDate">Date de la publication : </label></a>
 												<input type="date" id="PublishedDate" name="publishedDate" value="2019-08-22" min="2019-07-31">

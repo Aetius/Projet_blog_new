@@ -126,7 +126,7 @@ public function showOne($id){
 		$this->modelArticles->hydrate($article); 
 		$article = $this->modelArticles->one('id', $this->modelArticles->id());
 		if ($article){
-		$article['author'] = $this->defineUser($article["author_id"]);
+			$article['author'] = $this->defineUser($article["author_id"]);
 			return $article; 
 		}
 	}
@@ -248,8 +248,8 @@ public function showOne($id){
 		
 		//$this->modelArticles->validation($inputs); 
 		$result = $this->modelArticles->prepareCreate($inputs);
-		var_dump($result); die(); 
-		if ($result===true){
+ 
+		if ($result===null){
 			$_SESSION["success"][1]= "L'article est crée";
 			header("location:/admin/dashboard");
 		}else{
@@ -258,20 +258,11 @@ public function showOne($id){
 		}
 	}
 
-	public function articlesPage($idPage){
+/*	public function articlesPage($idPage){
 		return $this->showAll($this->articleDisplay($idPage)); 
-	}
+	}*/
 
-	public function updatePublication(){  
-		
-		/*if (isset($_POST['page'])){
-			return $this->showAllAdmin($this->articleDisplay());  */
-		if (isset($_POST['published'])){
-			$this->update($_POST, 'prepareUpdatePublished'); 
-		}else{
-			header("location:/admin/articles");
-		}
-	}
+	
 
 
 	private function articleDisplay($results, $idPage){
@@ -330,6 +321,11 @@ public function showOne($id){
 		$inputs = $_POST; 
 		$this->update($inputs, __function__); 
 	}*/
+
+
+	public function updatePublication(){  
+		$this->update($_POST, 'prepareUpdatePublished'); 
+	}
 
 
 	public function updateArticle($idArticle){ 

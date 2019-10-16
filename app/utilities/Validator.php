@@ -71,7 +71,7 @@ class Validator{
 	}
 
     public function isBool/*is_admin*/($key){ 
-         $value = $this->getValue($key); 
+         $value = $this->getValue($key); var_dump($this->params); 
          if (!preg_match("#[0|1]#", $value)){
             $this->addError($key, 'number'); 
         }return $this; 
