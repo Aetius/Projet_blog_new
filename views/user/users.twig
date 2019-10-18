@@ -8,12 +8,12 @@
 
 <main>
 
-	<section class="bg-light page-section text-center">
-	    <div class=" col-md-2 align-self-start">
+	<section class="page-section text-center">
+	    <div class=" col-md-2 align-self-start d-none d-md-block">
 			<button class="btn btn-primary backButton"> Retour</button>
 		</div>
 
-	    <div class="container col-lg-12 m-lg-3">
+	    <div class="container col-lg-12 px-0 ">
 			<h1 class="text-center">Espace d'administration des utilisateurs</h1> 
 		</div>
 	 	<div class="">	
@@ -39,13 +39,13 @@
 
 
 {% set csrf = csrf_input() %}
-				<div class="col-md-12  my-5 py-3 bg-white"> 
+				<div class="col-md-12  my-5 pt-5 bg-light mx-0 px-0"> 
 					<h2 class="text-center">Les Editeurs
 					</h2>
 					{% for key, user in results.users %}
 						{% if user.is_admin == 0 %}
 					
-							<div class="col-md-12 bg-light row my-5 pt-5">
+							<div class="bg-white row my-5 pt-5">
 								<div class="col-md-4 text-center ">
 									<h4 class="mb-4">Informations utilisateur</h4>
 									<p>Nom : {{user.last_name}}</p>
@@ -93,14 +93,14 @@
 				</div>
 
 <!-- admin section  -->
-				<div class="col-md-12  my-5 py-3 bg-white"> 
+				<div class="col-md-12  my-5 pt-5 bg-light mx-0 px-0"> 
 					<h2 class="text-center">Les Administrateurs
 					</h2>
 					{% for key, user in results.users %}
 						{% if user.is_admin == 1 %}
 							{% if user.id != session.user.id %}
 							
-								<div class="col-md-12 bg-light row my-5 pt-5">
+								<div class="bg-white row my-5 pt-5">
 									<div class="col-md-4 text-center ">
 										<h4 class="mb-4">Informations utilisateur</h4>
 										<p>Nom : {{user.last_name}}</p>

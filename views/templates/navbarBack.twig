@@ -1,52 +1,67 @@
-<nav class="navbar navbar-expand-lg  fixed-top bg-light shadow col col-sm-12 " id="backNav">
-       <div class="container">     
-      <div>
-            <a class="" href="/">Accueil</a>
+
+
+<nav class="navbar navbar-expand-lg  fixed-top bg-light shadow" id="backNav">
+  <div class="container">     
+    <div>
+      <a type="button" class="btn btn-primary" href="/">Accueil</a>
+    </div>
+
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+    Menu
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+     <ul class="navbar-nav ml-auto">
+       <div class="topbar-divider "></div>
+
+
+        
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="/admin/dashboard">
+              <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+              Tableau de bord
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="/admin/comments">
+              <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+              Commentaires
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="/admin/articles">
+              <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+              Articles
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="/admin/settings">
+              <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
+              Paramètres
+            </a>
+          </li>
+
+          {% if session.user.is_admin == 1 %}
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="/admin/users">
+              <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
+              Tableau de bord utilisateur
+            </a>
+          </li>
+          {% endif %}
+          <li class="nav-item">
+            <div class="dropdown-divider"></div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="#logoutModal" data-toggle="modal" >
+              <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+              Se déconnecter
+            </a>
+          </li>
+   
       </div>
 
-<!-- Topbar Navbar -->
-          <ul class="navbar-nav ml-auto">
-            <div class="topbar-divider "></div>
+    </ul>
+  </div>
+</nav>
 
-            <!-- Nav Item - User Information -->
-            <li class="nav-item dropdown ">
-              <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="mr-2 lg">Menu</span>
-                <img class="img-profile rounded-circle" src="">
-              </a>
-              <!-- Dropdown - User Information -->
-              <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                <a class="dropdown-item" href="/admin/dashboard">
-                  <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                  Tableau de bord
-                </a>
-
-                <a class="dropdown-item" href="/admin/comments">
-                  <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                  Commentaires
-                </a>
-                <a class="dropdown-item" href="/admin/articles">
-                  <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                  Articles
-                </a>
-                <a class="dropdown-item" href="/admin/settings">
-                  <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
-                  Paramètres
-                </a>
-                  {% if session.user.is_admin == 1 %}
-                  <a class="dropdown-item" href="/admin/users">
-                    <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
-                      Tableau de bord utilisateur
-                  </a>
-                {% endif %}
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#logoutModal" data-toggle="modal" >
-                  <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                  Se déconnecter
-                </a>
-              </div>
-            </li>
-
-          </ul>
-</div>
-        </nav>

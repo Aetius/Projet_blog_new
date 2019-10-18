@@ -10,9 +10,7 @@
 {% block content %}
 
 	<div class="articles">
-		<div class=" col-md-2 d-flex align-items-start">
-			<button class="btn btn-primary backButton"> Retour</button>
-		</div>
+		
 		
 		<div class="col-md-12 row"> 
 
@@ -23,7 +21,7 @@
 					</div>
 
 					
-						<div class="col-md-2 d-flex align-items-center text-left">
+						<div class="col-md-2 d-flex align-items-center text-left mb-4">
 							<form method="POST" class="text-right pr-3" action="/admin/articles/{{results.article.id}}/delete"> {{csrf_input()}} 
 								<button class="btn btn-primary btn-sm confirmClose" type="submit" name="delete" value={{results.article.id}}>Supprimer l'article</button>
 							</form>
@@ -183,30 +181,45 @@
 			</div>
 
 		{# sidebar : display all articles in bdd#}
-			<nav class="nav flex-column col-md-2 ">
-				<div class="col-12 "> 
-					<div class=" text-center mt-4 "> 
-						<h4 class="mb-4">Tous les articles</h4>
-						{% for key, value in options %}
-							{% if key matches '/[0-9]/'%}  
-								<div class="card mt-4">
-									<div class="card-block text-center">
-										<div >
-											<a class="no-gutters " href="/admin/articles/{{value.id}}" id={{value.id}} >
-												<h5 class="card-title mt-2 ">{{value.title |title }}</h5>
+			
+<div class="d-flex flex-column col-md-2 mt-0">
+				<nav class="navbar navbar-expand-md ">
+					 <button class=" navbar-toggler navbar-toggler-right btn btn-primary btn-sm mb-5" type="button" data-toggle="collapse" data-target="#articleDropdown" aria-controls="articleDropdown" aria-expanded="false" aria-label="Toggle navigation">
+			            Tous les articles       
+			            <i class="fas fa-bars"></i>
+			        </button>
+					<div class="collapse navbar-collapse" id="articleDropdown" >
+					 	<ul class="navbar-nav d-flex flex-column">	
+			             
+							{% for key, value in options %}
+								{% if key matches '/[0-9]/'%}  
+									<li class="nav-item">
+										<div class="nav-link js-scroll-trigger">
+											<a class=" " href="/admin/articles/{{value.id}}" id="{{value.id}}">
+												<h5 class="">{{value.title |title }}</h5>
 											</a>
-											<div class="card-body py-1 px-1">
-												<p class="mb-1">{{value.description|title|striptags('<br><p>')|raw }}</p>
-											</div>
+												
+											<p class="mb-1">{{value.description|title|striptags('<br><p>')|raw }}</p>
 										</div>
-									</div>
-								</div>
-							{% endif %}
-						{% endfor %}
-						</div>
+									</li>
+								{% endif %}
+							{% endfor %}
+						</ul>
 					</div>
-				</div>
-			</nav>
+				</nav>
+			</div>
+
+
+
+
+
+
+
+
+
+
+
+
 		</div>
 	</div>
 		

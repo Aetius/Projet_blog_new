@@ -9,7 +9,7 @@
 	<div class="articles">
 		<div class="">
 			<div class="col-md-12 row no-gutters">
-				<div class=" col-md-2 align-self-start">
+				<div class=" col-md-2 align-self-start d-none d-md-block">
 					<button class="btn btn-primary backButton"> Retour</button>
 				</div>
 				<div class="col-md-9">
@@ -24,7 +24,7 @@
 
 
 			            <div class="col-md-12 d-flex justify-content-end pl-5">
-			            	<button type="button" class="btn btn-primary" id="visibilityComments" data-toggle="button" aria-pressed="false" autocomplete="off">
+			            	<button type="button" class="btn btn-primary btn-" id="visibilityComments" data-toggle="button" aria-pressed="false" autocomplete="off">
 							 Afficher les commentaires publiés.
 							</button>
 			            </div>
@@ -68,7 +68,7 @@
 									{{ csrf|raw }}
 									
 									<input type="hidden" name="id" value="{{comment.id}}">
-									<button class="btn btn-primary " type="submit"  name="delete">Supprimer le commentaire</button>
+									<button class="btn btn-primary btn-sm" type="submit"  name="delete">Supprimer le commentaire</button>
 								</form>
 							</div>
 						</div>

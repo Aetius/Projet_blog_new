@@ -130,7 +130,7 @@
                   {{form.input ('email', 'votre email', {col:'col-md-12', type:'email', value:session.inputs.email})}}
                 </div>
                   {{form.textarea ('message', 'votre message', {value:session.inputs.message})}}
-                <div class="visibility form-group">
+                <div class="visibility form-group" hidden="">
                   <label>Cliquez ici</label>
                   <input type="checkbox" name="envoi" id="envoi" class="form-control" value="vrai">
                 </div>
@@ -155,7 +155,7 @@
                 </a>
               </li>
               <li class="">
-                <a href="#" download="">
+                <a href="/public/images/error404.jpg" download="CV.jpg">
                   <div class="fab fa-lien_cv">Mon CV</div>
                 </a>
               </li>
