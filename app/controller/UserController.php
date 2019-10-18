@@ -5,8 +5,6 @@ use App\model\UserModel;
 use App\controller\Controller; 
 
 
-
-
 class UserController extends Controller{
 	
 	private $modelUser; 
@@ -38,7 +36,6 @@ class UserController extends Controller{
 	public function showSettings($results=[]){	
 		$this->show('settings');
 	}
-
 
 
 	public function showPage(){
@@ -82,6 +79,45 @@ class UserController extends Controller{
 	}
 	
 
+
+/*connexion, logout and verification of login and password*/
+	public function connexion(){ 
+		$this->modelUser->hydrate($_POST);
+		$result = $this->modelUser->connexion();
+		if ($result === true){
+			$_SESSION['user']=$this->modelUser->one('login', $this->modelUser->login());  
+			if ($_SESSION['user']['activate'] == 1){
+				$_SESSION['access']=['auth'=>'valide', 'login'=>$this->modelUser->login()];
+				$_SESSION['success'][1]= "Vous êtes connecté"; 
+				return header('location: admin/dashboard');
+			}
+		}
+		$_SESSION['success'][2]= "Le couple identifiant/mot de passe est incorrect"; 
+		$this->show('connexionPage');
+	}
+
+
+	public function lostPassword(){
+		$inputs=$this->modelUser->hydrate($_POST); 
+		$results = $this->modelUser->lostPassword(); 
+		
+		if ($results !== false){
+			$modelEmail = $this->factory->getModel('Email'); 
+			$modelEmail->preparePassword($results, $inputs); 
+			header('location:/admin'); 
+		}else{
+			$_SESSION['success'][2]= "Login ou adresse email invalide"; 
+			header("location:/password"); 
+		}
+	}
+
+
+	public function logout(){
+		session_destroy();
+		sessionController::getSession(); 
+		$_SESSION['success'][1]= "La session est bien déconnectée"; 
+		header('Location:/admin');
+	}
 
 
 /*creation update and delete users*/
@@ -158,66 +194,7 @@ class UserController extends Controller{
 	}
 
 
-/*	
-	private function updateError(){
-		if (empty($this->modelUser->errors())){
-			return false;
-		}elseif (!(empty($this->modelUser->errors()))) {	
-			$_SESSION['success']=2;
-			$errorResult['errors'] = $this->modelUser->errors();
-			$this->show("settingsPage", $errorResult);
-			$errorResult=[];		
-		}
-	}*/
 
 
-
-
-
-
-/*connexion, logout and verification of login and password*/
-	public function connexion(){ 
-		$this->modelUser->hydrate($_POST);
-		$result = $this->modelUser->connexion();
-		if ($result === true){
-			$_SESSION['user']=$this->modelUser->one('login', $this->modelUser->login());  
-			if ($_SESSION['user']['activate'] == 1){
-				$_SESSION['access']=['auth'=>'valide', 'login'=>$this->modelUser->login()];
-				$_SESSION['success'][1]= "Vous êtes connecté"; 
-				return header('location: admin/dashboard');
-			}
-		}
-		$_SESSION['success'][2]= "Le couple identifiant/mot de passe est incorrect"; 
-		$this->show('connexionPage');
-	}
-
-
-	public function lostPassword(){
-		$inputs=$this->modelUser->hydrate($_POST); 
-		$results = $this->modelUser->lostPassword(); 
-		
-		if ($results !== false){
-			$modelEmail = $this->factory->getModel('Email'); 
-			$modelEmail->preparePassword($results, $inputs); 
-			header('location:/admin'); 
-		}else{
-			$_SESSION['success'][2]= "Login ou adresse email invalide"; 
-			header("location:/password"); 
-		}
-	}
-
-
-	public function logout(){
-		session_destroy();
-		sessionController::getSession(); 
-		$_SESSION['success'][1]= "La session est bien déconnectée"; 
-		header('Location:/admin');
-	}
-
-	/*public function defineUser($userId){ 
-		$userParams = $this->modelUser->one('id', $userId); 
-		$user=$userParams['login']; 
-		return $user; 
-	}*/
 
 }

@@ -13,23 +13,9 @@ class CommentModel extends AppModel{
 	private $author; 
 	private $published=null; 
 	private $publishedDate=null;
-	private $articleId; 
-	
+	private $articleId; 	
 	private $adminAnswer=null; 
 	 
-
-
-/*execute in bdd*/ 
-	
-	/*public function allComments(){
-		return $this->executeRequest("SELECT * FROM comments ORDER BY id DESC");
-	}*/
-// à virer
-	/*public function commentsByPublished($publicated){
-		return $this->prepareRequest("SELECT * FROM comments WHERE publicated=:publicated ORDER BY id DESC", [":publicated"=>$publicated]);
-	}*/
-
-
 	
 	public function PrepareUpdate($inputs){ 
 		$validationInput['isBool']['published']=$inputs['published']; 
@@ -39,51 +25,13 @@ class CommentModel extends AppModel{
 			return $this->isErrors($inputs); 
 		};
 
-
 		$fields=array(
 			'publicated'=>$this->published, 
 			'admin_answer'=>$this->adminAnswer
-		);
-		
+		);	
 		return $this->recordValid('update', $fields);
 	}
-/*functions calling*/
-	
-/*
-	public function read($id){
-		
-		$request=$this->bdd->prepare("SELECT * FROM comments WHERE article_id=$id ORDER BY id DESC");
-		$request->execute(array(
-			":idArticle"=>$id));
-		$allResult=[];
-		while ($result=$request->fetch(PDO::FETCH_ASSOC)){
-			foreach ($result as $key => $value) {
-				$result[$key]=(htmlspecialchars_decode($value));
-				$result['login']=$this->readAuthor($result['author_id']);
-			}
-			array_push($allResult, $result);
-		}	
 
-		$request->closeCursor();
-		return $allResult; 
-	}*/
-
-	/*private function readAuthor($loginId){
-		$request=$this->bdd->prepare("SELECT login FROM users WHERE id=$loginId");
-		$request->execute(array(
-			"id"=>$loginId));
-		$result=$request->fetch(PDO::FETCH_ASSOC);
-		$request->closeCursor();   
-	
-		return $result['login'];
-	}*/
-	
-
-	/*public function verif($id, $name){
-
-	}*/
-
-/*verification if all inputs are here, and start the request. */
 
 	public function prepareCreate($inputs){
 		$date= $this->setDate(); 
@@ -99,7 +47,6 @@ class CommentModel extends AppModel{
 			'date_comment'=>($date)
 		);
 		return $this->recordValid("create", $fields); 
-
 	}
 
 

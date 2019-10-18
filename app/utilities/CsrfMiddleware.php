@@ -18,13 +18,13 @@ class CsrfMiddleware{
 
 
 	public function __construct($formKey='_csrf', $sessionKey='csrf'){
-		sessionController::getSession(); //le & permet de faire appel à une référence. au lieu qu'une copie soit envoyée. 
+		sessionController::getSession(); 
 		
 		$this->formKey=$formKey; 
 		$this->sessionKey=$sessionKey; 
 		$this->getSession(); 
-
 	}
+
 
 	public function process($request, $delegate){  
 		if (in_array($request->getMethod(), ['POST', 'DELETE'])){  
@@ -48,12 +48,10 @@ class CsrfMiddleware{
 		}
 	}
 
+
 	public function generateToken(){
 		$token = bin2hex(random_bytes(16)); 
-		
-
 		$csrfList = $this->session ; 
-		
 		$csrfList[]=$token;   
 		unset($this->session);
 		$this->session=$csrfList;  
@@ -66,6 +64,7 @@ class CsrfMiddleware{
 		throw new \Exception(); 
 	}
 
+
 	private function useToken($token){
 		$tokens = array_filter($this->session, function ($t) use ($token){
 			return $token !== $t; 
@@ -73,41 +72,28 @@ class CsrfMiddleware{
 		$this->session[$this->sessionKey]=$tokens; 
 	}
 
+
 	private function limitTokens(){
 		$tokens = $this->session ?? []; 
 		while (count($tokens) > $this->limit) {
 			array_shift($tokens); 
 		
 		}
-
-
 		$_SESSION[$this->sessionKey] = $tokens; 
 		
 	}
 
-/*	private function validSession(){
-		if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-        var_dump($_SESSION); 
 
-        return $session = $_SESSION; 
-	}*/
-
-	public function getFormKey(): string
-	    {
+	public function getFormKey(){
 	        return $this->formKey;
 	    }
 
-	    private function getSession(){
-	    	if (array_key_exists('csrf', $_SESSION)){
-	    		$this->session = $_SESSION['csrf']; 
-	    		//unset($_SESSION['csrf']); 
 
-	    		return $this->session; 
-	    	}
-	    }
-
-
+    private function getSession(){
+    	if (array_key_exists('csrf', $_SESSION)){
+    		$this->session = $_SESSION['csrf']; 
+    		return $this->session; 
+    	}
+    }
 
 }

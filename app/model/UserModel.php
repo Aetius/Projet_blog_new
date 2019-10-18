@@ -1,15 +1,13 @@
 <?php
 namespace App\model;
 
-//use PDO;
-//use App\controller\UsersController;
+
 use App\model\AppModel;
 use App\utilities\Validator;
 
 
 class UserModel extends AppModel{
 
-	
 	private $name;
 	private $lastname;
 	private $email;
@@ -20,82 +18,8 @@ class UserModel extends AppModel{
 	private $dataBdd;
 	private $oldPassword;
 	private $passwordDecrypt;
-
 	private $activate; 
 	private $isAdmin; 
-
-
-/*	public function __construct(){
-		parent::__construct(); 
-		$this->bdd=(BDDConnection::Connection()); 
-	}*/
-
-
-
-
-
-/*private functions seaching datas in the bdd */
-/*	public function create(){		
-		
-		$request=$this->bdd->prepare('INSERT INTO users(name, last_name, email, login, password, role) VALUES(:name, :last_name, :email, :login, :password, :role)');
-		$request->execute(array(
-			'name'=>($this->name), 
-			'last_name'=>($this->lastname),
-			'email'=>($this->email),
-			'login'=>($this->login),
-			'password'=>($this->password),
-			'role'=>("editor")
-			));
-		$request->closeCursor();
-	}*/
-
-/*	public function readUser($login){
-		
-		$request=$this->bdd->prepare("SELECT name, email, role FROM users WHERE login =:login");
-		$request->execute(array(':login'=> $login));
-		$result=$request->fetch(PDO::FETCH_ASSOC);
-		$request->closeCursor(); 
-		return $result;
-	}*/
-
-/*
-	public function verifUse($value, $field){
-		
-		$request=$this->bdd->prepare("SELECT id FROM users WHERE $field=:field");
-		$request->execute(array(':field' => $value));
-		$result=$request->fetch(PDO::FETCH_ASSOC);
-		$request->closeCursor(); 
-		return $result;
-	}*/
-
-/*	public function loginPassword($value){
-		
-		$request=$this->bdd->prepare("SELECT password FROM users WHERE login=:login");
-		$request->execute(array( ':login'=>$value ));
-		$result=$request->fetch(PDO::FETCH_ASSOC);
-		$request->closeCursor(); 
-		return $result['password'];
-	}*/
-
-/*	public function modifData($login, $modif, $newValue){
-		
-		$request=$this->bdd->prepare ("UPDATE users SET $modif=:valueModif WHERE login=:login");
-		$result=$request->execute(array(
-			':login'=>$login,
-			':valueModif'=>$newValue));
-		$request->closeCursor(); 
-		return $result;
-	}*/
-
-/*	public function delete($login){
-		
-		$request=$this->bdd->prepare("DELETE FROM users WHERE login=:login");
-		$result=$request->execute(array(":login"=>$login));
-		$request->closeCursor(); 
-		return $result;
-	}*/
-
-
 
 
 	public function prepareInscription($inputs){
@@ -120,9 +44,7 @@ class UserModel extends AppModel{
 			'is_admin'=>("0")
 		);
 		return $this->recordValid('create', $fields);
-	
 	}
-
 
 
 	public function updatePassword($label){ 
@@ -134,6 +56,7 @@ class UserModel extends AppModel{
 		
 	}
 
+
 	public function updateEmail($label){ 
 		$fields['email']=$this->email;
 		$validationInput['email']=$fields; 
@@ -142,6 +65,7 @@ class UserModel extends AppModel{
 		}
 		return $this->validationUpdate($fields, $validationInput);  
 	}
+
 
 	public function updateAccount($label){
 		$fields['is_admin']=$this->isAdmin; 
@@ -160,8 +84,6 @@ class UserModel extends AppModel{
 	}
 
 
-
-
 	public function connexion(){ 
 		if (password_verify($this->password, $this->one('login', $this->login)['password'])){
 			return true;  
@@ -176,7 +98,6 @@ class UserModel extends AppModel{
 		$results = $this->update($update, $this->id); 
 		return $results; 
 	}
-
 
 
 	public function lostPassword(){
@@ -200,7 +121,6 @@ class UserModel extends AppModel{
 	}
 
 
-
 	private function oldPasswordConfirm($id){ 
 		if (!password_verify($this->oldPassword, $this->one('id', $id)['password'])){
 			$this->errors[]="L'ancien mot de passe n'est pas valide";
@@ -209,12 +129,7 @@ class UserModel extends AppModel{
 	}
 		
 	
-
-
-
-
-
-	/*setters*/
+/*setters*/
 
 	public function setId($value){
 		return $this->id = $value; 
@@ -252,8 +167,7 @@ class UserModel extends AppModel{
 				$this->passwordDecrypt = $value; 
 		}else{
 			return $this->errors[]="La confirmation du mot de passe est invalide";
-		}
-		
+		}		
 	}
 
 	public function setActivate($value){
@@ -266,7 +180,7 @@ class UserModel extends AppModel{
 
 
 	
-			/*getters*/
+/*getters*/
 	public function login(){
 		return $this->login;
 	}
@@ -280,23 +194,6 @@ class UserModel extends AppModel{
 	}
 
 
-
-
-
-
-	/*protected function getValidator($inputs, $key, $value){
-			return (new Validator($inputs))
-				->$key($value); 
-		
-	}*/
-
-/*	protected function validatorUpdate($inputs){  
-		$key = array_key_first($inputs);
-		return(new Validator($inputs))
-			->$key($key);
-	}*/
-
-	
 
 	protected function getValidator($inputs){
 		$fieldsExist= ['name', 'lastname', 'email', 'login', 'password', 'passwordConfirm']; 

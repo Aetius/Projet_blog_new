@@ -2,16 +2,16 @@
 
 namespace App\Model; 
 
-use App\Model\Model; 
+
 use \PDO; 
 use App\utilities\Purifier;
 use App\utilities\Validator;
 
-class AppModel extends Model{
+class AppModel{
 	protected $errors=[]; 
 	protected $id;
-
-
+	protected $db;
+	protected $table; 
 
 	public function hydrate($verifyInputs=[]){
 		$inputs=[]; 
@@ -21,7 +21,6 @@ class AppModel extends Model{
 			$value=Purifier::htmlPurifier($value);
 			
 			$function = "set".$key;
-			//$input = $value;
 			$inputs+= [$key=>$value];
 			 
 			if(method_exists(get_class($this), $function)){
@@ -31,12 +30,86 @@ class AppModel extends Model{
 		return $inputs; 
 	}
 	
+public function __construct (){
+		$this->db=(BDDConnection::connection());
+		if ($this->table === null){
+			$parts= explode("\\", get_class($this));
+			$this->table = strtolower(str_replace("Model", "", end($parts)))."s";
+		}
+	}
 
 
+	public function create($fields){ 
+		$sqlParams=[]; 
+		$attributes=[];
+		foreach ($fields as $key => $value) {
+			$sqlParams[]="$key=?";
+			$attributes[]= $value;
+		}
+		$sqlParams = implode(',', $sqlParams);
+		return $this->executeRequest("INSERT INTO {$this->table} SET $sqlParams", $attributes, true);
+	}
 
-/*
-* Verification of errors' array. If it's not empty, return errors. 
-*/
+
+	public function all(){ 
+		return $this->executeRequest("SELECT * FROM {$this->table} ORDER BY id DESC");
+	}
+
+
+	public function one($fieldName, $field){ 
+		return $this->executeRequest("SELECT * FROM {$this->table} WHERE $fieldName=:field", [":field"=>$field], true);
+	}
+
+
+	public function search($fieldName, $field){  
+		return $this->executeRequest("SELECT * FROM comments WHERE $fieldName=:fieldName ORDER BY id DESC", [":fieldName"=>$field]);
+	}
+
+
+	public function update($fields, $id){  
+		$sqlParams=[]; 
+		$attributes=[];
+		foreach ($fields as $key => $value) {
+			$sqlParams[]="$key=?";
+			$attributes[]= $value;
+		}
+ 		$sqlParams = implode(',', $sqlParams);
+ 	
+ 		$attributes[]=$id;
+ 		return $this->executeRequest("UPDATE {$this->table} SET $sqlParams WHERE id=?", $attributes, true);
+	}
+
+
+	public function delete($id, $field='id'){
+		return $this->executeRequest("DELETE FROM {$this->table} WHERE $field=:id", [":id"=>$id], true );
+	}
+
+
+	protected function executeRequest($statement, $attributes=null, $one=false){ 
+		if ($attributes){
+			$request= $this->db->prepare(
+				$statement
+			);
+		}else{
+			$request= $this->db->query(
+				$statement 
+			);
+		}
+
+		$result = $request->execute($attributes);
+		if (strpos($statement, 'SELECT') === 0){
+			if ($one){
+				$result = $request->fetch(PDO::FETCH_ASSOC); ;
+			}else{
+				$result = $request->fetchAll(PDO::FETCH_ASSOC); 
+			}
+		};		
+		$request->closeCursor(); 
+		return $result; 
+	
+	}
+
+
 	protected function isErrors($fields){
 		if (!empty($this->errors)){
 			$result['errors']=$this->errors;
@@ -48,34 +121,11 @@ class AppModel extends Model{
 	}
 	
 
-
-	/*
-	*@id if id needs (update, delete)
-	*verify errors
-	*launch request 
-	*return bool
-	**/
-	protected function recordValid($function, $fields)	{ 
-		/*$this->isErrors($fields);*/ //à supprimer et à mettre dans les fonctions mères.
-		/*if (!empty($this->errors)){
-			$result['errors']=$this->errors;
-			foreach ($fields as $key => $value) {
-				$result[$key]=$value; 
-			}var_dump($result); die();
-			return $result; 
-		}*/
+	protected function recordValid($function, $fields){ 		
+		$id=$this->id;
 		
-			$id=$this->id;
-		/*else{
-			$id =""; à voir si fonctionne. 
-		}   */
-
- 
 		if (($this->$function($fields, $id)!==true)){ 
 			$this->errors[]="L'enregistrement a échoué"; 
-			/*$result['errors']=$this->errors; 
-			return $result; 
-		*/
 		} 
 	}
 
@@ -83,7 +133,6 @@ class AppModel extends Model{
 /*
 *Verify if inputs are expected datas. 
 */
-
 	protected function validation($inputs, $validator="getValidator"){
 		$validator = $this->$validator($inputs);  
 		if ($validator->isValid()!= true){
@@ -106,16 +155,6 @@ class AppModel extends Model{
 		return $validator;
 	}
 
-/*each class had to redeclare this function getValidator, to define which validation must be done.  */
-	/*protected function getValidator($inputs){
-	}*/
 
-/*	protected function id(){
-		return $this->id; 
-	}*/
-
-/*	protected function errors(){
-		return $this->errors; 
-	}*/
 
 }

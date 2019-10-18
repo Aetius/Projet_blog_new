@@ -30,8 +30,6 @@ class ValidatorError{
 
 	public function errorMessage(){
 		$params = array_merge([$this->messages[$this->rule], $this->key], $this->attributes); 
-		//return (string)call_user_func_array('sprintf', $params);
-		//var_dump($params); die(); 
 		return call_user_func_array('sprintf', $params); 
 	}
 

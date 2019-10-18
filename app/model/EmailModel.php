@@ -12,21 +12,6 @@ class EmailModel extends AppModel{
 	private $email; 
 	private $message; 
 
-
-
-
-	protected function send($to, $subject, $message_content){
-		$content = '<html><body>';
-		$content .= '<p>'.nl2br($message_content).'</p>';
-		$content .='</body></html>';
-		$headers  = 'MIME-Version: 1.0' . "\r\n";
-		$headers .= 'Content-type: text/html; charset=utf-8' . "\r\n";
-		$headers .= 'FROM:' . 'dontomberry@outlook.com';
-		mail ($to, $subject, $content, $headers); 
-	}
-
-
-
 /*
 *lost password
 */
@@ -52,8 +37,6 @@ class EmailModel extends AppModel{
 			return $this->errors; 
 		}
 	}
-
-
 	
 
 /*
@@ -76,6 +59,16 @@ class EmailModel extends AppModel{
 	}
 
 
+
+	protected function send($to, $subject, $message_content){
+		$content = '<html><body>';
+		$content .= '<p>'.nl2br($message_content).'</p>';
+		$content .='</body></html>';
+		$headers  = 'MIME-Version: 1.0' . "\r\n";
+		$headers .= 'Content-type: text/html; charset=utf-8' . "\r\n";
+		$headers .= 'FROM:' . 'dontomberry@outlook.com';
+		mail ($to, $subject, $content, $headers); 
+	}
 
 
 	protected function getValidator($inputs){ 

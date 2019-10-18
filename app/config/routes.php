@@ -4,44 +4,8 @@ namespace App\config;
 
 
 $routes=(array(
-   
- 
-    
-    //array('GET','/connexion/update/[i:id]', 'article#showUpdate'),
-  //  array('POST','/connexion/update/[i:id]', 'article#updateArticle'),
-    /*array('GET', '/articles/delete/[i:id]', 'article#delete'),*/
-   /*dans articleController. méthode show*/
-   
-    /*array('GET', '/articles/[i:id]', 'article#showOneArticle'),*/
-
-  
-   
-   // array('POST', '/connexion/dashboard[/page]?[i:id]?', 'postConnexion#routes'),
-
-   
-    //array('POST', '/connexion/dashboard[/page]?[i:id]?', 'article#dashboard'),
-
-    //array('GET', '/connexion/dashboard[/page]?[i:id]?', 'user#showdashboard'),
-    //array('POST', '/connexion/dashboard[/page]?[i:id]?', 'article#dashboard'),
-
-    
-  
-    //array('GET', '/comment', 'comment#show'),
-    //array('GET', '/articles/comment', 'comment#show'), 
-   // array('POST', '/articles/comment', 'comment#show'),
-
-
-
- //array('DELETE', '/admin/articles/[i:id]', 'article#delete'), //pas de méthode delete accessible via un form. en tout cas, pas trouvé. 
-    
-
-
-
- 
-//pour les update, c'est un put
-array('POST', '/admin/users', 'user#dashboardAdmin'), 
+    array('POST', '/admin/users', 'user#dashboardAdmin'), 
     array('GET', '/admin/users', 'user#showDashboardAdmin'),
-    //array('DELETE', '/admin/articles/[i:id]', 'article#testDelete'),
     array('POST', '/admin/articles/[i:id]/delete', 'article#delete'), 
     array('POST', '/admin/articles/[i:id]/comments/delete', 'comment#delete'), 
     array('POST', '/admin/articles/[i:id]/comments', 'comment#update'), 
@@ -49,7 +13,6 @@ array('POST', '/admin/users', 'user#dashboardAdmin'),
     array('GET', '/admin/articles/[i:id]', 'article#showOneAdmin'),
     array('GET', '/admin/articles[/page/]?[i:id]?', 'article#showAllAdmin'),
     array('POST', '/admin/articles', 'article#updatePublication'),
-
     array('POST', '/admin/comments/delete', 'comment#delete'),
     array('GET', '/admin/comments', 'comment#showDashboard'),  
     array('POST', '/admin/comments', 'comment#update'),
@@ -68,8 +31,6 @@ array('POST', '/admin/users', 'user#dashboardAdmin'),
     array('GET', '/articles[/page/]?[i:id]?', 'article#showAll'),  
     array('GET', '/password', 'user#showLost'), 
     array('POST', '/password', 'user#lostPassword'), 
-   // array('GET', '/articles', 'article#showAll'),
     array('POST', '/contact', 'email#contact'),  
     array('GET', '/', 'home')
-  //array('DELETE','/users/[i:id]', 'users#delete', 'delete_user')
 ));

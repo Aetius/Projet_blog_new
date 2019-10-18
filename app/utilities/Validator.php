@@ -6,14 +6,7 @@ use App\utilities\ValidatorError;
 
 class Validator{
 	
-	/**
-	*@var array
-	*/
 	private $params;
-
-	/**
-	*@var string[]
-	*/
 	private $errors=[];
 
 
@@ -22,14 +15,14 @@ class Validator{
 		$this->params = $params;
 	}
 
-	public function required($keys){                   ///keys est un tableau, contenant clé et valeur. à rapprocher de l'hydratation. 
+	public function required($keys){                 
 		foreach ($keys as $key) {  
 			$value=$this->getValue($key); 
 			if (is_null($value)){
 				 $this->addError($key, 'required');
 			}
 		}
-		return $this; ///sert à retourner l'objet pour continuer les tests. 
+		return $this; 
 	}
 
 
@@ -70,19 +63,14 @@ class Validator{
 		}return $this;
 	}
 
-    public function isBool/*is_admin*/($key){ 
+    public function isBool($key){ 
          $value = $this->getValue($key); var_dump($this->params); 
          if (!preg_match("#[0|1]#", $value)){
             $this->addError($key, 'number'); 
         }return $this; 
     }
 
-     /*  public function activate($key){
-         $value = $this->getValue($key); 
-         if (!preg_match("#[0|1]#", $value)){
-            $this->addError($key, 'number'); 
-        }return $this; 
-    }*/
+   
 
     public function isInt($key){
          $value = $this->getValue($key); 
@@ -93,7 +81,7 @@ class Validator{
     }
 
 
-	public function notEmpty($keys) {  
+	public function notEmpty($keys){  
         foreach ($keys as $key) { 
             $value = $this->getValue($key); 
             if (is_null($value) || empty($value)) {
@@ -103,7 +91,7 @@ class Validator{
         return $this;
     }
 
-    public function length(string $key, ?int $min, ?int $max = null): self{ 
+    public function length($key, $min, $max = null){ 
         $value = $this->getValue($key); 
         $length = mb_strlen($value);
         if (
@@ -130,24 +118,8 @@ class Validator{
         return $this;
     }
 
-    /**
-     * Vérifie que l'élément est un slug
-     *
-     * @param string $key
-     * @return Validator
-     */
-    public function slug(string $key): self
-    {
-        $value = $this->getValue($key);
-        $pattern = '/^([a-z0-9]+-?)+$/';
-        if (!is_null($value) && !preg_match($pattern, $value)) {
-            $this->addError($key, 'slug');
-        }
-        return $this;
-    }
 
-    public function dateTime (string $key, string $format = "Y-m-d H:i:s"): self
-    {
+    public function dateTime ($key, $format = "Y-m-d H:i:s"){
         $value = $this->getValue($key);
         $date = \DateTime::createFromFormat($format, $value);
         $errors = \DateTime::getLastErrors();
@@ -157,34 +129,22 @@ class Validator{
         return $this;
     }
 
-    public function isValid(): bool
-    {
+    public function isValid(){
         return empty($this->errors);
     }
 
-    /**
-     * Récupère les erreurs
-     * @return ValidationError[]
-     */
-    public function getErrors(): array
-    {
+  
+    public function getErrors(){
         return $this->errors;
     }
 
-    /**
-     * Ajoute une erreur
-     *
-     * @param string $key
-     * @param string $rule
-     * @param array $attributes
-     */
-    private function addError(string $key, string $rule, array $attributes = []): void
-    {
+    
+    private function addError($key, $rule, $attributes = []){
         $this->errors[] = (new ValidatorError($key, $rule, $attributes))->errorMessage();
-        //echo $this->errors[$key];die(); pour pouvoir lire les données. __toString convertit l'objet en chaine, et met les params. 
     }
 
-    private function getValue(string $key){ 
+
+    private function getValue($key){ 
         if (array_key_exists($key, $this->params)) {
             return $this->params[$key];
         }

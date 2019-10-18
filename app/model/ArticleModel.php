@@ -2,8 +2,7 @@
 
 namespace App\Model; 
 
-//use PDO;
-/*use App\utilities\Purifier;*/
+
 use App\utilities\Validator;
 use App\model\AppModel; 
 use App\utilities\AppFactory;
@@ -12,18 +11,16 @@ use App\utilities\AppFactory;
 
 
 class ArticleModel extends AppModel{
-	//private $bdd;
+
 	private $description;
 	private $dateCreation;
 	private $content;
-	
 	private $published=null; 
 	private $publishedDate=null; 
 	private $title; 
 	private $authorId; 
 
 
-/*functions calling*/
 	public function allArticles(){
 		$articles = $this->all(); 
 		foreach ($articles as $key => $value) {
@@ -74,21 +71,7 @@ class ArticleModel extends AppModel{
 	}
 
 
-	public function prepareCreate($inputs){ 
-/*
-		if (isset($_SESSION['user']['id'])){
-			$result = $this->hydrate($_SESSION['user']);
-			$this->setAuthorId($result['id']);
-			
-		}else{
-			$factory = AppFactory::getInstance(); 
-			$userModel = $factory->getModel('user');
-			$result = $this->hydrate($_SESSION['access']);
-			$id = $userModel->one('login', $result['login']); 
-			$this->setAuthorId($id['id']); 
-		}*/
-
-			
+	public function prepareCreate($inputs){ 	
 		$this->validation($inputs);
 		$article=$this->one('title',$this->title);  
 		if ((($article['title'])===($this->title))){ 
@@ -113,10 +96,7 @@ class ArticleModel extends AppModel{
 	}
 
 
-
-
-
-	/*getters*/
+/*getters*/
 
 	public function errors(){
 		return $this->errors;
@@ -138,11 +118,6 @@ class ArticleModel extends AppModel{
 		return $this->id; 
 	}
 
-	////////////////setters///////////////
-	/*public function setVerification($Purifier){
-		return \App\utilities\Purifier::htmlPurifier($Purifier);
-	}*/
-
 	public function setDate(){
 		$datetime = getdate(); 
 		$date = $datetime['year']."-".$datetime['mon']."-".($datetime['mday']); 
@@ -151,31 +126,23 @@ class ArticleModel extends AppModel{
 
 
 	public function setTitle($input){  
-		//$name = $this->setVerification($name);
-			return $this->title = $input;
+		return $this->title = $input;
 	}
 
 	public function setDescription($name){
-		//$name = $this->setVerification($name);
 		return $this->description=$name; 
 	}
 
 	public function setContent($name){
-		//$name = $this->setVerification($name);
 		return $this->content=$name; 
 
 	}
 
 	public function setPublished($name){
-		
-		//$name = $this->setVerification($name);
-		
-			return $this->published=$name; 
-	
+		return $this->published=$name; 
 	}
 
 	public function setPublishedDate($name){
-		//$name=htmlentities($name);
 		$nameVerify=explode("-", $name);
 		if (checkdate($nameVerify["1"], $nameVerify["2"], $nameVerify["0"])){
 			if ($this->published === "1"){ 
@@ -190,7 +157,6 @@ class ArticleModel extends AppModel{
 		if ($this->one( 'id', $name)){
 			return $this->id = $name; 
 		}
-		//$name = $this->setVerification($name);
 	}
 
 	public function setAuthorId($name){ 
@@ -198,10 +164,7 @@ class ArticleModel extends AppModel{
 	}
 
 
-	
-
-	protected function getValidator($inputs){
-		
+	protected function getValidator($inputs){		
 		return(new Validator($inputs))
 			->length('content', 1)
 			->length('description', 1)
