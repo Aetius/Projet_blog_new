@@ -31,7 +31,7 @@ $request = ServerRequest::fromGlobals(); //permet de créer une requête à part
 
 $response = new Response(); 
 
-$dispatcher = new Dispatcher();
+$dispatcher = new Dispatcher();  
 $dispatcher
 	->pipe(new TrailingSlash())
 	->pipe(new CsrfMiddleware())
@@ -45,7 +45,7 @@ $page=new \App\controller\TwigController();
 /*
 *routeur altorouteur. 
 **/
-//var_dump($match); var_dump($_SERVER); die(); 
+//var_dump($_SERVER); die(); 
 if(is_array($match)){ 
 	if (preg_match('/#/', $match['target'])){ 
 		$params = explode('#', $match['target']);

@@ -6,6 +6,8 @@ use App\controller\UserController;
 
 class Auth{
 
+	private $url; 
+
 	public function process($request, $delegate){ 
 		$response = $delegate->process($request); 
 		$target = $request->getRequestTarget();  
@@ -16,7 +18,7 @@ class Auth{
 
 			 if ($result !== true){
 			 	return $response
-					->withHeader('Location', $result)
+					->withHeader('Location', $this->url)
 					->withStatus(302); 
 			 }else{ 
 				return $response;
@@ -28,20 +30,25 @@ class Auth{
 
 
 	private function adminVerif($auth){
-		if($auth->adminAccess() !== true){
-			return $url = '/admin/comments';
-		}else{
-			return true; 
+		if (array_key_exists('user', $_SESSION)){
+			if ($_SESSION['user']['is_admin']==="1"){
+				return true; 
+			}
 		}
+		$this->url = '/admin/dashboard';
+		return false; 
 	}
 
+	
 
-	private function editorVerif($partsTarget){
+
+	private function editorVerif($partsTarget){ 
 		$auth= new UserController(); 
 		
 		if ($auth->editorAccess() !== true){ 
-			return $url = '/admin'; 
-		}elseif ($partsTarget === "users"){
+			$this->url = '/admin';
+			return false; 
+		}elseif ($partsTarget === "users"){ 
 			return $this->adminVerif($auth); 
 		}else{
 			return true;

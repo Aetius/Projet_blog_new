@@ -8,7 +8,7 @@ use App\utilities\Validator;
 class EmailModel extends AppModel{
 
 	private $name; 
-	private $surname; 
+	private $lastName; 
 	private $email; 
 	private $message; 
 
@@ -18,7 +18,7 @@ class EmailModel extends AppModel{
 
 	public function preparePassword($password, $inputs){
 		$to = $inputs['email'];
-		$subject= "Récupération du mot de passe - site Thomas Brumain";
+		$subject= "Récupération du mot de passe - site L-M";
 		$message_content = "Bonjour ".$inputs['login']."; <p>Vous trouverez votre mot de passe provisoire. Merci de vous connecter et de le modifier dans votre espace personnel</p> <p>Votre mot de passe est $password.</p> <p>N'hésitez pas à revenir vers votre administrateur de site pour tout problème.</p> <p>Cordialement</p>"; 
 		$this->send($to, $subject, $message_content);
 		
@@ -27,15 +27,15 @@ class EmailModel extends AppModel{
 /*
 *contact form
 */
-	public function prepareContact($inputs){
-		if ($this->validation($inputs) ==  true){
+	public function prepareContact($inputs){ 
+		if (empty($this->validation($inputs))){
 			$to = 'thomas.brumain@hotmail.fr';
-			$subject= 'Message envoyé par ' . $this->surname .' '. $this->name .'__'.'Email : '.$this->email ;
+			$subject= 'Message envoyé par ' . $this->lastName .' '. $this->name .'__'.'Email : '.$this->email ;
 			$message_content = $this->message;
 			$this->send($to, $subject, $message_content);
-		}else{
-			return $this->errors; 
-		}
+		};
+		return $this->errors; 
+		
 	}
 	
 
@@ -46,8 +46,8 @@ class EmailModel extends AppModel{
 		return $this->name = $value; 
 	}
 
-	public function setSurname($value){
-		return $this->surname = $value; 
+	public function setLastName($value){
+		return $this->lastName = $value; 
 	}
 
 	public function setEmail($value){
@@ -67,6 +67,7 @@ class EmailModel extends AppModel{
 		$headers  = 'MIME-Version: 1.0' . "\r\n";
 		$headers .= 'Content-type: text/html; charset=utf-8' . "\r\n";
 		$headers .= 'FROM:' . 'dontomberry@outlook.com';
+		
 		mail ($to, $subject, $content, $headers); 
 	}
 

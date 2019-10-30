@@ -80,12 +80,12 @@
 				{% if session.user.is_admin == 0 %}
 					<div class="col-md-12 my-5 py-5 bg-light">
 						<div class="text-center">
-							<h4>Suppression de votre compte </h4>
-							<p class="font-weight-light">(Cette action est irréversible)</p>
+							<h4>Désactivation de votre compte </h4>
+							<p class="font-weight-light">(Pour supprimer le compte, merci de prendre contact avec l'administrateur.)</p>
 						</div>
-						<div class="col-md-10 d-flex justify-content-end pt-3">
+						<div class="col-md-12 d-flex justify-content-center pt-3">
 							<form class="" method="post">{{ csrf_input() }}
-								<button class="btn btn-primary confirmClose" type="submit" name="activate" value="0">Supprimer</button>
+								<button class="btn btn-primary confirmClose" type="submit" name="activate" value="0">Désactiver</button>
 							</form>
 						</div>
 					</div>

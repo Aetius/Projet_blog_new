@@ -8,7 +8,7 @@ use View\twigView;
 
 
 
-class EmailController extends controller{
+class EmailController extends Controller{
 	private $modelEmail; 
 
 
@@ -22,15 +22,15 @@ class EmailController extends controller{
 		$inputs =$this->modelEmail->hydrate($_POST); 
 		$errors = $this->modelEmail->prepareContact($inputs);
 		
-		if ( !isset($errors)){
+		if (empty($errors)){
 			$_SESSION['success']['1'] = "La demande de contact a bien été envoyée!";
-			header("location:/#contact"); 
-		}else{
-			$_SESSION['success']['2']= "Echec lors de l'envoi du mail."; 
-			$results['errors']=$this->modelEmail->errors(); 
-			$results['contact']=$inputs; 
-			$this->show('homePage', $results); 
-		}
+			return header("location:/#contact"); 
+		};
+		$_SESSION['success']['2']= "Echec lors de l'envoi du mail."; 
+		$results['errors']=$errors; 
+		$results['contact']=$inputs; 
+		return $this->show('homePage', $results); 
+		
 	}
 
 }

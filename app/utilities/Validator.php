@@ -64,7 +64,7 @@ class Validator{
 	}
 
     public function isBool($key){ 
-         $value = $this->getValue($key); var_dump($this->params); 
+         $value = $this->getValue($key);
          if (!preg_match("#[0|1]#", $value)){
             $this->addError($key, 'number'); 
         }return $this; 

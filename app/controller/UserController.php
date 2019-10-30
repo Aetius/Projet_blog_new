@@ -70,13 +70,7 @@ class UserController extends Controller{
 	}
 
 
-	public function adminAccess(){
-		if (array_key_exists('user', $_SESSION)){
-			if ($_SESSION['user']['is_admin']==="1"){
-				return true; 
-			}
-		}
-	}
+	
 	
 
 
@@ -104,11 +98,11 @@ class UserController extends Controller{
 		if ($results !== false){
 			$modelEmail = $this->factory->getModel('Email'); 
 			$modelEmail->preparePassword($results, $inputs); 
-			header('location:/admin'); 
-		}else{
-			$_SESSION['success'][2]= "Login ou adresse email invalide"; 
-			header("location:/password"); 
+			return header('location:/admin'); 
 		}
+		$_SESSION['success'][2]= "Login ou adresse email invalide"; 
+		return header("location:/password"); 
+		
 	}
 
 
@@ -127,10 +121,9 @@ class UserController extends Controller{
 		if($results == null){ 
 			$_SESSION['success'][1]="L'inscription est effectuée !";
 			return header('Location:/admin/users');
-		}else{
-			$_SESSION['success'][2]="L'inscription a échoué !";
-			$this->show("inscriptionPage", $results);		
 		}
+		$_SESSION['success'][2]="L'inscription a échoué !";
+		return $this->show("inscriptionPage", $results);		
 	}
 
 
@@ -170,11 +163,11 @@ class UserController extends Controller{
 		if( $results !== null){
 			$_SESSION['success'][2]= "La modification a échouée"; 
 			return $results;
-		} else{
-			$_SESSION['success'][1]="La modification a bien été prise en compte"; 
-			$this->editorAccess(); 
-			return header("location:/admin/$page");
 		}
+		$_SESSION['success'][1]="La modification a bien été prise en compte"; 
+		//$this->editorAccess(); 
+		return header("location:/admin/$page");
+		
 	}
 
 
@@ -182,19 +175,17 @@ class UserController extends Controller{
 		$input = $_POST; 
 		$input['id']=$id;  
 		$this->modelUser->hydrate($input); 
+
 		if ($this->modelUser->desactivate($id)){
 			unset ($_SESSION['access']);
 			unset ($_SESSION['user']);
 			$_SESSION['success'][1]="La désactivation du compte a bien été prise en compte. Pour le réactiver ou le supprimer, merci de contacter l'administrateur du site. "; 
-			header('location:/admin');
-		}else{
-			$_SESSION['success'][2]="Erreur lors de la désactivation. Merci de contacter l'administrateur du site.";
-			header('location:/admin/settings');
+			return header('location:/admin');
 		}
+		$_SESSION['success'][2]="Erreur lors de la désactivation. Merci de contacter l'administrateur du site.";
+		return header('location:/admin/settings');
+		
 	}
-
-
-
 
 
 }

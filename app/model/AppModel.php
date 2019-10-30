@@ -13,6 +13,16 @@ class AppModel{
 	protected $db;
 	protected $table; 
 
+
+	public function __construct (){
+		$this->db=(BDDConnection::connection());
+		if ($this->table === null){
+			$parts= explode("\\", get_class($this));
+			$this->table = strtolower(str_replace("Model", "", end($parts)))."s";
+		}
+	}
+
+
 	public function hydrate($verifyInputs=[]){
 		$inputs=[]; 
 		
@@ -30,15 +40,11 @@ class AppModel{
 		return $inputs; 
 	}
 	
-public function __construct (){
-		$this->db=(BDDConnection::connection());
-		if ($this->table === null){
-			$parts= explode("\\", get_class($this));
-			$this->table = strtolower(str_replace("Model", "", end($parts)))."s";
-		}
-	}
 
 
+/**
+*prepare requests
+*/
 	public function create($fields){ 
 		$sqlParams=[]; 
 		$attributes=[];
@@ -62,7 +68,7 @@ public function __construct (){
 
 
 	public function search($fieldName, $field){  
-		return $this->executeRequest("SELECT * FROM comments WHERE $fieldName=:fieldName ORDER BY id DESC", [":fieldName"=>$field]);
+		return $this->executeRequest("SELECT * FROM {$this->table} WHERE $fieldName=:fieldName ORDER BY id DESC", [":fieldName"=>$field]);
 	}
 
 
@@ -83,6 +89,7 @@ public function __construct (){
 	public function delete($id, $field='id'){
 		return $this->executeRequest("DELETE FROM {$this->table} WHERE $field=:id", [":id"=>$id], true );
 	}
+
 
 
 	protected function executeRequest($statement, $attributes=null, $one=false){ 
@@ -132,9 +139,10 @@ public function __construct (){
 
 /*
 *Verify if inputs are expected datas. 
+*params in models
 */
 	protected function validation($inputs, $validator="getValidator"){
-		$validator = $this->$validator($inputs);  
+		$validator = $this->$validator($inputs);   
 		if ($validator->isValid()!= true){
 			return $this->errors =  $validator->getErrors();
 		}	

@@ -16,7 +16,10 @@ class CommentModel extends AppModel{
 	private $articleId; 	
 	private $adminAnswer=null; 
 	 
-	
+
+/**
+* validations datas before execution in db
+*/
 	public function PrepareUpdate($inputs){ 
 		$validationInput['isBool']['published']=$inputs['published']; 
 		$this->validation($validationInput, "getValidatorUpdate");   
@@ -98,7 +101,9 @@ class CommentModel extends AppModel{
 	}
 
 
-	
+/**
+*generic validator 
+*/
 	protected function getValidator($inputs){
 		return(new Validator($inputs))
 			->length('comment', 5)

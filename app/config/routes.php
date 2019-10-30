@@ -12,7 +12,7 @@ $routes=(array(
     array('POST', '/admin/articles/[i:id]', 'article#updateArticle'), 
     array('GET', '/admin/articles/[i:id]', 'article#showOneAdmin'),
     array('GET', '/admin/articles[/page/]?[i:id]?', 'article#showAllAdmin'),
-    array('POST', '/admin/articles', 'article#updatePublication'),
+    array('POST', '/admin/articles[/page/]?[i:id]?', 'article#updatePublication'),
     array('POST', '/admin/comments/delete', 'comment#delete'),
     array('GET', '/admin/comments', 'comment#showDashboard'),  
     array('POST', '/admin/comments', 'comment#update'),

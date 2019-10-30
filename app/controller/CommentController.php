@@ -9,13 +9,14 @@ class CommentController extends Controller{
 	private $modelComment ; 
 	
 
+/**
+*show functions 
+*/
 	public function __construct(){
 		$this->modelComment = new CommentModel(); 
 		parent::__construct(); 
 	}
 		
-
-
 	public function showDashboard(){
 		$comments = $this->modelComment->all();
 		$modelArticle = $this->factory->getModel('Article'); 
@@ -34,7 +35,9 @@ class CommentController extends Controller{
 		return $this->modelComment->all();  
 	}
 
-
+/**
+*results expect str or null
+*/
 	public function create(){ 
 		$inputs = $this->modelComment->hydrate($_POST); 
 		$results= $this->modelComment->prepareCreate($inputs); 
@@ -48,7 +51,9 @@ class CommentController extends Controller{
 		
 	}
 
-
+/**
+*result expects str or null
+*/
 	public function update(){  
 		$page = $_SERVER['HTTP_REFERER'];
 		$inputs = $this->modelComment->hydrate($_POST); 
@@ -62,12 +67,14 @@ class CommentController extends Controller{
 		header("location:$page"); 
 	}
 
-
+/**
+*result expects bool
+*/
 	public function delete (){ 
 		$page = $_SERVER['HTTP_REFERER'];
 		$inputs = $this->modelComment->hydrate($_POST);
-		$result = $this->modelComment->delete($inputs['id']); 
-		if ( $result == null){
+		$result = $this->modelComment->delete($inputs['id']);  
+		if ( $result == true){
 			$_SESSION['success']['1']='Le commentaire est supprimé.';
 		}else{
 			$_SESSION['success']['2']="Echec de la suppression."; 

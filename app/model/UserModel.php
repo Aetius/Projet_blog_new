@@ -22,6 +22,9 @@ class UserModel extends AppModel{
 	private $isAdmin; 
 
 
+/**
+*functions prepare before requests
+*/
 	public function prepareInscription($inputs){
 		$this->validation($inputs); 
 		
@@ -46,16 +49,16 @@ class UserModel extends AppModel{
 		return $this->recordValid('create', $fields);
 	}
 
-
+/**
+*validation of datas before send to update
+*/
 	public function updatePassword($label){ 
 		$this->oldPasswordConfirm($this->id); 
 		$fields[$label]= $this->passwordDecrypt;
 		$validationInput['password']=$fields; 	
 
 		return $this->validationUpdate($fields, $validationInput); 
-		
 	}
-
 
 	public function updateEmail($label){ 
 		$fields['email']=$this->email;
@@ -75,13 +78,7 @@ class UserModel extends AppModel{
 	}
 
 
-	private function validationUpdate($inputs, $validationInput){  
-		$this->validation($validationInput, 'getValidatorUpdate'); 
-		if (!empty($this->errors)){
-			return $this->isErrors($inputs); 
-		}
-		return($this->recordValid('update', $inputs));
-	}
+	
 
 
 	public function connexion(){ 
@@ -109,6 +106,18 @@ class UserModel extends AppModel{
 			}
 		}
 		return false; 
+	}
+
+/**
+*valide if there's an error, and return if update is done 
+*return a bool
+*/
+	private function validationUpdate($inputs, $validationInput){  
+		$this->validation($validationInput, 'getValidatorUpdate'); 
+		if (!empty($this->errors)){
+			return $this->isErrors($inputs); 
+		}
+		return($this->recordValid('update', $inputs));
 	}
 
 

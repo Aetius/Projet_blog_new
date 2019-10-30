@@ -20,6 +20,7 @@
         "ezyang/htmlpurifier":">=4", 
         "psr/http-message": "^1.0",
         "psr/http-server-middleware":"^1.0.1",
+        "http-interop/response-sender": "^1.0",
         "guzzlehttp/guzzle": "^6.3"
     }, 
     "require-dev": {

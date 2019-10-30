@@ -15,8 +15,11 @@ class ArticleController extends Controller{
 	}
 
 
+/**
+*functions show public
+*/
 	public function showAll($idPage){  	
-		$results['articles'] = $this->allArticles(); 
+		$results['articles'] = $this->allArticlesPublished(); 
 		$results = $this->articleDisplay($results, $idPage); 
 
 		$this->show("/public/dashboard", $results);
@@ -28,13 +31,15 @@ class ArticleController extends Controller{
 		if (!$results['article']){
 			header("location:/articles");
 		}else{
-			$articles= $this->allArticles(); 
+			$articles= $this->allArticlesPublished(); 
 			$results["comments"] = $this->commentsByArticle($this->modelArticles->id());
 			$this->show("/createComment", $results, $articles);
 		};
 	}
 
-
+/**
+*functions show admin
+*/
 	public function showDashboard(){
 		$results['articles']=$this->allArticles();
 		$results['comments']=$this->allComments(); 
@@ -53,13 +58,13 @@ class ArticleController extends Controller{
 	public function showOneAdmin($id, $inputsError=[]){ 
 		$results['article']= $this->oneArticle($id);  
 		if (!$results['article']){
-			header("location:/admin/articles");
-		}else{
-			$articles= $this->allArticles();  
-			$results["comments"] = $this->commentsByArticle($this->modelArticles->id());
-			$results = $results + $inputsError; 
-			$this->show("/admin/article", $results, $articles);
-		};
+			return header("location:/admin/articles");
+		}
+		$articles= $this->allArticles();  
+		$results["comments"] = $this->commentsByArticle($this->modelArticles->id());
+		$results = $results + $inputsError; 
+		return $this->show("/admin/article", $results, $articles);
+		
 	}
 
 		
@@ -68,6 +73,9 @@ class ArticleController extends Controller{
 	}
 
 
+/**
+*result expects str or null
+*/
 	public function create(){  
 		$input['authorId']= $_SESSION['user']['id']; 
 		$inputs = $this->modelArticles->hydrate($input); 
@@ -76,25 +84,17 @@ class ArticleController extends Controller{
  
 		if ($result===null){
 			$_SESSION["success"][1]= "L'article est crée";
-			header("location:/admin/dashboard");
-		}else{
-			$_SESSION["success"][2]="Impossible de créer l'article";
-			$this->show('/admin/create', $result);	
+			return header("location:/admin/dashboard");
 		}
+		$_SESSION["success"][2]="Impossible de créer l'article";
+		return $this->show('/admin/create', $result);	
+		
 	}
 
-
-	public function updatePublication(){  
-		$this->update($_POST, 'prepareUpdatePublished'); 
-	}
-
-
-	public function updateArticle($idArticle){ 
-		$inputs = $_POST;
-		$inputs["id"]=$idArticle; 
-		$this->update($inputs, "prepareUpdate"); 
-	}
-
+/**
+*verify if article and its comments are delete
+*return true or false
+*/
 
 	public function delete(){ 
 		$inputs = $this->modelArticles->hydrate($_POST); 
@@ -113,6 +113,27 @@ class ArticleController extends Controller{
 	}
 
 
+/**
+*update routes. 
+*/
+	public function updatePublication(){   
+		$this->update($_POST, 'prepareUpdatePublished'); 
+		$page = explode('/', $_SERVER['REQUEST_URI']); 
+		$page = intval(end($page)); 
+		
+		if ($page == 0 ){
+			$page = 1; 
+		}
+		header("location:/admin/articles/page/$page");
+	}
+
+
+	public function updateArticle($idArticle){ 
+		$inputs = $_POST;
+		$inputs["id"]=$idArticle; 
+		$this->update($inputs, "prepareUpdate"); 
+		return header("location:/admin/articles");
+	}
 
 
 	private function update($inputsVerif, $method){ 
@@ -121,17 +142,25 @@ class ArticleController extends Controller{
 
 		if (is_null($result)){ 
 			$_SESSION["success"][1]="Mise à jour de l'article effectuée";
-			return header("location:/admin/articles");
-		}else{
-			$_SESSION["success"][2]="La mise à jour de l'article a échoué"; 
-			$result['errors']= $this->modelArticles->errors(); 
-			return $this->showOneAdmin($result['inputsError']['id'], $result); 
+			return $result; 
 		}
+		$_SESSION["success"][2]="La mise à jour de l'article a échoué"; 
+		$result['errors']= $this->modelArticles->errors(); 
+		return $this->showOneAdmin($result['inputsError']['id'], $result); 
+		
 	}
 
 
+/**
+*articles and comments functions
+*/
 	private function allArticles(){
 		$allArticles=$this->defineAllUsers($this->modelArticles->all()); 
+		return $allArticles; 
+	}
+
+	private function allArticlesPublished(){
+		$allArticles=$this->defineAllUsers($this->modelArticles->search('publicated', '1')); 
 		return $allArticles; 
 	}
 
@@ -146,6 +175,10 @@ class ArticleController extends Controller{
 		}
 	}
 
+
+/**
+*comments functions
+*/
 	private function allComments(){
 		$modelComment = $this->factory->getModel('Comment'); 
 		return $modelComment->all();
@@ -157,6 +190,9 @@ class ArticleController extends Controller{
 	}
 
 
+/**
+*users functions
+*/
 	private function defineAllUsers($articles){ 
 		foreach ($articles as $key => $value) {    
 		$user = $this->defineUser($value["author_id"]);
@@ -174,6 +210,9 @@ class ArticleController extends Controller{
 	}
 
 
+/**
+*define which articles will be display in one page. 
+*/
 	private function articleDisplay($results, $idPage){
 		$articlesByPage = 10; 
 		$lenArticles = count($results['articles']); 
