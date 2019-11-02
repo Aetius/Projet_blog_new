@@ -1,5 +1,5 @@
 
 vendor
 a lire.txt
-public/tinymce.*
-public/images.*
+public/tinymce/tinymce.*
+public/images
