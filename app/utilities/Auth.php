@@ -48,7 +48,8 @@ class Auth{
 		if ($auth->editorAccess() !== true){ 
 			$this->url = '/admin';
 			return false; 
-		}elseif ($partsTarget === "users"){ 
+		}
+		if ($partsTarget === "users"){ 
 			return $this->adminVerif($auth); 
 		}else{
 			return true;

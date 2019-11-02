@@ -34,7 +34,7 @@ class UserController extends Controller{
 
 
 	public function showSettings($results=[]){	
-		$this->show('settings');
+		$this->show('settings', $results);
 	}
 
 
