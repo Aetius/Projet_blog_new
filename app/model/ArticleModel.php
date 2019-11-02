@@ -118,6 +118,8 @@ class ArticleModel extends AppModel{
 		return $this->id; 
 	}
 
+/*setters*/
+
 	public function setDate(){
 		$datetime = getdate(); 
 		$date = $datetime['year']."-".$datetime['mon']."-".($datetime['mday']); 
