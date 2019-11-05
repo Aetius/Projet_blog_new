@@ -16,96 +16,106 @@ class UserController extends Controller{
 	}
 
 
-/*show functions */
-
+	/**
+	 *@return page connexion
+	 */
 	public function showConnexion(){
 		if (isset($_SESSION['access'])){
 			if (($_SESSION['access']['auth'])==='valide'){
-				header('Location:/admin/dashboard');
+				return header('Location:/admin/dashboard');
 			}	
 		}
 		$this->show("connexionPage");
 	}
 
-
+	/**
+	 *@return page inscritpion in admin area
+	 */
 	public function showInscription(){ 
 		$this->show("inscriptionPage");
 	}
 
-
+	/**
+	 *@return page settings in admin area
+	 */
 	public function showSettings($results=[]){	
 		$this->show('settings', $results);
 	}
 
 
+/*this function is not use
 	public function showPage(){
 		$parts = explode("::", __METHOD__);
 		$page = $parts[1]; 
 		$this->show($page."Page");
-	}
+	}*/
 
 
+	/**
+	 *@return page dashboard in admin area
+	 */
 	public function showDashboardAdmin($results=[]){
 		$results['users']=$this->modelUser->all(); 
 		$this->show('users', $results); 
 	}
 
-
+	/**
+	 *@return page password
+	 */
 	public function showLost(){
 		$this->show('password');
 	}
 
 
-/*
-* verify user's access in the auth utilities.
-**/
-	public function editorAccess(){ 
-		if (array_key_exists('access', $_SESSION)) {
-			if ($_SESSION['access']['auth'] ==='valide'){
-				$login = $_SESSION['access']['login'];
-				($_SESSION['user']=$this->modelUser->one('login', $login)); 
-				return true;
-			}
-		}
-	}
 
 
-	
-	
-
-
-/*connexion, logout and verification of login and password*/
+	/**
+	 *Verify if user can access restricted area
+	 *Put user informations in $_SESSION
+	 *@return show function
+	 */
 	public function connexion(){ 
 		$this->modelUser->hydrate($_POST);
-		$result = $this->modelUser->connexion();
-		if ($result === true){
-			$_SESSION['user']=$this->modelUser->one('login', $this->modelUser->login());  
-			if ($_SESSION['user']['activate'] == 1){
-				$_SESSION['access']=['auth'=>'valide', 'login'=>$this->modelUser->login()];
-				$_SESSION['success'][1]= "Vous êtes connecté"; 
-				return header('location: admin/dashboard');
-			}
+		 
+		if (!$this->modelUser->connexion()){
+			$_SESSION['success'][2]= "Le couple identifiant/mot de passe est incorrect"; 
+			return header("location:/admin");
+		};
+
+		$_SESSION['user']=$this->modelUser->one('login', $this->modelUser->login());  
+		
+		if ($_SESSION['user']['activate'] != 1){
+			$_SESSION['success'][2]= "Le compte est désactivé. Merci de contacter l'administrateur du site"; 
+			return header("location:/admin");
 		}
-		$_SESSION['success'][2]= "Le couple identifiant/mot de passe est incorrect"; 
-		$this->show('connexionPage');
+		
+		$_SESSION['access']=['auth'=>'valide', 'login'=>$this->modelUser->login()];
+		$_SESSION['success'][1]= "Vous êtes connecté"; 
+		return header('location: admin/dashboard');
 	}
 
 
+	/**
+	 *Send a new passeword to the user
+	 *@return page
+	 */
 	public function lostPassword(){
 		$inputs=$this->modelUser->hydrate($_POST); 
-		$results = $this->modelUser->lostPassword(); 
-		
-		if ($results !== false){
-			$modelEmail = $this->factory->getModel('Email'); 
-			$modelEmail->preparePassword($results, $inputs); 
-			return header('location:/admin'); 
+	
+		if ($this->modelUser->lostPassword() == false){
+			$_SESSION['success'][2]= "Login ou adresse email invalide"; 
+			return header("location:/password"); 
 		}
-		$_SESSION['success'][2]= "Login ou adresse email invalide"; 
-		return header("location:/password"); 
-		
+		$newPassword = $this->modelUser->generatePassword(); 
+		$modelEmail = $this->factory->getModel('Email'); 
+		$modelEmail->preparePassword($newPassword, $inputs); 
+		return header('location:/admin'); 
 	}
 
-
+	/**
+	 *destroy the user session
+	 *@return admin page
+	 */
 	public function logout(){
 		session_destroy();
 		sessionController::getSession(); 
@@ -114,49 +124,119 @@ class UserController extends Controller{
 	}
 
 
-/*creation update and delete users*/
+	/**
+	 *create a new user after verification of the data. 
+	 *@return a success or error page. 
+	 */
 	public function inscription(){ 
-		$inputs= $this->modelUser->hydrate($_POST);
-		$results = $this->modelUser->prepareInscription($inputs); 
-		if($results == null){ 
-			$_SESSION['success'][1]="L'inscription est effectuée !";
-			return header('Location:/admin/users');
+		$inputs= $this->modelUser->hydrate($_POST); 
+		if ($this->modelUser->prepareInscription($inputs)== false){
+			 $_SESSION['success'][2]="L'inscription a échoué !";
+			return $this->show("inscriptionPage", $this->modelUser->saveInputs());
 		}
-		$_SESSION['success'][2]="L'inscription a échoué !";
-		return $this->show("inscriptionPage", $results);		
+		$_SESSION['success'][1]="L'inscription est effectuée !";
+		return header('Location:/admin/users');
+		
+				
 	}
 
+	/**
+	 *Desactivate an editor and close the session
+	 *@return success or failed page
+	 */
+	public function desactivate(){ 
+		if ($this->update('desactivate') == false){
+			$_SESSION['success'][2]="Erreur lors de la désactivation. Merci de contacter l'administrateur du site.";
+			return header('location:/admin/settings');
+		}
+		unset ($_SESSION['access']);
+		unset ($_SESSION['user']);
+		$_SESSION['success'][1]="La désactivation du compte a bien été prise en compte. Pour le réactiver ou le supprimer, merci de contacter l'administrateur du site. "; 
+		return header('location:/admin');
+		}
+		
+		
+	
 
-	public function settings(){ 
+/**
+*redirection according to inputs in $_POST
+*/
+///////////A modifier ???????????????????
+/*	public function settings(){ 
 		$input['id'] = $_SESSION['user']['id']; 
 		$inputs = $this->modelUser->hydrate($input);
 		$inputs = $inputs + $this->modelUser->hydrate($_POST);  
 
 		if (array_key_exists("email", $inputs)){
 			$this->update('email', "settings");
-			$this->showSettings($results); 
-		}elseif (array_key_exists("password", $inputs)) {
+			return $this->showSettings($results); 
+		}; 
+		if (array_key_exists("password", $inputs)) {
 			$this->update('password', "settings");
-			$this->showSettings($results); 
-		}elseif (array_key_exists("activate", $inputs)) {  
-			$this->desactivate();	
-		}else{
-			header('Location:/admin/settings');
-		}
+			return $this->showSettings($results); 
+		};
+		header('Location:/admin/settings');
 		
+	}*/
+
+
+	/**
+	 *Update email 
+	 *@return success or failed page
+	 */
+	public function emailUpdate(){
+		if($this->update("updateEmail") == false){
+			$_SESSION['success'][2]= "La modification de l'email a échoué"; 			
+			return $this->showSettings($this->modelUser->saveInputs());
+		}
+		$_SESSION['success'][1]="La modification a bien été prise en compte"; 
+		header("location:/admin/settings"); 
+	}
+	
+
+	/**
+	 *Update password 
+	 *@return success or failed page
+	 */
+	public function passwordUpdate(){
+		if($this->update("updatePassword") == false){
+			$_SESSION['success'][2]= "La modification du mot de passe a échoué"; 			
+			return $this->showSettings($this->modelUser->errors());
+		}
+		$_SESSION['success'][1]="Le mot de passe a bien été modifié"; 
+		header("location:/admin/settings"); 
+	}
+
+	/**
+	 *Update users 
+	 *@return success or failed page
+	 */
+	public function dashboardAdmin(){  
+		if($this->update("updateAccount") == false){
+			$_SESSION['success'][2]= "La modification de l'utilisateur a échoué"; 			
+			return $this->showDashboardAdmin($this->modelUser->errors());
+		}
+		$_SESSION['success'][1]="La modification a bien été effectuée"; 
+		header("location:/admin/users"); 
 	}
 
 
-	public function dashboardAdmin(){ 
-		$input['id'] = $_SESSION['user']['id']; 
-		$inputs = $this->modelUser->hydrate($input);
-		$inputs = $inputs + $this->modelUser->hydrate($_POST);   
-		$results = $this->update('account', "users");
-		$this->showDashboardAdmin($results); 
+	/**
+	 *inputs purification and start the method
+	 *@param str $method
+	 *@return bool
+	 */
+	private function update($method){
+		$input = $_POST; 
+		if (!isset($input['id'])){
+			$input['id']=$_SESSION['user']['id'];  
+		};
+		$this->modelUser->hydrate($input); 
+		return $this->modelUser->$method();
 	}
 
 
-	private function update($label, $page){
+	/*private function update($label, $page){
 		$method = "update".(ucfirst($label)); 
 		$results = $this->modelUser->$method($label);  
 		
@@ -168,24 +248,9 @@ class UserController extends Controller{
 		//$this->editorAccess(); 
 		return header("location:/admin/$page");
 		
-	}
+	}*/
 
-
-	private function desactivate($id){ 
-		$input = $_POST; 
-		$input['id']=$id;  
-		$this->modelUser->hydrate($input); 
-
-		if ($this->modelUser->desactivate($id)){
-			unset ($_SESSION['access']);
-			unset ($_SESSION['user']);
-			$_SESSION['success'][1]="La désactivation du compte a bien été prise en compte. Pour le réactiver ou le supprimer, merci de contacter l'administrateur du site. "; 
-			return header('location:/admin');
-		}
-		$_SESSION['success'][2]="Erreur lors de la désactivation. Merci de contacter l'administrateur du site.";
-		return header('location:/admin/settings');
-		
-	}
+	
 
 
 }

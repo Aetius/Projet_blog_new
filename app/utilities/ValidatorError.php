@@ -19,6 +19,7 @@ class ValidatorError{
         'regex'=>'Le champ %s est incorrect.', 
         'number'=>'Le champ %s doit être un nombre.',
         'robot'=>'Je suis un robot', 
+        'bool'=>'Le champ %s doit être un booléen.',
         'password' => "Le champ %s doit contenir 8 caractères, 1 lettre, 1 chiffre et un des caractères spéciaux (,?;.:/!@')."
 	]; 
 
@@ -58,6 +59,10 @@ class ValidatorError{
 				return 'administrateur'; 
 			case 'activate':
 				return 'actif'; 
+			case 'published':
+				return '"publier"';
+			case 'author'; 
+				return 'auteur'; 
 			default: 
 				return $key;
 		}

@@ -19,8 +19,12 @@ class ArticleModel extends AppModel{
 	private $publishedDate=null; 
 	private $title; 
 	private $authorId; 
+	private $articlesByPage = 10; 
 
-
+	/**
+	 *Decode articles with htmlspecialchars
+	 *@return array 
+	 */
 	public function allArticles(){
 		$articles = $this->all(); 
 		foreach ($articles as $key => $value) {
@@ -31,15 +35,23 @@ class ArticleModel extends AppModel{
 		return $articles; 
 	}
 
-
-	public function prepareUpdatePublished($inputs){ 
+	/**
+	 *Prepare datas before update of the article
+	 *@param array $inputs
+	 *@return bool 
+	 */
+	public function prepareUpdatePublished($inputs){
+		if ((!isset ($inputs['published']))|| (!isset ($this->id))){
+			$this->errors[]="Erreur lors de l'enregistrement";
+			return false; 
+		}
+		
 		$validationInput['isBool']['published']=$inputs['published']; 
 		$this->validation($validationInput, 'getValidatorUpdate'); 
 
 		if (!empty($this->errors)){
-			return $this->isErrors($inputs); 
-		}
-
+			return false;
+		};
 		$fields=array(
 			'publicated'=>$this->published,
 			'date_publication'=>$this->publishedDate
@@ -47,17 +59,22 @@ class ArticleModel extends AppModel{
 		return $this->recordValid('update', $fields);
 	}
 
-
-	public function prepareUpdate/*updateArticle*/($inputs){ 
+	/**
+	 *Prepare datas before update of the article
+	 *@param array $inputs
+	 *@return bool 
+	 */
+	public function prepareUpdate($inputs){ 
 		$this->validation($inputs);
 		$article=$this->one('title', $this->title);  
-		if ( ((($article['title'])===($this->title))&&($article['id']!==$this->id))){
+		if (((($article['title'])===($this->title))&&($article['id']!==$this->id)) && ($this->title != null)){ 
 			array_push($this->errors, "Le titre de cet article existe déjà!");
 		};
-
+ 
 		if (!empty($this->errors)){
-			return $this->isErrors($inputs); 
-		}
+			$this->saveInputs = $this->isErrors($inputs); 
+			return false; 
+		};
 
 		$fields=array(
 			'title'=>$this->title, 
@@ -70,16 +87,22 @@ class ArticleModel extends AppModel{
 		return $this->recordValid('update', $fields);
 	}
 
-
+	/**
+	 *Prepare datas before creation of the article
+	 *@param array $inputs
+	 *@return bool 
+	 */
 	public function prepareCreate($inputs){ 	
 		$this->validation($inputs);
 		$article=$this->one('title',$this->title);  
-		if ((($article['title'])===($this->title))){ 
+		
+		if ((($article['title'])===($this->title))&& ($this->title != null)){ 
 			$this->errors[]="Le titre de cet article existe déjà!";
 		};
 
 		if (!empty($this->errors)){
-			return $this->isErrors($inputs); 
+			$this->saveInputs = $this->isErrors($inputs); 
+			return false; 
 		};
 
 		$fields = array(
@@ -91,13 +114,44 @@ class ArticleModel extends AppModel{
 			'date_creation'=>($this->setDate()),
 			'author_id'=>($this->authorId)
 		);
-		
 		return $this->recordValid('create', $fields);
 	}
 
+	/**
+	 *Define which articles will be display in the page
+	 *Verify if the page number exists. If not, redirection to the highest page number. 
+	 *@param array $resultsArticles
+	 *@param array $idPage
+	 *@return array
+	 */
+	public function articleDisplay($resultsArticles, $idPage){
+		$resultsArticles['page'] = $idPage;
 
-/*getters*/
+		if ((!isset($resultsArticles['page']['num'])) || (empty($resultsArticles['page']['num'])) || ($resultsArticles['page']['num'] < 1 )){
+			$resultsArticles['page']['num'] = 1; 
+		}; 
+	
+		$resultsArticles['page']['min'] = ($resultsArticles['page']['num'] -1) * $this->articlesByPage;
+		$resultsArticles['page']['max'] = (($resultsArticles['page']['num'] * $this->articlesByPage)-1);
+		return $resultsArticles; 
+	}
 
+	/**
+	 *Verify the page number
+	 *@param array $resultsArticles
+	 *@return int
+	 */
+	public function verifyPageNumber($resultsArticles, $idPage){
+		$lenArticles = count($resultsArticles['articles']); 
+		if ((($lenArticles/$this->articlesByPage)+1) <= $idPage['num']){
+			$page = ceil($lenArticles/$this->articlesByPage); 
+			return $page; 
+		} 
+	}
+
+	/**
+	 *Getters
+	 */
 	public function errors(){
 		return $this->errors;
 	}
@@ -114,18 +168,20 @@ class ArticleModel extends AppModel{
 		return $this->content; 
 	}
 
-	public function id(){
+	public function id(){ 
 		return $this->id; 
 	}
 
-/*setters*/
 
+
+	/**
+	 *Setters
+	 */
 	public function setDate(){
 		$datetime = getdate(); 
 		$date = $datetime['year']."-".$datetime['mon']."-".($datetime['mday']); 
 		return $date;
 	}
-
 
 	public function setTitle($input){  
 		return $this->title = $input;
@@ -166,6 +222,10 @@ class ArticleModel extends AppModel{
 	}
 
 
+	/**
+	 *Validator verification
+	 *@return object
+	 */
 	protected function getValidator($inputs){		
 		return(new Validator($inputs))
 			->length('content', 1)

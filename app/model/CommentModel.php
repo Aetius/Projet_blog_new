@@ -17,15 +17,22 @@ class CommentModel extends AppModel{
 	private $adminAnswer=null; 
 	 
 
-/**
-* validations datas before execution in db
-*/
+	/**
+	 *Prepare datas before update of the article
+	 *@param array $inputs
+	 *@return bool 
+	 */
 	public function PrepareUpdate($inputs){ 
+		if ((!isset ($inputs['published']))|| (!isset ($this->id))){
+			$this->errors[]="Erreur lors de l'enregistrement";
+			return false; 
+		}
+
 		$validationInput['isBool']['published']=$inputs['published']; 
 		$this->validation($validationInput, "getValidatorUpdate");   
 		
 		if (!isset($this->errors)){
-			return $this->isErrors($inputs); 
+			return false;  
 		};
 
 		$fields=array(
@@ -35,12 +42,16 @@ class CommentModel extends AppModel{
 		return $this->recordValid('update', $fields);
 	}
 
-
+	/**
+	 *Prepare datas before creation of the comment
+	 *@param array $inputs
+	 *@return bool 
+	 */
 	public function prepareCreate($inputs){
 		$date= $this->setDate(); 
 		$this->validation($inputs);   
-		if (!isset($this->errors)){
-			return $this->isErrors($inputs); 
+		if (!empty($this->errors)){ 
+			return false; 
 		};
 
 		$fields = array(
@@ -54,7 +65,9 @@ class CommentModel extends AppModel{
 
 
 
-/*setters*/
+	/**
+	 *Setters
+	 */
 	public function setAuthor($input){
 		return $this->author = $input; 
 	}
@@ -74,7 +87,7 @@ class CommentModel extends AppModel{
 	}
 
 	public function setId($input){
-		return $this->id=$input; 
+		return $this->id=intval($input); 
 	}
 
 	public function setPublished($input){
@@ -87,7 +100,9 @@ class CommentModel extends AppModel{
 
 	
 
-/*getters*/
+	/**
+	 *Getters
+	 */
 	public function articleId(){
 		return $this->articleId; 
 	}
@@ -100,10 +115,10 @@ class CommentModel extends AppModel{
 		return $this->published; 
 	}
 
-
-/**
-*generic validator 
-*/
+	/**
+	 *Validator verification
+	 *@return object
+	 */
 	protected function getValidator($inputs){
 		return(new Validator($inputs))
 			->length('comment', 5)

@@ -12,6 +12,7 @@ class AppModel{
 	protected $id;
 	protected $db;
 	protected $table; 
+	protected $saveInputs; 
 
 
 	public function __construct (){
@@ -22,8 +23,12 @@ class AppModel{
 		}
 	}
 
-
-	public function hydrate($verifyInputs=[]){
+	/**
+	 *Hydrate function to the setters
+	 *@param array $verifyInputs
+	 *@return array
+	 */
+	public function hydrate($verifyInputs){
 		$inputs=[]; 
 		
 		foreach ($verifyInputs as $key => $value) {
@@ -41,10 +46,11 @@ class AppModel{
 	}
 	
 
-
-/**
-*prepare requests
-*/
+	/**
+	 *Create statement
+	 *@param array $field
+	 *@return str
+	 */
 	public function create($fields){ 
 		$sqlParams=[]; 
 		$attributes=[];
@@ -56,22 +62,46 @@ class AppModel{
 		return $this->executeRequest("INSERT INTO {$this->table} SET $sqlParams", $attributes, true);
 	}
 
-
+	/**
+	 *All statement : search all entries in db
+	 *@return str
+	 */
 	public function all(){ 
 		return $this->executeRequest("SELECT * FROM {$this->table} ORDER BY id DESC");
 	}
 
-
+	/**
+	 *One statement : search one entry in db 
+	 *@param str $fieldName
+	 *@param str $field
+	 *@return str
+	 */
 	public function one($fieldName, $field){ 
 		return $this->executeRequest("SELECT * FROM {$this->table} WHERE $fieldName=:field", [":field"=>$field], true);
 	}
 
-
+	/**
+	 *Search statement : search all entries in db with one criteria
+	 *@param str $fieldName
+	 *@param str $field
+	 *@return str
+	 */
 	public function search($fieldName, $field){  
 		return $this->executeRequest("SELECT * FROM {$this->table} WHERE $fieldName=:fieldName ORDER BY id DESC", [":fieldName"=>$field]);
 	}
 
+public function search2($search){
+		return $this->executeRequest("SELECT * FROM {$this->table} WHERE $search ORDER BY id DESC");
+	}
 
+
+
+	/**
+	 *Update statement
+	 *@param array $fields
+	 *@param int $id
+	 *@return str
+	 */
 	public function update($fields, $id){  
 		$sqlParams=[]; 
 		$attributes=[];
@@ -85,13 +115,37 @@ class AppModel{
  		return $this->executeRequest("UPDATE {$this->table} SET $sqlParams WHERE id=?", $attributes, true);
 	}
 
-
+	/**
+	 *Delete statement
+	 *@param int $id
+	 *@param str $field
+	 *@return str 
+	 */
 	public function delete($id, $field='id'){
 		return $this->executeRequest("DELETE FROM {$this->table} WHERE $field=:id", [":id"=>$id], true );
 	}
 
 
+	/**
+	 *Getters
+	 */
+	public function errors(){
+		$result['errors'] = $this->errors; 
+		return $result; 
+	}
 
+	public function saveInputs(){
+		return $this->saveInputs; 
+	}
+
+
+	/**
+	 *Execute the statement to the db
+	 *@param str $statement
+	 *@param array $attributes
+	 *@param int $one
+	 *@return array $result
+	 */
 	protected function executeRequest($statement, $attributes=null, $one=false){ 
 		if ($attributes){
 			$request= $this->db->prepare(
@@ -116,41 +170,56 @@ class AppModel{
 	
 	}
 
-
+	/**
+	 *Add errors with initial inputs to return an array that will show both
+	 *@param array $fields
+	 *@return array $result
+	 */
 	protected function isErrors($fields){
 		if (!empty($this->errors)){
 			$result['errors']=$this->errors;
 			foreach ($fields as $key => $value) {
 				$result['inputsError'][$key]=$value; 
-			}
+			} 
 		return $result; 
 		} 
 	}
 	
-
+	/**
+	 *Validate if the record in db is true
+	 *@param str $function
+	 *@param array $fields
+	 *@return bool
+	*/
 	protected function recordValid($function, $fields){ 		
 		$id=$this->id;
 		
 		if (($this->$function($fields, $id)!==true)){ 
 			$this->errors[]="L'enregistrement a échoué"; 
+			return false; 
 		} 
+		return true; 
 	}
 
 
-/*
-*Verify if inputs are expected datas. 
-*params in models
-*/
+	/**
+	 *Inputs validation 
+	 *@param array $inputs
+	 *@param str $validator
+	 *@return void 
+	 */
 	protected function validation($inputs, $validator="getValidator"){
-		$validator = $this->$validator($inputs);   
+		$validator = $this->$validator($inputs);  
 		if ($validator->isValid()!= true){
-			return $this->errors =  $validator->getErrors();
+			$this->errors = array_merge($this->errors, $validator->getErrors());
 		}	
 	}
 
-/*
-*case update : if there's only few inputs to control
-*/
+	/**
+	 *inputs validation
+	 *@param array $inputs
+	 *@return object
+	 */
 	protected function getValidatorUpdate($inputs){  
 		$validationInputs = array_values($inputs); 
 		$validator = new Validator($validationInputs['0']);

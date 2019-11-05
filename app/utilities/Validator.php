@@ -63,16 +63,16 @@ class Validator{
 		}return $this;
 	}
 
-    public function isBool($key){ 
+    public function isBool($key){  
          $value = $this->getValue($key);
          if (!preg_match("#[0|1]#", $value)){
-            $this->addError($key, 'number'); 
+            $this->addError($key, 'bool'); 
         }return $this; 
     }
 
    
 
-    public function isInt($key){
+    public function isInt($key){ 
          $value = $this->getValue($key); 
          if (!is_numeric($value)){
             $this->addError($key, 'number'); 

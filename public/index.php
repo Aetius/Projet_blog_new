@@ -42,10 +42,7 @@ send($dispatcher->process($request, $response));
 
 $page=new \App\controller\TwigController();
 
-/*
-*routeur altorouteur. 
-**/
-//var_dump($_SERVER); die(); 
+
 if(is_array($match)){ 
 	if (preg_match('/#/', $match['target'])){ 
 		$params = explode('#', $match['target']);

@@ -4,6 +4,9 @@ namespace App\config;
 
 
 $routes=(array(
+     array('POST', '/admin/settings/email', 'user#emailUpdate'),
+    array('POST', '/admin/settings/password', 'user#passwordUpdate'),
+    array('POST', '/admin/settings/desactivate', 'user#desactivate'),
     array('POST', '/admin/users', 'user#dashboardAdmin'), 
     array('GET', '/admin/users', 'user#showDashboardAdmin'),
     array('POST', '/admin/articles/[i:id]/delete', 'article#delete'), 
@@ -20,7 +23,7 @@ $routes=(array(
     array('POST','/admin/articles/create', 'article#create'), 
     array('GET', '/admin/logout', 'user#logout'),
     array('GET', '/admin/settings', 'user#showSettings'),
-    array('POST', '/admin/settings', 'user#settings'), 
+    //array('POST', '/admin/settings', 'user#settings'), 
     array('GET', '/admin/dashboard', 'article#showDashboard'),
     array('GET', '/admin', 'user#showConnexion'),
     array('POST', '/admin', 'user#connexion'),

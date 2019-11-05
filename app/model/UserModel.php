@@ -22,10 +22,13 @@ class UserModel extends AppModel{
 	private $isAdmin; 
 
 
-/**
-*functions prepare before requests
-*/
-	public function prepareInscription($inputs){
+
+	/**
+	 *Validation of inputs
+	 *@param array $inputs
+	 *@return bool
+	 */
+	public function prepareInscription($inputs){  
 		$this->validation($inputs); 
 		
 		if ($this->one( 'email', $this->email)){
@@ -34,9 +37,9 @@ class UserModel extends AppModel{
 		if ($this->one('login', $this->login)){
 			$this->errors[]="Ce login existe déjà";
 		};
-		
 		if (!empty($this->errors)){
-			return $this->isErrors($inputs); 
+			$this->saveInputs = $this->isErrors($inputs); 
+			return false; 
 		};
 		$fields=array(
 			'name'=>($this->name), 
@@ -49,87 +52,143 @@ class UserModel extends AppModel{
 		return $this->recordValid('create', $fields);
 	}
 
-/**
-*validation of datas before send to update
-*/
-	public function updatePassword($label){ 
+	/**
+	 *Validate inputs and launch the update function 
+	 *@return bool
+	 */
+	public function updatePassword(){ 
+		$fields["password"]= $this->password; 
+		$validationInput['password']["password"]=$this->passwordDecrypt; 	
+ 
 		$this->oldPasswordConfirm($this->id); 
-		$fields[$label]= $this->passwordDecrypt;
-		$validationInput['password']=$fields; 	
-
-		return $this->validationUpdate($fields, $validationInput); 
+		$this->validation($validationInput, 'getValidatorUpdate');
+		if ($this->errors != null){
+			return false; 
+		}
+		return $this->recordValid('update', $fields); 
 	}
 
-	public function updateEmail($label){ 
+	/**
+	 *Validate inputs and start emailUpdate function
+	 *@return bool
+	 */
+	public function updateEmail(){ 
 		$fields['email']=$this->email;
 		$validationInput['email']=$fields; 
-		if ($this->one($label, $this->$label)){
-			array_push($this->errors, "Le champ $label existe déjà"); 
+		
+		if ($this->one('email', $this->email)){
+			array_push($this->errors, "Le champ 'email' existe déjà"); 
 		}
-		return $this->validationUpdate($fields, $validationInput);  
-	}
+		$this->validationUpdate($fields, $validationInput); 
+		if ($this->errors != null){
+			return false; 
+		}
+		return $this->recordValid('update', $fields); 
+	} 
+	
 
-
-	public function updateAccount($label){
+	/**
+	 *Validate inputs and start updateAccount function
+	 *@return bool
+	 */
+	public function updateAccount(){
 		$fields['is_admin']=$this->isAdmin; 
 		$fields['activate']=$this->activate; 
 		$validationInput['isBool']=$fields; 
-		return $this->validationUpdate($fields, $validationInput);
-	}
-
-
-	
-
-
-	public function connexion(){ 
-		if (password_verify($this->password, $this->one('login', $this->login)['password'])){
-			return true;  
-		}else{
+		$this->validationUpdate($fields, $validationInput);
+		if ($this->errors != null){
 			return false; 
 		}
+		return $this->recordValid('update', $fields); 
 	}
 
 
+	/**
+	 *connexion
+	 *@return bool
+	 */
+	public function connexion(){ 
+		if (!password_verify($this->password, $this->one('login', $this->login)['password'])){
+			return false;  
+		}
+		return true; 
+		
+	}
+
+	/**
+	*Get user's informations
+	*@param str $login
+	*@return array $access
+	*/
+	public function access($login){
+		$result = $this->one('login', $login);
+		$access = [
+			'id'=>$result['id'],
+			'login'=>$result['login'], 
+			'name'=>$result['name'], 
+			'email'=>$result['email'], 
+			'is_admin'=>$result['is_admin'], 
+			'activate'=>$result['activate']]; 
+		return $access; 
+
+	}
+
+	/**
+	 *Desactivate user
+	 *@return bool
+	 */
 	public function desactivate(){
 		$update['activate']= $this->activate; 
-		$results = $this->update($update, $this->id); 
-		return $results; 
+		return $this->update($update, $this->id); 
 	}
 
 
+	/**
+	 *Verify if user have email and login
+	 *@return bool
+	 */
 	public function lostPassword(){
 		$result = $this->one('login', $this->login); 
-		if ($result != false){
-			if($result['email'] == $this->email){
-				$newPassword = $this->generatePassword($result); 
-				return $newPassword; 
-			}
+		if ($result == false){
+			return false; 
 		}
-		return false; 
+		if($result['email'] != $this->email){
+			return false; 
+		}
+		$this->id = $result['id'];
+		return true; 	
 	}
 
-/**
-*valide if there's an error, and return if update is done 
-*return a bool
-*/
-	private function validationUpdate($inputs, $validationInput){  
-		$this->validation($validationInput, 'getValidatorUpdate'); 
-		if (!empty($this->errors)){
-			return $this->isErrors($inputs); 
-		}
-		return($this->recordValid('update', $inputs));
-	}
-
-
-	private function generatePassword($result){
+	/**
+	 *Generate a new password
+	 *@return str $hex
+	 */
+	public function generatePassword(){
 		$hex = bin2hex(random_bytes(12)); 
 		$pass = password_hash($hex, PASSWORD_DEFAULT, ['cost'=>12]);
 		$field['password'] = $pass; 
-		$this->update($field, $result['id']); 
+		$this->update($field, $this->id); 
 		return $hex; 
 	}
 
+	/**
+	 *Launch validator and save inputs if errors
+	 *@param array $inputs
+	 *@param array validationInputs
+	 *@return void
+	 */
+	private function validationUpdate($inputs, $validationInput){   
+		$this->validation($validationInput, 'getValidatorUpdate'); 
+		if (!empty($this->errors)){
+			$this->saveInputs = $this->isErrors($inputs); 
+		}
+	}
 
+	
+	/**
+	 *Verify if password is correct
+	 *@return void
+	 */
 	private function oldPasswordConfirm($id){ 
 		if (!password_verify($this->oldPassword, $this->one('id', $id)['password'])){
 			$this->errors[]="L'ancien mot de passe n'est pas valide";
@@ -193,17 +252,17 @@ class UserModel extends AppModel{
 	public function login(){
 		return $this->login;
 	}
-
-	public function dataInBdd(){
+///////////////////////////utilisé ?????????
+	/*public function dataInBdd(){
 		return $this->dataInBdd; 
-	}
-
-	public function errors(){
-		return $this->errors; 
-	}
+	}*/
 
 
 
+	/**
+	 *Validator verification
+	 *@return object
+	 */
 	protected function getValidator($inputs){
 		$fieldsExist= ['name', 'lastname', 'email', 'login', 'password', 'passwordConfirm']; 
 		return(new Validator($inputs))

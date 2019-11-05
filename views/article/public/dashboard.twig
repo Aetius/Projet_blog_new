@@ -24,7 +24,7 @@
 						</div>
 					</div>
 					<div>
-						<div {% if results.articles|length / 10 < results.page.num  %} hidden="true" {% endif %} >
+						<div {% if results.articles|length / 10 <= results.page.num   %} hidden="true" {% endif %} >
 							{% set test2 = results.page.num + 1 %}
 							<a href="/articles/page/{{test2}}">
 								Page suivante 

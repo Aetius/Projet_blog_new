@@ -12,10 +12,13 @@ class EmailModel extends AppModel{
 	private $email; 
 	private $message; 
 
-/*
-*lost password
-*/
 
+	/**
+	 *Prepare send password to user
+	 *Send inputs to send function. 
+	 *@param str $password
+	 *@param array $inputs
+	 **/
 	public function preparePassword($password, $inputs){
 		$to = $inputs['email'];
 		$subject= "Récupération du mot de passe - site L-M";
@@ -24,9 +27,11 @@ class EmailModel extends AppModel{
 		
 	}
 
-/*
-*contact form
-*/
+	/**
+	 *Valide inputs. If validation is ok, send inputs to send function. 
+	 *@param array $inputs
+	 *@return array
+	 */
 	public function prepareContact($inputs){ 
 		if (empty($this->validation($inputs))){
 			$to = 'thomas.brumain@hotmail.fr';
@@ -39,9 +44,9 @@ class EmailModel extends AppModel{
 	}
 	
 
-/*
-*setters
-*/
+	/**
+	 *Setters
+	 */
 	public function setName($value){
 		return $this->name = $value; 
 	}
@@ -59,7 +64,13 @@ class EmailModel extends AppModel{
 	}
 
 
-
+	/**
+	 *Formate the email, and send it
+	 *@param str $to
+	 *@param str $$subject
+	 *@param str $message_content
+	 *@return void
+	 */
 	protected function send($to, $subject, $message_content){
 		$content = '<html><body>';
 		$content .= '<p>'.nl2br($message_content).'</p>';
@@ -71,7 +82,10 @@ class EmailModel extends AppModel{
 		mail ($to, $subject, $content, $headers); 
 	}
 
-
+	/**
+	 *Validator
+	 *@return obj
+	 */
 	protected function getValidator($inputs){ 
 		$fieldsExist= ['name', 'lastName', 'email', 'message']; 
 		return(new Validator($inputs))

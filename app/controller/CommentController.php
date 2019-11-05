@@ -9,17 +9,19 @@ class CommentController extends Controller{
 	private $modelComment ; 
 	
 
-/**
-*show functions 
-*/
 	public function __construct(){
 		$this->modelComment = new CommentModel(); 
 		parent::__construct(); 
 	}
-		
+	
+	/**
+	 *Show all articles in the db
+	 *@return page
+	 */	
 	public function showDashboard(){
 		$comments = $this->modelComment->all();
 		$modelArticle = $this->factory->getModel('Article'); 
+		
 		foreach ($comments as $key => $value) {
 			$results= $modelArticle->one('id', $comments[$key]['article_id']); 
 			$comments[$key]['article_title'] = $results['title']; 
@@ -29,55 +31,51 @@ class CommentController extends Controller{
 	}
 
 
-	public function dashboard($idArticle){
-		$input['articleId']= $idArticle; 
-		$this->modelComment->hydrate($input); 
-		return $this->modelComment->all();  
-	}
-
-/**
-*results expect str or null
-*/
+	/**
+	 *Create a new comment
+	 *@return page
+	 */
 	public function create(){ 
 		$inputs = $this->modelComment->hydrate($_POST); 
-		$results= $this->modelComment->prepareCreate($inputs); 
-		if ($results == null){ 
-			$_SESSION['success']['1']='Le commentaire a été ajouté et est en attente pour modération.';
-		}else{
-			$_SESSION['success']['2']="Echec lors de l'ajout du commentaire"; 
-			$_SESSION['errors']=$results['errors']; 
-		}
-		header("location:/articles/".$this->modelComment->articleId()); 
 		
+		if ($this->modelComment->prepareCreate($inputs) == false){
+			$_SESSION["success"][2]="Impossible de créer l'article";
+			$errors = $this->modelComment->errors(); 
+			$_SESSION['errors']= $errors['errors'];  
+		}else{
+			$_SESSION['success']['1']='Le commentaire a été ajouté et est en attente pour modération.';
+		}
+
+		header("location:/articles/".$this->modelComment->articleId()); 
 	}
 
-/**
-*result expects str or null
-*/
+	/**
+	 *Update comments
+	 *@return page
+	 */
 	public function update(){  
 		$page = $_SERVER['HTTP_REFERER'];
 		$inputs = $this->modelComment->hydrate($_POST); 
 
-		$result=$this->modelComment->prepareUpdate($inputs); 
-		if ($result== null){
-			$_SESSION['success']['1']='Le commentaire a été modifié.';	
-		}else{
+		if ($this->modelComment->prepareUpdate($inputs) == false){
 			$_SESSION['success']['2']="Echec de l'enregistrement."; 
+		}else{
+			$_SESSION['success']['1']='Le commentaire a été modifié.';	
 		}
 		header("location:$page"); 
 	}
 
-/**
-*result expects bool
-*/
+	/**
+	 *Delete commentaire
+	 *@return page 
+	 */
 	public function delete (){ 
 		$page = $_SERVER['HTTP_REFERER'];
-		$inputs = $this->modelComment->hydrate($_POST);
-		$result = $this->modelComment->delete($inputs['id']);  
-		if ( $result == true){
-			$_SESSION['success']['1']='Le commentaire est supprimé.';
-		}else{
+		$inputs = $this->modelComment->hydrate($_POST); var_dump($this->modelComment->id()); die(); 
+		if ($this->modelComment->delete($this->modelComment->id()) == false){
 			$_SESSION['success']['2']="Echec de la suppression."; 
+		}else{
+			$_SESSION['success']['1']='Le commentaire est supprimé.';
 		}
 		header("location:$page"); 
 	}

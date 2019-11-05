@@ -37,8 +37,8 @@
 						<div class="col-md-5">
 							<p class="text-center">Votre nouvelle adresse email :
 							</p>
-							<form method="post" > {{ csrf_input() }}
-								 {{form.input ('email', 'votre email', {col:'col-md-12', type:'email', value:session.inputs.email})}}
+							<form method="post" action="/admin/settings/email"> {{ csrf_input() }}
+								 {{form.input ('email', 'votre email', {col:'col-md-12', type:'email', value:results.inputsError.email})}}
 
 								<div class="d-flex justify-content-center py-4">
 									<button class="btn btn-primary text-center" type="submit" >Modifier</button>
@@ -53,7 +53,7 @@
 						<h4>Changement de votre mot de passe</h4>
 					</div>
 
-					<form method="post" action="">{{ csrf_input() }}
+					<form method="post" action="/admin/settings/password">{{ csrf_input() }}
 						<div class="col-md-12">
 							<div class="row align-items-start">
 								<div class="col-md-6 flex-column text-center ">
@@ -84,7 +84,7 @@
 							<p class="font-weight-light">(Pour supprimer le compte, merci de prendre contact avec l'administrateur.)</p>
 						</div>
 						<div class="col-md-12 d-flex justify-content-center pt-3">
-							<form class="" method="post">{{ csrf_input() }}
+							<form class="" method="post" action="/admin/settings/desactivate">{{ csrf_input() }}
 								<button class="btn btn-primary confirmClose" type="submit" name="activate" value="0">Désactiver</button>
 							</form>
 						</div>

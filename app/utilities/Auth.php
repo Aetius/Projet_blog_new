@@ -3,12 +3,86 @@
 namespace App\utilities; 
 
 use App\controller\UserController; 
+use App\model\UserModel;
 
 class Auth{
 
 	private $url; 
 
+	/**
+	 *Verify if user has access, and grant access or send a redirection
+	 *@param str $request
+	 *@param str $delegate
+	 *@return response
+	*/
 	public function process($request, $delegate){ 
+		$response = $delegate->process($request); 
+		$target = $request->getRequestTarget();  
+		$partsTarget = explode('/', $target); 
+
+		if (($partsTarget[1]==="admin")&& isset($partsTarget[2])) { 
+			 $result = $this->userAccess(); 
+			 if ($result === false) {
+			 	$this->url = '/admin';
+			 }
+		
+			if (($partsTarget[2]) === "users"){
+				$result = $this->adminAccess(); 
+				if ($result === false){
+					$this->url = '/admin/dashboard';
+				}
+			}
+			 if ($result === false){
+			 	return $response
+					->withHeader('Location', $this->url)
+					->withStatus(302); 
+			 }
+		};
+		return $response;  
+	
+	}
+
+	/**
+	 *verification of admin access
+	 *@return bool
+	 */
+	private function adminAccess(){
+		if (!array_key_exists('user', $_SESSION)){
+			return false;
+		}
+		if ($_SESSION['user']['is_admin']!=="1"){
+			return false; 
+		}		
+		return true; 
+	}
+
+
+	/**
+	 * Verify user's access in the auth utilities.
+	 * 
+	 * @param int (ou obj, ou autre) $nameVar
+	 * 
+	 * @return bool
+	 */
+	public function userAccess(){ 
+		$modelUser = new UserModel(); 
+		if (!array_key_exists('access', $_SESSION)) {
+			return false; 
+		}
+		if ($_SESSION['access']['auth'] !=='valide'){
+			return false; 
+		}
+		$login = $_SESSION['access']['login'];
+		$_SESSION['user']=$modelUser->access($login); 
+		return true; 
+	}
+
+
+
+
+
+
+	/*public function process($request, $delegate){ 
 		$response = $delegate->process($request); 
 		$target = $request->getRequestTarget();  
 		$partsTarget = explode('/', $target); 
@@ -55,6 +129,21 @@ class Auth{
 			return true;
 		}
 	}
+
+
+
+	/*
+* verify user's access in the auth utilities.
+**/
+	/*public function editorAccess(){ 
+		if (array_key_exists('access', $_SESSION)) {
+			if ($_SESSION['access']['auth'] ==='valide'){
+				$login = $_SESSION['access']['login'];
+				($_SESSION['user']=$this->modelUser->one('login', $login)); 
+				return true;
+			}
+		}
+	}*/
 	
 
 		

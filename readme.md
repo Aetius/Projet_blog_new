@@ -1,14 +1,20 @@
-# Fichier d'installation du projet sur votre machine
+# Readme file : help to install this project on your computer. 
 
-Afin d'installer le projet, il est nécessaire de copier les différents fichiers du projet.  
+To install your project, you have to copy these files. 
 
-Sur la droite de l'écran, cliquer sur "Clone or download" : 
-- Soit vous utiliser la fonction "Open in Desktop", qui permet de télécharger le fichier directement (via GitHub Desktop par exemple)
-- Soit vous télécharger les fichiers en .zip (en dans ce cas, il faudra les décompresser avec 7Zip par exemple)
+- Click on "clone or download" : 
+	If you choose 'Open in Desktop', you will upload these files directly from github, by GitHub Desktop (from example)
+	If you choose to copy these files in .zip, 
 
-Une fois les fichiers sur votre machine, il faut les intégrer dans le fichier www de WAMP, LAMP ou MAMP. 
+- Once the files in your computer, you have to put them in your www files, in wamp, lamp or mamp. 
 
-Puis, via composer, vous initialisez et téléchargez les différentes dépendances. 
+- Then, you initialize the composer file, and upload the dependancies. 
+
+- If you choose to test this project in local mode : 
+	You have to put the TinyMCE module in your public folder, 
+	You have to configurate your SMTP parameters. In that case, you could send email. 
 
 
-Une fois ces actions effectuées, vous pouvez lancer le projet et modifier les différents fichiers. 
+
+
+expliquer comment utiliser le site. 

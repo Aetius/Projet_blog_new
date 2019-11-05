@@ -17,19 +17,24 @@ class EmailController extends Controller{
 		$this->modelEmail = new EmailModel(); 
 	}
 	
-
+	/**
+	 *Send mail
+	 **@return page
+	 */
 	public function contact(){ 
 		$inputs =$this->modelEmail->hydrate($_POST); 
 		$errors = $this->modelEmail->prepareContact($inputs);
 		
-		if (empty($errors)){
-			$_SESSION['success']['1'] = "La demande de contact a bien été envoyée!";
-			return header("location:/#contact"); 
-		};
-		$_SESSION['success']['2']= "Echec lors de l'envoi du mail."; 
-		$results['errors']=$errors; 
-		$results['contact']=$inputs; 
-		return $this->show('homePage', $results); 
+		if ($errors != empty){
+			$_SESSION['success']['2']= "Echec lors de l'envoi du mail."; 
+			$results['errors']=$errors; 
+			$results['contact']=$inputs; 
+			return $this->show('homePage', $results); 
+		}
+		$_SESSION['success']['1'] = "La demande de contact a bien été envoyée!";
+		return header("location:/#contact"); 
+
+		
 		
 	}
 

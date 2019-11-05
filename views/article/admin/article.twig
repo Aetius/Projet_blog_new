@@ -23,7 +23,7 @@
 					
 						<div class="col-md-2 d-flex align-items-center text-left mb-4">
 							<form method="POST" class="text-right pr-3" action="/admin/articles/{{results.article.id}}/delete"> {{csrf_input()}} 
-								<button class="btn btn-primary btn-sm confirmClose" type="submit" name="delete" value={{results.article.id}}>Supprimer l'article</button>
+								<button class="btn btn-primary btn-sm confirmClose" type="submit" name="id" value={{results.article.id}}>Supprimer l'article</button>
 							</form>
 						</div>
 					
