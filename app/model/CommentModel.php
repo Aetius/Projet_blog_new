@@ -2,7 +2,7 @@
 
 namespace App\Model; 
 
-use PDO;
+
 use App\model\AppModel;
 use App\utilities\Validator;
 
@@ -27,9 +27,8 @@ class CommentModel extends AppModel{
 			$this->errors[]="Erreur lors de l'enregistrement";
 			return false; 
 		}
-
-		$validationInput['isBool']['published']=$inputs['published']; 
-		$this->validation($validationInput, "getValidatorUpdate");   
+		$validationInput['isBool']['published']=$inputs['published'];
+		$this->validation($validationInput, "getValidatorUpdate");
 		
 		if (!isset($this->errors)){
 			return false;  

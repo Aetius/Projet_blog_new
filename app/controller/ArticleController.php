@@ -241,10 +241,11 @@ class ArticleController extends Controller{
 		return $allArticles; 
 	}
 
-	/**
-	 *Find one article by id in db, and add the user
-	 *@return array
-	 */
+    /**
+     *Find one article by id in db, and add the user
+     * @param $id
+     * @return array
+     */
 	private function oneArticle($id){ 
 		$article['id']=$id; 
 		$this->modelArticles->hydrate($article); 

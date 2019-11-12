@@ -2,7 +2,7 @@
 
 namespace App\model; 
 
-use App\model\AppModel; 
+//use App\model\AppModel;
 use App\utilities\Validator;
 
 class EmailModel extends AppModel{
@@ -16,7 +16,7 @@ class EmailModel extends AppModel{
 	/**
 	 *Prepare send password to user
 	 *Send inputs to send function. 
-	 *@param str $password
+	 *@param string $password
 	 *@param array $inputs
 	 **/
 	public function preparePassword($password, $inputs){
@@ -66,13 +66,13 @@ class EmailModel extends AppModel{
 
 	/**
 	 *Formate the email, and send it
-	 *@param str $to
-	 *@param str $$subject
-	 *@param str $message_content
+	 *@param string $to
+	 *@param string $subject
+	 *@param string $message_content
 	 *@return void
 	 */
 	protected function send($to, $subject, $message_content){
-		$content = '<html><body>';
+		$content = '<html lang="fr"><body>';
 		$content .= '<p>'.nl2br($message_content).'</p>';
 		$content .='</body></html>';
 		$headers  = 'MIME-Version: 1.0' . "\r\n";
@@ -82,18 +82,19 @@ class EmailModel extends AppModel{
 		mail ($to, $subject, $content, $headers); 
 	}
 
-	/**
-	 *Validator
-	 *@return obj
-	 */
-	protected function getValidator($inputs){ 
-		$fieldsExist= ['name', 'lastName', 'email', 'message']; 
+    /**
+     *Validator
+     * @param $inputs
+     * @return Validator
+     */
+	protected function getValidator($inputs){
+		$fieldsExist= ['name', 'lastName', 'email', 'message'];
 		return(new Validator($inputs))
 			->length('message', 10)
-			->name('name', 1)
-			->name('lastName', 1) 
+			->name('name')
+			->name('lastName')
 			->email('email')
-			->empty('envoi')
+			->emptyParam('envoi')
 			->notEmpty($fieldsExist); 
 	}
 }

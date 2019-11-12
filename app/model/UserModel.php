@@ -2,7 +2,7 @@
 namespace App\model;
 
 
-use App\model\AppModel;
+//use App\model\AppModel;
 use App\utilities\Validator;
 
 
@@ -13,9 +13,9 @@ class UserModel extends AppModel{
 	private $email;
 	private $login ;
 	private $password; 
-	private $passwordConnexion;
-	private $connexion;
-	private $dataBdd;
+	//private $passwordConnexion;
+	//private $connexion;
+	//private $dataBdd;
 	private $oldPassword;
 	private $passwordDecrypt;
 	private $activate; 

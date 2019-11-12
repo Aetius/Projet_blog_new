@@ -49,7 +49,7 @@ class AppModel{
 	/**
 	 *Create statement
 	 *@param array $field
-	 *@return str
+	 *@return array
 	 */
 	public function create($fields){
 		$sqlParams=[];
@@ -64,7 +64,7 @@ class AppModel{
 
 	/**
 	 *All statement : search all entries in db
-	 *@return str
+	 *@return array
 	 */
 	public function all(){
 		return $this->executeRequest("SELECT * FROM {$this->table} ORDER BY id DESC");
@@ -115,7 +115,7 @@ class AppModel{
 	 *Update statement
 	 *@param array $fields
 	 *@param int $id
-	 *@return string
+	 *@return array
 	 */
 	public function update($fields, $id){
 		$sqlParams=[];
@@ -133,8 +133,8 @@ class AppModel{
 	/**
 	 *Delete statement
 	 *@param int $id
-	 *@param str $field
-	 *@return str
+	 *@param string $field
+	 *@return array
 	 */
 	public function delete($id, $field='id'){
 		return $this->executeRequest("DELETE FROM {$this->table} WHERE $field=:id", [":id"=>$id], true );
@@ -156,7 +156,7 @@ class AppModel{
 
 	/**
 	 *Execute the statement to the db
-	 *@param str $statement
+	 *@param string $statement
 	 *@param array $attributes
 	 *@param int $one
 	 *@return array $result
@@ -202,7 +202,7 @@ class AppModel{
 
 	/**
 	 *Validate if the record in db is true
-	 *@param str $function
+	 *@param string $function
 	 *@param array $fields
 	 *@return bool
 	*/
@@ -220,7 +220,7 @@ class AppModel{
 	/**
 	 *Inputs validation
 	 *@param array $inputs
-	 *@param str $validator
+	 *@param string $validator
 	 *@return void
 	 */
 	protected function validation($inputs, $validator="getValidator"){

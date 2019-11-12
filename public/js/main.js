@@ -5,7 +5,7 @@
 
 	if (submitForm != null) {
 		submitForm.addEventListener("click", function(event) {
-		    console.log("click");
+		  /*  console.log("click");*/
 		   	if(submitForm != undefined){
 		        location.href = "#contact"}});
 	}
@@ -112,7 +112,7 @@ fonction de confirmation de fermeture de page : (à retravailler)
 		
 		for (let i = 0; i<comments.length; i++ ){			
 			(comments[i].classList.toggle('d-none')); 
-			console.log(comments[i].classList);
+			/*console.log(comments[i].classList);*/
 		}
 
 		if (buttonComment.classList.contains("active")){

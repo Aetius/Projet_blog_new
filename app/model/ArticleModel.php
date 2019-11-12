@@ -136,11 +136,12 @@ class ArticleModel extends AppModel{
 		return $resultsArticles; 
 	}
 
-	/**
-	 *Verify the page number
-	 *@param array $resultsArticles
-	 *@return int
-	 */
+    /**
+     *Verify the page number
+     * @param array $resultsArticles
+     * @param $idPage
+     * @return int
+     */
 	public function verifyPageNumber($resultsArticles, $idPage){
 		$lenArticles = count($resultsArticles['articles']); 
 		if ((($lenArticles/$this->articlesByPage)+1) <= $idPage['num']){
@@ -177,48 +178,79 @@ class ArticleModel extends AppModel{
 	/**
 	 *Setters
 	 */
+    /**
+     * @return string
+     */
 	public function setDate(){
 		$datetime = getdate(); 
 		$date = $datetime['year']."-".$datetime['mon']."-".($datetime['mday']); 
 		return $date;
 	}
 
-	public function setTitle($input){  
+    /**
+     * @param $input
+     * @return string
+     */
+    public function setTitle($input){
 		return $this->title = $input;
 	}
 
+    /**
+     * @param $name
+     * @return string
+     */
 	public function setDescription($name){
 		return $this->description=$name; 
 	}
 
+    /**
+     * @param $name
+     * @return string
+     */
 	public function setContent($name){
 		return $this->content=$name; 
 
 	}
 
+    /**
+     * @param $name
+     * @return string
+     */
 	public function setPublished($name){
 		return $this->published=$name; 
 	}
 
+    /**
+     * @param $name
+     * @return string|NULL
+     */
 	public function setPublishedDate($name){
 		$nameVerify=explode("-", $name);
 		if (checkdate($nameVerify["1"], $nameVerify["2"], $nameVerify["0"])){
 			if ($this->published === "1"){ 
 				return $this->publishedDate = $name; 
-			}else{
-				return $this->publishedDate =NULL; 
 			}
-		}
+        }
+		return $this->publishedDate =NULL;
 	}
 
-	public function setId($name){
+    /**
+     * @param $name
+     * @return string|null
+     */
+    public function setId($name){
 		if ($this->one( 'id', $name)){
 			return $this->id = $name; 
 		}
+		return $this->id = NULL;
 	}
 
+    /**
+     * @param $name
+     * @return string
+     */
 	public function setAuthorId($name){ 
-			$this->authorId = $name; 
+			return $this->authorId = $name;
 	}
 
 
@@ -227,12 +259,11 @@ class ArticleModel extends AppModel{
 	 *@return object
 	 */
 	protected function getValidator($inputs){		
-		return(new Validator($inputs))
+		return (new Validator($inputs))
 			->length('content', 1)
 			->length('description', 1)
 			->length('title', 1)
 			->name('title');
-			
 	}
 
 }

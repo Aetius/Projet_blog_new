@@ -12,7 +12,6 @@ class BDDConnection{
 			$password = 'root';
 			$options=[\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION];
 
-		
 			try{
 				self::$_bdd = new \PDO($dsn, $user , $password, $options);
 			}catch (\PDOException $e){

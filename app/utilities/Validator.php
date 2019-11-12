@@ -2,7 +2,7 @@
 
 namespace App\utilities;
 
-use App\utilities\ValidatorError; 
+//use App\utilities\ValidatorError;
 
 class Validator{
 	
@@ -33,7 +33,7 @@ class Validator{
 		}return $this; 
 	}
 
-    public function empty($key){ 
+    public function emptyParam($key){
          $value = $this->getValue($key); 
          if (isset($value)){
             $this->addError($key, 'robot'); 
