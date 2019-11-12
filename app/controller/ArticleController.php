@@ -1,26 +1,29 @@
 <?php
 namespace App\controller; 
 
-use App\controller\Controller;
 use App\Model\ArticleModel;
+use Psr\Http\Message\ServerRequestInterface;
 
 
 class ArticleController extends Controller{
 	private $modelArticles;
 	
 
-	public function __construct(){
+	public function __construct(ServerRequestInterface $request){
 		$this->modelArticles = new ArticleModel(); 
-		parent::__construct(); 		
+		parent::__construct($request);
 	}
 
+
+	public function showHome(){
+	    $this->show("/home");
+    }
 
 	/**
 	 *Show all articles
 	 *@param int $idPage
-	 *@return page 
 	 */
-	public function showAll($idPage){  
+	public function showAll($idPage){
 		$input['num']=$idPage; 
 		$page = $this->modelArticles->hydrate($input);  	
 		$results['articles'] = $this->allArticlesPublished(); 
@@ -38,7 +41,6 @@ class ArticleController extends Controller{
 	 *Show one article by id
 	 *If id is not in db, return to page all articles
 	 *@param int $id
-	 *@return page
 	 */
 	public function showOne($id){ 
 		$results['article']= $this->oneArticle($id);  
@@ -53,7 +55,6 @@ class ArticleController extends Controller{
 
 	/**
 	 *Show admin dashboard
-	 *@return page
 	*/
 	public function showDashboard(){
 		$results['articles']=$this->allArticles();
@@ -61,13 +62,13 @@ class ArticleController extends Controller{
 		$this->show('/admin/dashboard', $results);
 	}
 
-	/**
-	 *Show all articles in admin
-	 *@param int $idPage
-	 *@param array $results
-	 *@return page
-	 */
-	public function showAllAdmin($idPage, $errors=[]){ 
+
+    /**
+     * Show all articles in admin
+     * @param $idPage
+     * @param array $errors
+     */
+    public function showAllAdmin($idPage, $errors=[]){
 		$input['num']=$idPage; 
 		$page = $this->modelArticles->hydrate($input); 
 		$preparation['articles']=$this->allArticles();
@@ -85,25 +86,22 @@ class ArticleController extends Controller{
 
 	/**
 	 *Show one article with comments in admin
-	 *@param int $id
+	 *@param string $id
 	 *@param array $inputsError
-	 *@return page
 	 */
-	public function showOneAdmin($id, $inputsError=[]){ 
+	public function showOneAdmin($id, $inputsError=[]){
 		$results['article']= $this->oneArticle($id);  
 		if (!$results['article']){
 			return header("location:/admin/articles");
 		}
 		$articles= $this->allArticles();  
 		$results["comments"] = $this->commentsByArticle($this->modelArticles->id());
-		$results = $results + $inputsError; 
-		return $this->show("/admin/article", $results, $articles);
-		
+		$results = $results + $inputsError;
+		$this->show('/admin/article', $results, $articles);
 	}
 
 	/**
 	 *Page create article
-	 *@return page
 	 */
 	public function showCreate(){
 		$this->show("/admin/create");
@@ -111,36 +109,31 @@ class ArticleController extends Controller{
 
 	/**
 	 *Creation article
-	 *@return page
 	 */
-	public function create(){  
-		$inputs = $_POST; 
-		$inputs['authorId']= $_SESSION['user']['id']; 
+	public function create(){
+        $inputs = $this->request->getParsedBody();;
+        $inputs['authorId']= $_SESSION['user']['id'];
 		$this->modelArticles->hydrate($inputs); 
 		
 		if ($this->modelArticles->prepareCreate($inputs) == false){
 			$_SESSION["success"][2]="Impossible de créer l'article";
 			return $this->show('/admin/create', $this->modelArticles->saveInputs());	
 		}
-		$_SESSION["success"][1]= "L'article est crée";
+		$_SESSION["success"][1]= "L'article est créé";
 		return header("location:/admin/dashboard");
-		
-		
-		
 	}
 
 	/**
 	 *Verify if article and its comments are delete
-	 *@return page
 	 */
 	public function delete(){
-		$inputs = $this->modelArticles->hydrate($_POST); 
+		$this->modelArticles->hydrate($this->request->getParsedBody());
 		$id = $this->modelArticles->id();
 		if ( $id == null){
 			$_SESSION['success'][2]="Echec de la suppression!!";
 			return header("location:/admin/articles");
 		};
-		$modelComment = $this->factory->getModel('comment'); 
+		$modelComment = $this->factory->getModel('comment');
 		if ($modelComment->delete($id, 'article_id') == false){
 			$_SESSION['success'][2]="Echec de la suppression des commentaires !!";
 			return header("location:/admin/articles/$id");
@@ -156,11 +149,10 @@ class ArticleController extends Controller{
 
 	/**
 	 *Update page with all articles. Can update published and date publication
-	 *@param str $id 
-	 *@return location page
+	 *@param string $id
 	 */
 	public function updatePublication($id){   
-		$inputs = $_POST; 
+		$inputs = $this->request->getParsedBody();
 		if ($id == null){
 			$inputs['page']=1; 
 		}else{
@@ -176,10 +168,9 @@ class ArticleController extends Controller{
 	/**
 	 *Update article
 	 *@param int $idArticle
-	 *@return page 
 	 */
 	public function updateArticle($idArticle){ 
-		$inputs = $_POST;
+		$inputs = $this->request->getParsedBody();
 		$inputs["id"]=$idArticle; 
 		$this->update($inputs, "prepareUpdate"); 
 		return header("location:/admin/articles");
@@ -188,8 +179,9 @@ class ArticleController extends Controller{
 	/**
 	 *Execute update
 	 *@param array $inputsVerify
-	 *@param str $method
-	 *@return bool*/
+	 *@param string $method
+	 *@return bool
+     */
 	private function update($inputsVerify, $method){ 
 		$inputs= $this->modelArticles->hydrate($inputsVerify); 
 		
@@ -224,7 +216,7 @@ class ArticleController extends Controller{
 	 *@return array
 	 */
 	private function allArticles(){
-		$allArticles=$this->defineAllUsers($this->modelArticles->all()); 
+		$allArticles=$this->defineAllUsers( (array)$this -> modelArticles -> all() );
 		return $allArticles; 
 	}
 
@@ -234,7 +226,17 @@ class ArticleController extends Controller{
 	 */
 	private function allArticlesPublished(){
 		$date = $this->modelArticles->setDate();
-		$search = "date_publication<'$date' AND publicated=1"; 
+		$search =[
+            "0"=>array(
+                "field"=>"date_publication",
+                "value"=> $date,
+                "operator"=>"<"
+            ),
+            "1"=>array(
+                "field"=>"publicated",
+                "value"=>"1",
+                "operator"=>"="
+            )];
 		$allArticles=$this->defineAllUsers($this->modelArticles->search2($search));  
 		return $allArticles; 
 	}
@@ -267,8 +269,15 @@ class ArticleController extends Controller{
 	 *@return array
 	 */
 	private function commentsByArticle($idArticle){
-		$modelComment = $this->factory->getModel('Comment');  
-		return $modelComment->search( "article_id", $idArticle); 		
+		$modelComment = $this->factory->getModel('Comment');
+        $search =[
+            "0"=>array(
+                "field"=>"article_id",
+                "value"=> $idArticle,
+                "operator"=>"="
+            )];
+        return $modelComment->search2($search);
+        //return $modelComment->search( "article_id", $idArticle);
 	}
 
 	/**
@@ -287,7 +296,7 @@ class ArticleController extends Controller{
 	/**
 	 *Find user by id in db
 	 *@param int $userId
-	 *@return str
+	 *@return string
 	 */
 	private function defineUser($userId){ 
 		$modelUser = $this->factory->getModel('User'); 

@@ -32,7 +32,7 @@ class AppFactory{
 
 	/**
 	 *Find the model
-	 *@param str $name
+	 *@param string $name
 	 *@return model
 	 */
 	public static function getModel($name){ 

@@ -22,7 +22,7 @@ class Dispatcher {
     }
 
 
-    public function process( $request){ 
+    public function process($request){
         $middleware = $this->getMiddleware(); 
         $this->index++;
         if (is_null($middleware)){

@@ -35,5 +35,5 @@ $routes=(array(
     array('GET', '/password', 'user#showLost'), 
     array('POST', '/password', 'user#lostPassword'), 
     array('POST', '/contact', 'email#contact'),  
-    array('GET', '/', 'home')
+    array('GET', '/', 'article#showHome')
 ));

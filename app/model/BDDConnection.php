@@ -1,6 +1,5 @@
 <?php
 namespace App\model;
-use PDO;
 
 
 class BDDConnection{
@@ -10,12 +9,12 @@ class BDDConnection{
 		if (is_null(self::$_bdd)){
 			$dsn = 'mysql:host=localhost;dbname=projet_p5_blog_oc;charset=utf8';
 			$user = 'root';
-			$password = '';
-			$options=[PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION];
-			
+			$password = 'root';
+			$options=[\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION];
+
 		
 			try{
-				self::$_bdd = new PDO($dsn, $user , $password, $options);	
+				self::$_bdd = new \PDO($dsn, $user , $password, $options);
 			}catch (\PDOException $e){
 				die ("L'accès à la bdd est refusée");
 				

@@ -2,7 +2,8 @@
 namespace App\controller; 
 
 use App\model\UserModel;
-use App\controller\Controller; 
+use App\controller\Controller;
+use Psr\Http\Message\ServerRequestInterface;
 
 
 class UserController extends Controller{
@@ -10,9 +11,9 @@ class UserController extends Controller{
 	private $modelUser; 
 
 
-	public function __construct(){
+	public function __construct(ServerRequestInterface $request){
 		$this->modelUser= new UserModel();
-		parent::__construct(); 
+		parent::__construct($request);
 	}
 
 
@@ -75,7 +76,7 @@ class UserController extends Controller{
 	 *@return show function
 	 */
 	public function connexion(){ 
-		$this->modelUser->hydrate($_POST);
+		$this->modelUser->hydrate($this->request->getParsedBody());
 		 
 		if (!$this->modelUser->connexion()){
 			$_SESSION['success'][2]= "Le couple identifiant/mot de passe est incorrect"; 
@@ -100,7 +101,7 @@ class UserController extends Controller{
 	 *@return page
 	 */
 	public function lostPassword(){
-		$inputs=$this->modelUser->hydrate($_POST); 
+		$inputs=$this->modelUser->hydrate($this->request->getParsedBody());
 	
 		if ($this->modelUser->lostPassword() == false){
 			$_SESSION['success'][2]= "Login ou adresse email invalide"; 
@@ -129,7 +130,7 @@ class UserController extends Controller{
 	 *@return a success or error page. 
 	 */
 	public function inscription(){ 
-		$inputs= $this->modelUser->hydrate($_POST); 
+		$inputs= $this->modelUser->hydrate($this->request->getParsedBody());
 		if ($this->modelUser->prepareInscription($inputs)== false){
 			 $_SESSION['success'][2]="L'inscription a échoué !";
 			return $this->show("inscriptionPage", $this->modelUser->saveInputs());
@@ -227,7 +228,7 @@ class UserController extends Controller{
 	 *@return bool
 	 */
 	private function update($method){
-		$input = $_POST; 
+		$input = $this->request->getParsedBody();
 		if (!isset($input['id'])){
 			$input['id']=$_SESSION['user']['id'];  
 		};

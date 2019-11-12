@@ -3,15 +3,16 @@ namespace App\controller;
 
 use App\controller\Controller;
 use App\Model\CommentModel;
+use Psr\Http\Message\ServerRequestInterface;
 
 
 class CommentController extends Controller{
 	private $modelComment ; 
 	
 
-	public function __construct(){
+	public function __construct(ServerRequestInterface $request){
 		$this->modelComment = new CommentModel(); 
-		parent::__construct(); 
+		parent::__construct($request);
 	}
 	
 	/**
@@ -36,7 +37,7 @@ class CommentController extends Controller{
 	 *@return page
 	 */
 	public function create(){ 
-		$inputs = $this->modelComment->hydrate($_POST); 
+		$inputs = $this->modelComment->hydrate($this->request->getParsedBody());
 		
 		if ($this->modelComment->prepareCreate($inputs) == false){
 			$_SESSION["success"][2]="Impossible de créer l'article";
@@ -55,7 +56,7 @@ class CommentController extends Controller{
 	 */
 	public function update(){  
 		$page = $_SERVER['HTTP_REFERER'];
-		$inputs = $this->modelComment->hydrate($_POST); 
+		$inputs = $this->modelComment->hydrate($this->request->getParsedBody());
 
 		if ($this->modelComment->prepareUpdate($inputs) == false){
 			$_SESSION['success']['2']="Echec de l'enregistrement."; 
@@ -71,7 +72,7 @@ class CommentController extends Controller{
 	 */
 	public function delete (){ 
 		$page = $_SERVER['HTTP_REFERER'];
-		$inputs = $this->modelComment->hydrate($_POST); var_dump($this->modelComment->id()); die(); 
+		$inputs = $this->modelComment->hydrate($this->request->getParsedBody());
 		if ($this->modelComment->delete($this->modelComment->id()) == false){
 			$_SESSION['success']['2']="Echec de la suppression."; 
 		}else{
