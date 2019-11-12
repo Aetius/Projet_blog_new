@@ -13,7 +13,7 @@ use App\utilities\AppFactory;
 class ArticleModel extends AppModel{
 
 	private $description;
-	private $dateCreation;
+	//private $dateCreation;
 	private $content;
 	private $published=null; 
 	private $publishedDate=null; 

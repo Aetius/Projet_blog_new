@@ -208,11 +208,12 @@ class UserController extends Controller{
 		header("location:/admin/settings"); 
 	}
 
-	/**
-	 *Update users 
-	 *@return success or failed page
-	 */
-	public function dashboardAdmin(){  
+
+    /**
+     * Update User
+     * @return page
+     */
+    public function dashboardAdmin(){
 		if($this->update("updateAccount") == false){
 			$_SESSION['success'][2]= "La modification de l'utilisateur a échoué"; 			
 			return $this->showDashboardAdmin($this->modelUser->errors());
@@ -224,7 +225,7 @@ class UserController extends Controller{
 
 	/**
 	 *inputs purification and start the method
-	 *@param str $method
+	 *@param string $method
 	 *@return bool
 	 */
 	private function update($method){

@@ -6,7 +6,7 @@ class BDDConnection{
 	private static $_bdd = null;
 
 	public static function connection(){
-		if (is_null(self::$_bdd)){
+		if ((self::$_bdd)=== null){
 			$dsn = 'mysql:host=localhost;dbname=projet_p5_blog_oc;charset=utf8';
 			$user = 'root';
 			$password = 'root';

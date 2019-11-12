@@ -25,7 +25,7 @@ class Dispatcher {
     public function process($request){
         $middleware = $this->getMiddleware(); 
         $this->index++;
-        if (is_null($middleware)){
+        if (($middleware)=== null){
             return $this->response;
         }
         if (is_callable($middleware)) {

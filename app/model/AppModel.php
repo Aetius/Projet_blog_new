@@ -46,11 +46,11 @@ class AppModel{
 	}
 
 
-	/**
-	 *Create statement
-	 *@param array $field
-	 *@return array
-	 */
+    /**
+     *Create statement
+     * @param $fields
+     * @return array
+     */
 	public function create($fields){
 		$sqlParams=[];
 		$attributes=[];
@@ -97,7 +97,8 @@ class AppModel{
      */
     public function search2($search){
         $statement = "";
-        for ($i = 0; $i<count($search); $i++){
+        $countSearch = count($search);
+        for ($i = 0; $i<$countSearch; $i++){
 	        $statement .= $search[$i]['field']. $search[$i]['operator']. ':'.$search[$i]['field'];
 	        $attributes[':'.$search[$i]['field']]= $search[$i]['value'];
 
@@ -154,13 +155,13 @@ class AppModel{
 	}
 
 
-	/**
-	 *Execute the statement to the db
-	 *@param string $statement
-	 *@param array $attributes
-	 *@param int $one
-	 *@return array $result
-	 */
+    /**
+     *Execute the statement to the db
+     * @param string $statement
+     * @param array $attributes
+     * @param bool $one
+     * @return array $result
+     */
 	protected function executeRequest($statement, $attributes=null, $one=false){
 		if ($attributes){
 			$request= $this->db->prepare(

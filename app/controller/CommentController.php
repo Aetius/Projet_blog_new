@@ -21,14 +21,21 @@ class CommentController extends Controller{
 	 */	
 	public function showDashboard(){
 		$comments = $this->modelComment->all();
-		$modelArticle = $this->factory->getModel('Article'); 
-		
-		foreach ($comments as $key => $value) {
+		$modelArticle = $this->factory->getModel('Article');
+		$countComments = count($comments);
+		for ($key = 0; $key<$countComments; $key++){
+            $results= $modelArticle->one('id', $comments[$key]['article_id']);
+            $comments[$key]['article_title'] = $results['title'];
+        }
+        $results['comments']= $comments;
+        $this->show('dashboardComments', $results);
+
+        /*foreach ($comments as $key => $value) {
 			$results= $modelArticle->one('id', $comments[$key]['article_id']); 
 			$comments[$key]['article_title'] = $results['title']; 
 		}
 		$results['comments']= $comments; 
-		$this->show('dashboardComments', $results); 
+		$this->show('dashboardComments', $results); */
 	}
 
 

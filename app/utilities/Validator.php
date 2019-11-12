@@ -18,7 +18,7 @@ class Validator{
 	public function required($keys){                 
 		foreach ($keys as $key) {  
 			$value=$this->getValue($key); 
-			if (is_null($value)){
+			if (($value)=== null){
 				 $this->addError($key, 'required');
 			}
 		}

@@ -12,7 +12,7 @@ class CommentModel extends AppModel{
 	private $comment; 
 	private $author; 
 	private $published=null; 
-	private $publishedDate=null;
+	//private $publishedDate=null;
 	private $articleId; 	
 	private $adminAnswer=null; 
 	 

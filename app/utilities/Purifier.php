@@ -7,7 +7,7 @@ class Purifier{
 		
 		$config = \HTMLPurifier_Config::createDefault();
 		$purifier = new \HTMLPurifier($config);
-		return ($clean_html = $purifier->purify($dirty_html));
+		return ($purifier->purify($dirty_html));
 		
 	}
 
