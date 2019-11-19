@@ -1,11 +1,11 @@
 <?php  
 
-namespace App\utilities; 
+namespace App\Utilities;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use App\controller\sessionController; 
-use App\utilities\Purifier;
+use App\Utilities\Session;
+use App\Utilities\Purifier;
 
 class CsrfMiddleware{
 
@@ -18,7 +18,7 @@ class CsrfMiddleware{
 
 
 	public function __construct($formKey='_csrf', $sessionKey='csrf'){
-		sessionController::getSession(); 
+		Session::getSession();
 		
 		$this->formKey=$formKey; 
 		$this->sessionKey=$sessionKey; 

@@ -3,9 +3,10 @@
 namespace App\Model;
 
 
+use App\Utilities\ErrorException;
 use \PDO;
-use App\utilities\Purifier;
-use App\utilities\Validator;
+use App\Utilities\Purifier;
+use App\Utilities\Validator;
 
 class AppModel{
 	protected $errors=[];
@@ -15,7 +16,11 @@ class AppModel{
 	protected $saveInputs;
 
 
-	public function __construct (){
+    /**
+     * AppModel constructor.
+     * @throws ErrorException
+     */
+    public function __construct (){
 		$this->db=(BDDConnection::connection());
 		if ($this->table === null){
 			$parts= explode("\\", get_class($this));
@@ -189,7 +194,7 @@ class AppModel{
 	/**
 	 *Add errors with initial inputs to return an array that will show both
 	 *@param array $fields
-	 *@return array $result
+	 *@return array|void
 	 */
 	protected function isErrors($fields){
 		if (!empty($this->errors)){

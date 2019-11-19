@@ -1,5 +1,5 @@
 <?php
-namespace App\controller; 
+namespace App\Controller;
 
 use App\Model\ArticleModel;
 use Psr\Http\Message\ServerRequestInterface;
@@ -7,13 +7,16 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class ArticleController extends Controller{
 	private $modelArticles;
-	
+
 
 	public function __construct(ServerRequestInterface $request){
 		$this->modelArticles = new ArticleModel(); 
 		parent::__construct($request);
 	}
-
+/*
+	public function test(){
+        $this->redirectTo("/admin/articles");
+    }*/
 
 	public function showHome(){
 	    $this->show("/home");
@@ -30,7 +33,7 @@ class ArticleController extends Controller{
 		
 		$verifyPage = $this->modelArticles->verifyPageNumber($results, $page);//var_dump($verifyPage); die();
 		if ( $verifyPage != null){
-			header("location:/articles/page/$verifyPage");
+			$this->redirectTo("/articles/page/$verifyPage");
 		};
 
 		$results = $this->modelArticles->articleDisplay($results, $page); 
@@ -45,7 +48,7 @@ class ArticleController extends Controller{
 	public function showOne($id){ 
 		$results['article']= $this->oneArticle($id);  
 		if (!$results['article']){
-			header("location:/articles");
+			$this->redirectTo("/articles");
 		}else{
 			$articles= $this->allArticlesPublished(); 
 			$results["comments"] = $this->commentsByArticle($this->modelArticles->id());
@@ -75,7 +78,7 @@ class ArticleController extends Controller{
 
 		$verifyPage = $this->modelArticles->verifyPageNumber($preparation, $page);
 		if ( $verifyPage != null){
-			header("location:/admin/articles/page/$verifyPage");
+			$this->redirectTo("/admin/articles/page/$verifyPage");
 		};
 
 		$results = $this->modelArticles->articleDisplay($preparation, $page); 
@@ -92,7 +95,7 @@ class ArticleController extends Controller{
 	public function showOneAdmin($id, $inputsError=[]){
 		$results['article']= $this->oneArticle($id);  
 		if (!$results['article']){
-			return header("location:/admin/articles");
+			$this->redirectTo("/admin/articles");
 		}
 		$articles= $this->allArticles();  
 		$results["comments"] = $this->commentsByArticle($this->modelArticles->id());
@@ -117,10 +120,11 @@ class ArticleController extends Controller{
 		
 		if ($this->modelArticles->prepareCreate($inputs) == false){
 			$_SESSION["success"][2]="Impossible de créer l'article";
-			return $this->show('/admin/create', $this->modelArticles->saveInputs());	
+			$this->show('/admin/create', $this->modelArticles->saveInputs());
 		}
 		$_SESSION["success"][1]= "L'article est créé";
-		return header("location:/admin/dashboard");
+
+		$this->redirectTo("/admin/dashboard");
 	}
 
 	/**
@@ -131,19 +135,19 @@ class ArticleController extends Controller{
 		$id = $this->modelArticles->id();
 		if ( $id == null){
 			$_SESSION['success'][2]="Echec de la suppression!!";
-			return header("location:/admin/articles");
+			$this->redirectTo("/admin/articles");
 		};
 		$modelComment = $this->factory->getModel('comment');
 		if ($modelComment->delete($id, 'article_id') == false){
 			$_SESSION['success'][2]="Echec de la suppression des commentaires !!";
-			return header("location:/admin/articles/$id");
+			$this->redirectTo("/admin/articles/$id");
 		}; 
 		if ($this->modelArticles->delete($id) == false){
 			$_SESSION['success'][2]="Echec de la suppression de l'article !!";
-			return header("location:/admin/articles/$id");
+			$this->redirectTo("/admin/articles/$id");
 		}; 
 		$_SESSION['success'][1]="L'article et les commentaires associés ont bien été supprimés.";
-		header("location:/admin/articles");
+		$this->redirectTo("/admin/articles");
 	}
 
 
@@ -173,7 +177,7 @@ class ArticleController extends Controller{
 		$inputs = $this->request->getParsedBody();
 		$inputs["id"]=$idArticle; 
 		$this->update($inputs, "prepareUpdate"); 
-		return header("location:/admin/articles");
+		$this->redirectTo("/admin/articles");
 	}
 
 	/**
@@ -244,7 +248,7 @@ class ArticleController extends Controller{
     /**
      *Find one article by id in db, and add the user
      * @param $id
-     * @return array
+     * @return array|void
      */
 	private function oneArticle($id){ 
 		$article['id']=$id; 
@@ -265,10 +269,11 @@ class ArticleController extends Controller{
 		return $modelComment->all();
 	}
 
-	/**
-	 *Find all comments by article id
-	 *@return array
-	 */
+    /**
+     *Find all comments by article id
+     * @param $idArticle
+     * @return array
+     */
 	private function commentsByArticle($idArticle){
 		$modelComment = $this->factory->getModel('Comment');
         $search =[

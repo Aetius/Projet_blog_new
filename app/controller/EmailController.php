@@ -1,9 +1,9 @@
 <?php
 
-namespace App\controller;
+namespace App\Controller;
 
-use App\controller\Controller;
-use App\model\EmailModel;
+use App\Controller\Controller;
+use App\Model\EmailModel;
 use Psr\Http\Message\ServerRequestInterface;
 
 
@@ -29,13 +29,10 @@ class EmailController extends Controller{
 			$_SESSION['success']['2']= "Echec lors de l'envoi du mail."; 
 			$results['errors']=$errors; 
 			$results['contact']=$inputs; 
-			return $this->show('homePage', $results); 
+			$this->show('homePage', $results);
 		}
 		$_SESSION['success']['1'] = "La demande de contact a bien été envoyée!";
-		return header("location:/#contact"); 
-
-		
-		
+		$this->redirectTo("/#contact");
 	}
 
 }

@@ -3,9 +3,9 @@
 namespace App\Model; 
 
 
-use App\utilities\Validator;
-use App\model\AppModel; 
-use App\utilities\AppFactory;
+use App\Utilities\Validator;
+use App\Model\AppModel;
+use App\Utilities\AppFactory;
 
 
 

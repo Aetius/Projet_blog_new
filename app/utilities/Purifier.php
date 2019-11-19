@@ -1,6 +1,6 @@
 <?php
 
-namespace App\utilities;
+namespace App\Utilities;
 
 class Purifier{
 	public static function htmlPurifier($dirty_html){

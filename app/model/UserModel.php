@@ -1,9 +1,8 @@
 <?php
-namespace App\model;
+namespace App\Model;
 
 
-//use App\model\AppModel;
-use App\utilities\Validator;
+use App\Utilities\Validator;
 
 
 class UserModel extends AppModel{

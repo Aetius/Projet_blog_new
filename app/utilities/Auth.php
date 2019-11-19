@@ -1,9 +1,9 @@
 <?php
 
-namespace App\utilities; 
+namespace App\Utilities;
 
-use App\controller\UserController; 
-use App\model\UserModel;
+/*use App\controller\UserController; */
+use App\Model\UserModel;
 
 class Auth{
 
@@ -11,9 +11,9 @@ class Auth{
 
 	/**
 	 *Verify if user has access, and grant access or send a redirection
-	 *@param str $request
-	 *@param str $delegate
-	 *@return response
+	 *@param string $request
+	 *@param string $delegate
+	 *@return $response
 	*/
 	public function process($request, $delegate){ 
 		$response = $delegate->process($request); 
@@ -57,14 +57,11 @@ class Auth{
 	}
 
 
-	/**
-	 * Verify user's access in the auth utilities.
-	 * 
-	 * @param int (ou obj, ou autre) $nameVar
-	 * 
-	 * @return bool
-	 */
-	public function userAccess(){ 
+    /**
+     * Verification access
+     * @return bool
+     */
+    public function userAccess(){
 		$modelUser = new UserModel(); 
 		if (!array_key_exists('access', $_SESSION)) {
 			return false; 

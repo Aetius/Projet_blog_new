@@ -1,6 +1,8 @@
 <?php
-namespace App\model;
+namespace App\Model;
 
+
+use App\Utilities\ErrorException;
 
 class BDDConnection{
 	private static $_bdd = null;
@@ -15,7 +17,8 @@ class BDDConnection{
 			try{
 				self::$_bdd = new \PDO($dsn, $user , $password, $options);
 			}catch (\PDOException $e){
-				die ("L'accès à la bdd est refusée");
+
+			  throw new ErrorException("L'accès à la bdd est refusée");
 				
 			}
 			

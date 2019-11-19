@@ -1,10 +1,12 @@
 <?php
-namespace App\config;
+namespace App\Config;
 
 use App\utilities\CsrfMiddleware;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
 
-class CsrfExtension extends \Twig_Extension {
+class CsrfExtension extends AbstractExtension {
 
     private $csrfMiddleware;
 
@@ -14,7 +16,7 @@ class CsrfExtension extends \Twig_Extension {
 
     public function getFunctions(){
         return [
-            new \Twig_SimpleFunction('csrf_input', [$this, 'csrfInput'], ['is_safe' => ['html']])
+            new TwigFunction('csrf_input', [$this, 'csrfInput'], ['is_safe' => ['html']])
         ];
     }
 

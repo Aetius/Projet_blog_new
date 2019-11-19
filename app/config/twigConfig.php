@@ -1,7 +1,11 @@
 <?php
-namespace App\config;
+namespace App\Config;
 
-class twigConfig{
+use Twig\Environment;
+
+class TwigConfig{
+
+    /** @var  Environment */
 	protected $twig;
 
 	protected function config() {

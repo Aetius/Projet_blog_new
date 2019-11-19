@@ -1,7 +1,7 @@
 <?php
-namespace App\controller; 
+namespace App\Utilities;
 
-class sessionController{
+class Session{
 	
 	private static $lifetime=10000000; 
 

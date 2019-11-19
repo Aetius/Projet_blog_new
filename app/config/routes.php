@@ -1,9 +1,10 @@
 <?php
 
-namespace App\config; 
+namespace App\Config;
 
 
 $routes=(array(
+    array('GET', '/test', 'article#test'),
      array('POST', '/admin/settings/email', 'user#emailUpdate'),
     array('POST', '/admin/settings/password', 'user#passwordUpdate'),
     array('POST', '/admin/settings/desactivate', 'user#desactivate'),

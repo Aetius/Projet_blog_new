@@ -3,8 +3,8 @@
 namespace App\Model; 
 
 
-use App\model\AppModel;
-use App\utilities\Validator;
+use App\Model\AppModel;
+use App\Utilities\Validator;
 
 
 class CommentModel extends AppModel{
