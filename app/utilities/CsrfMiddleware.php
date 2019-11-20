@@ -15,8 +15,6 @@ class CsrfMiddleware{
 	private $session=[]; 
 
 
-
-
 	public function __construct($formKey='_csrf', $sessionKey='csrf'){
 		Session::getSession();
 		
@@ -26,7 +24,13 @@ class CsrfMiddleware{
 	}
 
 
-	public function process($request, $delegate){  
+    /**
+     * @param $request
+     * @param $delegate
+     * @return mixed
+     * @throws \Exception
+     */
+    public function process($request, $delegate){
 		if (in_array($request->getMethod(), ['POST', 'DELETE'])){  
 			$params = $request->getParsedBody() ?:[];  
 			
@@ -49,7 +53,10 @@ class CsrfMiddleware{
 	}
 
 
-	public function generateToken(){
+    /**
+     * @return string
+     */
+    public function generateToken(){
 		$token = bin2hex(random_bytes(16)); 
 		$csrfList = $this->session ; 
 		$csrfList[]=$token;   
@@ -60,12 +67,18 @@ class CsrfMiddleware{
 	}
 
 
-	private function reject(){
+    /**
+     * @throws \Exception
+     */
+    private function reject(){
 		throw new \Exception(); 
 	}
 
 
-	private function useToken($token){
+    /**
+     * @param string $token
+     */
+    private function useToken($token){
 		$tokens = array_filter($this->session, function ($t) use ($token){
 			return $token !== $t; 
 		});
@@ -73,7 +86,10 @@ class CsrfMiddleware{
 	}
 
 
-	private function limitTokens(){
+    /**
+     *limite the number of tokens and delete the surplus
+     */
+    private function limitTokens(){
 		$tokens = $this->session ?? []; 
 		while (count($tokens) > $this->limit) {
 			array_shift($tokens); 
@@ -84,11 +100,17 @@ class CsrfMiddleware{
 	}
 
 
-	public function getFormKey(){
+    /**
+     * @return string
+     */
+    public function getFormKey(){
 	        return $this->formKey;
 	    }
 
 
+    /**
+     * @return array|mixed
+     */
     private function getSession(){
     	if (array_key_exists('csrf', $_SESSION)){
     		$this->session = $_SESSION['csrf']; 

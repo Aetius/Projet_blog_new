@@ -11,10 +11,7 @@ class UserModel extends AppModel{
 	private $lastname;
 	private $email;
 	private $login ;
-	private $password; 
-	//private $passwordConnexion;
-	//private $connexion;
-	//private $dataBdd;
+	private $password;
 	private $oldPassword;
 	private $passwordDecrypt;
 	private $activate; 
@@ -116,7 +113,7 @@ class UserModel extends AppModel{
 
 	/**
 	*Get user's informations
-	*@param str $login
+	*@param string $login
 	*@return array $access
 	*/
 	public function access($login){
@@ -132,11 +129,11 @@ class UserModel extends AppModel{
 
 	}
 
-	/**
-	 *Desactivate user
-	 *@return bool
-	 */
-	public function desactivate(){
+
+    /**
+     * @return array
+     */
+    public function desactivate(){
 		$update['activate']= $this->activate; 
 		return $this->update($update, $this->id); 
 	}
@@ -160,14 +157,14 @@ class UserModel extends AppModel{
 
 	/**
 	 *Generate a new password
-	 *@return str $hex
+	 *@return string $password
 	 */
 	public function generatePassword(){
-		$hex = bin2hex(random_bytes(12)); 
+		$password = bin2hex(random_bytes(12));
 		$pass = password_hash($hex, PASSWORD_DEFAULT, ['cost'=>12]);
 		$field['password'] = $pass; 
 		$this->update($field, $this->id); 
-		return $hex; 
+		return $password;
 	}
 
 	/**
@@ -186,7 +183,6 @@ class UserModel extends AppModel{
 	
 	/**
 	 *Verify if password is correct
-	 *@return void
 	 */
 	private function oldPasswordConfirm($id){ 
 		if (!password_verify($this->oldPassword, $this->one('id', $id)['password'])){
@@ -224,7 +220,7 @@ class UserModel extends AppModel{
 	}
 
 
-	public function setoldPassword($value){
+	public function setOldPassword($value){
 		return $this->oldPassword = $value; 
 	}
 
@@ -251,11 +247,6 @@ class UserModel extends AppModel{
 	public function login(){
 		return $this->login;
 	}
-///////////////////////////utilisé ?????????
-	/*public function dataInBdd(){
-		return $this->dataInBdd; 
-	}*/
-
 
 
 	/**

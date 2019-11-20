@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Config;
+namespace App\Utilities;
 
 
 $routes=(array(
-    array('GET', '/test', 'article#test'),
-     array('POST', '/admin/settings/email', 'user#emailUpdate'),
+    array('POST', '/admin/settings/email', 'user#emailUpdate'),
     array('POST', '/admin/settings/password', 'user#passwordUpdate'),
     array('POST', '/admin/settings/desactivate', 'user#desactivate'),
     array('POST', '/admin/users', 'user#dashboardAdmin'), 
@@ -24,7 +23,6 @@ $routes=(array(
     array('POST','/admin/articles/create', 'article#create'), 
     array('GET', '/admin/logout', 'user#logout'),
     array('GET', '/admin/settings', 'user#showSettings'),
-    //array('POST', '/admin/settings', 'user#settings'), 
     array('GET', '/admin/dashboard', 'article#showDashboard'),
     array('GET', '/admin', 'user#showConnexion'),
     array('POST', '/admin', 'user#connexion'),

@@ -13,7 +13,6 @@ use App\Utilities\AppFactory;
 class ArticleModel extends AppModel{
 
 	private $description;
-	//private $dateCreation;
 	private $content;
 	private $published=null; 
 	private $publishedDate=null; 
@@ -178,6 +177,7 @@ class ArticleModel extends AppModel{
 	/**
 	 *Setters
 	 */
+
     /**
      * @return string
      */

@@ -13,63 +13,68 @@ class ArticleController extends Controller{
 		$this->modelArticles = new ArticleModel(); 
 		parent::__construct($request);
 	}
-/*
-	public function test(){
-        $this->redirectTo("/admin/articles");
-    }*/
 
-	public function showHome(){
-	    $this->show("/home");
+
+    /**
+     * @return array
+     */
+    public function showHome(){
+	    return $this->show("/home");
     }
 
-	/**
-	 *Show all articles
-	 *@param int $idPage
-	 */
-	public function showAll($idPage){
+
+    /**
+     * @param string $idPage
+     * @return array
+     */
+    public function showAll($idPage){
 		$input['num']=$idPage; 
 		$page = $this->modelArticles->hydrate($input);  	
 		$results['articles'] = $this->allArticlesPublished(); 
 		
 		$verifyPage = $this->modelArticles->verifyPageNumber($results, $page);//var_dump($verifyPage); die();
 		if ( $verifyPage != null){
-			$this->redirectTo("/articles/page/$verifyPage");
+			return $this->redirectTo("/articles/page/$verifyPage");
 		};
 
 		$results = $this->modelArticles->articleDisplay($results, $page); 
-		$this->show("/public/dashboard", $results);
+		return $this->show("/public/dashboard", $results);
 	}
 
 	/**
-	 *Show one article by id
-	 *If id is not in db, return to page all articles
-	 *@param int $id
+	 * Show one article by id
+	 * If id is not in db, return to page all articles
+	 * @param int $id
+     * @return array
 	 */
 	public function showOne($id){ 
 		$results['article']= $this->oneArticle($id);  
 		if (!$results['article']){
-			$this->redirectTo("/articles");
-		}else{
-			$articles= $this->allArticlesPublished(); 
-			$results["comments"] = $this->commentsByArticle($this->modelArticles->id());
-			$this->show("/createComment", $results, $articles);
+			return $this->redirectTo("/articles");
 		};
+
+        $articles= $this->allArticlesPublished(); 
+        $results["comments"] = $this->commentsByArticle($this->modelArticles->id());
+        return $this->show("/createComment", $results, $articles);
 	}
 
-	/**
-	 *Show admin dashboard
-	*/
-	public function showDashboard(){
+
+
+    /**
+     * @return array
+     */
+    public function showDashboard(){
 		$results['articles']=$this->allArticles();
 		$results['comments']=$this->allComments(); 
-		$this->show('/admin/dashboard', $results);
+		return $this->show('/admin/dashboard', $results);
 	}
 
 
     /**
      * Show all articles in admin
-     * @param $idPage
+     * @param string $idPage
      * @param array $errors
+     * @return array
      */
     public function showAllAdmin($idPage, $errors=[]){
 		$input['num']=$idPage; 
@@ -78,40 +83,43 @@ class ArticleController extends Controller{
 
 		$verifyPage = $this->modelArticles->verifyPageNumber($preparation, $page);
 		if ( $verifyPage != null){
-			$this->redirectTo("/admin/articles/page/$verifyPage");
+			return $this->redirectTo("/admin/articles/page/$verifyPage");
 		};
 
 		$results = $this->modelArticles->articleDisplay($preparation, $page); 
 		$results['comments']=$this->allComments();  
 		$results['errors']=$errors;
-		$this->show('/admin/articles', $results);
+		return $this->show('/admin/articles', $results);
 	}
 
 	/**
 	 *Show one article with comments in admin
 	 *@param string $id
 	 *@param array $inputsError
+     * @return array
 	 */
 	public function showOneAdmin($id, $inputsError=[]){
 		$results['article']= $this->oneArticle($id);  
 		if (!$results['article']){
-			$this->redirectTo("/admin/articles");
+			return $this->redirectTo("/admin/articles");
 		}
 		$articles= $this->allArticles();  
 		$results["comments"] = $this->commentsByArticle($this->modelArticles->id());
 		$results = $results + $inputsError;
-		$this->show('/admin/article', $results, $articles);
+		return $this->show('/admin/article', $results, $articles);
 	}
 
 	/**
 	 *Page create article
+     * @return array
 	 */
 	public function showCreate(){
-		$this->show("/admin/create");
+		return $this->show("/admin/create");
 	}
 
 	/**
 	 *Creation article
+     * @return array
 	 */
 	public function create(){
         $inputs = $this->request->getParsedBody();;
@@ -120,11 +128,11 @@ class ArticleController extends Controller{
 		
 		if ($this->modelArticles->prepareCreate($inputs) == false){
 			$_SESSION["success"][2]="Impossible de créer l'article";
-			$this->show('/admin/create', $this->modelArticles->saveInputs());
+			return $this->show('/admin/create', $this->modelArticles->saveInputs());
 		}
 		$_SESSION["success"][1]= "L'article est créé";
 
-		$this->redirectTo("/admin/dashboard");
+		return $this->redirectTo("/admin/dashboard");
 	}
 
 	/**
@@ -135,25 +143,26 @@ class ArticleController extends Controller{
 		$id = $this->modelArticles->id();
 		if ( $id == null){
 			$_SESSION['success'][2]="Echec de la suppression!!";
-			$this->redirectTo("/admin/articles");
+			return $this->redirectTo("/admin/articles");
 		};
 		$modelComment = $this->factory->getModel('comment');
 		if ($modelComment->delete($id, 'article_id') == false){
 			$_SESSION['success'][2]="Echec de la suppression des commentaires !!";
-			$this->redirectTo("/admin/articles/$id");
+			return $this->redirectTo("/admin/articles/$id");
 		}; 
 		if ($this->modelArticles->delete($id) == false){
 			$_SESSION['success'][2]="Echec de la suppression de l'article !!";
-			$this->redirectTo("/admin/articles/$id");
+			return $this->redirectTo("/admin/articles/$id");
 		}; 
 		$_SESSION['success'][1]="L'article et les commentaires associés ont bien été supprimés.";
-		$this->redirectTo("/admin/articles");
+		return $this->redirectTo("/admin/articles");
 	}
 
 
 	/**
-	 *Update page with all articles. Can update published and date publication
-	 *@param string $id
+	 * Update page with all articles. Can update published and date publication
+	 * @param string $id
+     * @return array
 	 */
 	public function updatePublication($id){   
 		$inputs = $this->request->getParsedBody();
@@ -170,14 +179,14 @@ class ArticleController extends Controller{
 	}
 
 	/**
-	 *Update article
-	 *@param int $idArticle
+	 * Update article
+	 * @param int $idArticle
 	 */
 	public function updateArticle($idArticle){ 
 		$inputs = $this->request->getParsedBody();
 		$inputs["id"]=$idArticle; 
 		$this->update($inputs, "prepareUpdate"); 
-		$this->redirectTo("/admin/articles");
+		return $this->redirectTo("/admin/articles");
 	}
 
 	/**
@@ -196,23 +205,6 @@ class ArticleController extends Controller{
 			$_SESSION["success"][1]="Mise à jour de l'article effectuée";
 			return true; 
 	}
-
-	/*private function update($inputsVerify, $method){ 
-		$inputs= $this->modelArticles->hydrate($inputsVerify); 
-		$result = $this->modelArticles->$method($inputs); 
-
-		if (is_null($result)){ 
-			$_SESSION["success"][1]="Mise à jour de l'article effectuée";
-			return $result; 
-		}
-		$_SESSION["success"][2]="La mise à jour de l'article a échoué"; 
-		$result['errors']= $this->modelArticles->errors(); 
-		return $this->showOneAdmin($result['inputsError']['id'], $result); 
-		
-	}*/
-		
-		
-
 
 
 	/**
@@ -241,7 +233,7 @@ class ArticleController extends Controller{
                 "value"=>"1",
                 "operator"=>"="
             )];
-		$allArticles=$this->defineAllUsers($this->modelArticles->search2($search));  
+		$allArticles=$this->defineAllUsers($this->modelArticles->search($search));
 		return $allArticles; 
 	}
 
@@ -282,7 +274,7 @@ class ArticleController extends Controller{
                 "value"=> $idArticle,
                 "operator"=>"="
             )];
-        return $modelComment->search2($search);
+        return $modelComment->search($search);
         //return $modelComment->search( "article_id", $idArticle);
 	}
 

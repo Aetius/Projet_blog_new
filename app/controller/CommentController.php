@@ -14,10 +14,12 @@ class CommentController extends Controller{
 		parent::__construct($request);
 	}
 
-	/**
-	 *Show all articles in the db
-	 */
-	public function showDashboard(){
+
+    /**
+     * show all comments in the page commentDashboard
+     * @return array
+     */
+    public function showDashboard(){
 		$comments = $this->modelComment->all();
 		$modelArticle = $this->factory->getModel('Article');
 		$countComments = count($comments);
@@ -26,13 +28,15 @@ class CommentController extends Controller{
             $comments[$key]['article_title'] = $results['title'];
         }
         $results['comments']= $comments;
-        $this->show('dashboardComments', $results);
+        return $this->show('dashboardComments', $results);
 
 	}
 
 
-
-	public function create(){
+    /**
+     * @return array
+     */
+    public function create(){
 		$inputs = $this->modelComment->hydrate($this->request->getParsedBody());
 
 		if ($this->modelComment->prepareCreate($inputs) == false){
@@ -43,11 +47,14 @@ class CommentController extends Controller{
 			$_SESSION['success']['1']='Le commentaire a été ajouté et est en attente pour modération.';
 		}
 
-		$this->redirectTo("/articles/".$this->modelComment->articleId());
+		return $this->redirectTo("/articles/".$this->modelComment->articleId());
 	}
 
 
-	public function update(){
+    /**
+     * @return array
+     */
+    public function update(){
 		$page = $_SERVER['HTTP_REFERER'];
 		$inputs = $this->modelComment->hydrate($this->request->getParsedBody());
 
@@ -56,11 +63,14 @@ class CommentController extends Controller{
 		}else{
 			$_SESSION['success']['1']='Le commentaire a été modifié.';
 		}
-		$this->redirectTo("$page");
+		return $this->redirectTo("$page");
 	}
 
 
-	public function delete (){
+    /**
+     * @return array
+     */
+    public function delete (){
 		$page = $_SERVER['HTTP_REFERER'];
 		$this->modelComment->hydrate($this->request->getParsedBody());
 		if ($this->modelComment->delete($this->modelComment->id()) == false){
@@ -68,7 +78,7 @@ class CommentController extends Controller{
 		}else{
 			$_SESSION['success']['1']='Le commentaire est supprimé.';
 		}
-		$this->redirectTo("$page");
+		return $this->redirectTo("$page");
 	}
 
 

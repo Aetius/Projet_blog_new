@@ -15,15 +15,23 @@ class Dispatcher {
     private $response;
 
 
+    /**
+     * @param $middleware
+     * @return $this
+     */
     public function pipe($middleware){
-        $this->middlewares[] = $middleware;
+       $this->middlewares[] = $middleware;
        $this->response = new Response(); 
        return $this; 
     }
 
 
+    /**
+     * @param $request
+     * @return mixed
+     */
     public function process($request){
-        $middleware = $this->getMiddleware(); 
+        $middleware = $this->getMiddleware();
         $this->index++;
         if (($middleware)=== null){
             return $this->response;
@@ -35,6 +43,9 @@ class Dispatcher {
         }
     }
 
+    /**
+     * @return mixed|null
+     */
     private function getMiddleware(){
         if (isset($this->middlewares[$this->index])) {
             return $this->middlewares[$this->index];

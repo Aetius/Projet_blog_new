@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "25ab60e58089cb862ba03194f54899d1",
+    "content-hash": "c5ede676084427b867f1cd8e6ff4b86c",
     "packages": [
         {
             "name": "altorouter/altorouter",
@@ -652,16 +652,16 @@
         },
         {
             "name": "tinymce/tinymce",
-            "version": "5.1.1",
+            "version": "5.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tinymce/tinymce-dist.git",
-                "reference": "782aa3876f354b8d04fbf1124c4aa440cec9d199"
+                "reference": "7587e9a7d09ea0a2ae16f6628918c1bd18df2baa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tinymce/tinymce-dist/zipball/782aa3876f354b8d04fbf1124c4aa440cec9d199",
-                "reference": "782aa3876f354b8d04fbf1124c4aa440cec9d199",
+                "url": "https://api.github.com/repos/tinymce/tinymce-dist/zipball/7587e9a7d09ea0a2ae16f6628918c1bd18df2baa",
+                "reference": "7587e9a7d09ea0a2ae16f6628918c1bd18df2baa",
                 "shasum": ""
             },
             "type": "component",
@@ -694,20 +694,20 @@
                 "tinymce",
                 "wysiwyg"
             ],
-            "time": "2019-10-28T06:39:23+00:00"
+            "time": "2019-11-19T04:29:44+00:00"
         },
         {
             "name": "twig/twig",
-            "version": "v2.12.1",
+            "version": "v2.12.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "ddd4134af9bfc6dba4eff7c8447444ecc45b9ee5"
+                "reference": "d761fd1f1c6b867ae09a7d8119a6d95d06dc44ed"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/ddd4134af9bfc6dba4eff7c8447444ecc45b9ee5",
-                "reference": "ddd4134af9bfc6dba4eff7c8447444ecc45b9ee5",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/d761fd1f1c6b867ae09a7d8119a6d95d06dc44ed",
+                "reference": "d761fd1f1c6b867ae09a7d8119a6d95d06dc44ed",
                 "shasum": ""
             },
             "require": {
@@ -761,7 +761,7 @@
             "keywords": [
                 "templating"
             ],
-            "time": "2019-10-17T07:34:53+00:00"
+            "time": "2019-11-11T16:52:09+00:00"
         }
     ],
     "packages-dev": [
@@ -822,16 +822,16 @@
         },
         {
             "name": "symfony/var-dumper",
-            "version": "v4.3.5",
+            "version": "v4.3.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/var-dumper.git",
-                "reference": "bde8957fc415fdc6964f33916a3755737744ff05"
+                "reference": "ea4940845535c85ff5c505e13b3205b0076d07bf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/var-dumper/zipball/bde8957fc415fdc6964f33916a3755737744ff05",
-                "reference": "bde8957fc415fdc6964f33916a3755737744ff05",
+                "url": "https://api.github.com/repos/symfony/var-dumper/zipball/ea4940845535c85ff5c505e13b3205b0076d07bf",
+                "reference": "ea4940845535c85ff5c505e13b3205b0076d07bf",
                 "shasum": ""
             },
             "require": {
@@ -894,7 +894,7 @@
                 "debug",
                 "dump"
             ],
-            "time": "2019-10-04T19:48:13+00:00"
+            "time": "2019-10-13T12:02:04+00:00"
         }
     ],
     "aliases": [],
@@ -902,6 +902,8 @@
     "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "ext-pdo": "*"
+    },
     "platform-dev": []
 }

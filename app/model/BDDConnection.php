@@ -7,7 +7,11 @@ use App\Utilities\ErrorException;
 class BDDConnection{
 	private static $_bdd = null;
 
-	public static function connection(){
+    /**
+     * @return \PDO|null
+     * @throws ErrorException
+     */
+    public static function connection(){
 		if ((self::$_bdd)=== null){
 			$dsn = 'mysql:host=localhost;dbname=projet_p5_blog_oc;charset=utf8';
 			$user = 'root';
@@ -18,7 +22,7 @@ class BDDConnection{
 				self::$_bdd = new \PDO($dsn, $user , $password, $options);
 			}catch (\PDOException $e){
 
-			  throw new ErrorException("L'accès à la bdd est refusée");
+			  throw new ErrorException("L'accès à la bdd est refusé");
 				
 			}
 			

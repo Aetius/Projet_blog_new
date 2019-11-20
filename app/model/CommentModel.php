@@ -3,7 +3,6 @@
 namespace App\Model; 
 
 
-use App\Model\AppModel;
 use App\Utilities\Validator;
 
 
@@ -11,8 +10,7 @@ class CommentModel extends AppModel{
 	
 	private $comment; 
 	private $author; 
-	private $published=null; 
-	//private $publishedDate=null;
+	private $published=null;
 	private $articleId; 	
 	private $adminAnswer=null; 
 	 

@@ -1,8 +1,9 @@
 <?php
 
     require '../vendor/autoload.php';
-    require '../app/config/routes.php';
 
+
+    use \App\Utilities\Router;
     use function Http\Response\send;
     use Psr\Http\Message\ResponseInterface;
     use Psr\Http\Message\ServerRequestInterface;
@@ -15,20 +16,8 @@
 
 //error_reporting(0); //Hide all php errors. Must be active in production. 
 
-    $router = new AltoRouter();
 
-
-    $router -> addRoutes( $routes );
-
-
-    $match = $router -> match();
-
-
-    /*
-    *Middleware avec Psr7
-    **/
-
-    $request = ServerRequest ::fromGlobals(); //permet de créer une requête à partir des variables globales //instance d'objet qui pourrait me permettre de ne jamais faire appel à $_POST.
+    $request = ServerRequest ::fromGlobals();
 
     $response = new Response();
 
@@ -36,39 +25,10 @@
     $dispatcher
         -> pipe( new TrailingSlash() )
         -> pipe( new CsrfMiddleware() )
-        -> pipe( new Auth() );
+        -> pipe( new Auth() )
+        -> pipe (new Router());
 
-    send( $dispatcher -> process( $request ) );
-
-
-    $page = new \App\utilities\Templating();
-
-    try {
-
-        if (is_array( $match )) {
-            if (preg_match( '/#/', $match['target'] )) {
-                $params = explode( '#', $match['target'] );
-                $controller = '\App\controller\\' . $params[0] . "Controller";
-                $controller = new $controller( $request );
-                if (count( $match['params'] ) == "0") {
-                    array_push( $match['params'], null );
-                };
-                return call_user_func_array( [$controller, $params[1]], $match['params'] );
-            };
-        };
-    } catch (\App\utilities\ErrorException $e) {
-
-        $twig = new \App\utilities\Templating();
-         send( new Response(
-            500,
-            [],
-            $twig -> show( "500" )
-        ) );
-         return;
-    }
-    $page -> show( "error404" );
-
-
+    send($dispatcher -> process( $request )) ;
 
 
 

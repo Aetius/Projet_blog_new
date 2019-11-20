@@ -85,22 +85,11 @@ class AppModel{
 		return $this->executeRequest("SELECT * FROM {$this->table} WHERE $fieldName=:field", [":field"=>$field], true);
 	}
 
-	/**
-	 *Search statement : search all entries in db with one criteria
-	 *@param string$fieldName
-	 *@param string $field
-	 *@return array
-	 */
-	/*public function search($fieldName, $field){
-		return $this->executeRequest("SELECT * FROM {$this->table} WHERE $fieldName=:fieldName ORDER BY id DESC", [":fieldName"=>$field]);
-	}*/
-
-
     /**
      * @param $search
      * @return array
      */
-    public function search2($search){
+    public function search($search){
         $statement = "";
         $countSearch = count($search);
         for ($i = 0; $i<$countSearch; $i++){
