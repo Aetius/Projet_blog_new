@@ -1,7 +1,5 @@
 <?php
 
-namespace App\Utilities;
-
 
 $routes=(array(
     array('POST', '/admin/settings/email', 'user#emailUpdate'),

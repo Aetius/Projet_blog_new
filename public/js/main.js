@@ -7,7 +7,7 @@
 			if(submitForm !== undefined){
 				location.href = "#contact"}});
 	}
-})()
+})();
 
 
 (function(){
@@ -52,7 +52,7 @@
 	if (buttons != null) {
 		for (let i = 0; i<buttons.length; i++){
 			let button = buttons[i]; 
-			button.addEventListener(("click"), e => {
+			button.addEventListener("click", e => {
 				window.history.back();
 			})
 		}

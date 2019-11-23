@@ -19,7 +19,7 @@
          * @throws \Twig\Error\SyntaxError
          */
         public function process($request, $delegate){
-            require 'routes.php';
+            require '..\App\Config\routes.php';
 
             $router = new AltoRouter();
             $router -> addRoutes( $routes );

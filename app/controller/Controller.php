@@ -4,6 +4,7 @@
 
     use App\Utilities\AppFactory;
     use App\Utilities\Session;
+    use Psr\Http\Message\ServerRequestInterface;
 
 
     class Controller
@@ -14,10 +15,16 @@
          */
         protected $factory;
 
-        public function __construct()
+        /**
+         * @var ServerRequestInterface
+         */
+        protected $request;
+
+        public function __construct(ServerRequestInterface $request)
         {
             Session ::getSession();
             $this -> factory = AppFactory ::getInstance();
+            $this -> request = $request;
         }
 
 
