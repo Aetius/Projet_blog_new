@@ -14,6 +14,8 @@ To install your project, you have to copy these files.
 
 - Then you launch a composer install and you run your project locally. 
 
+- You have to configure a Constants file in App\Config, interface of ConstantsInterface
+
 - If you choose to test this project in local mode : 
 	You have to put the TinyMCE module in your public folder, 
 	You have to configurate your SMTP parameters. In that case, you could send email. 

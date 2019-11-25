@@ -55,7 +55,10 @@ class CommentController extends Controller{
      * @return array
      */
     public function update(){
-		$page = $_SERVER['HTTP_REFERER'];
+        $page = $this->request->getUri()->getPath();
+        if (strstr($page, 'articles')){
+            $page = substr($page, 0, strpos($page, '/comments'));
+        };
 		$inputs = $this->modelComment->hydrate($this->request->getParsedBody());
 
 		if ($this->modelComment->prepareUpdate($inputs) == false){
@@ -71,7 +74,8 @@ class CommentController extends Controller{
      * @return array
      */
     public function delete (){
-		$page = $_SERVER['HTTP_REFERER'];
+		$page = $this->request->getUri()->getPath();
+		$page = substr($page, 0, strpos($page, '/comments/delete' ));
 		$this->modelComment->hydrate($this->request->getParsedBody());
 		if ($this->modelComment->delete($this->modelComment->id()) == false){
 			$_SESSION['success']['2']="Echec de la suppression.";

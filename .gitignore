@@ -1,3 +1,4 @@
 /public/tinymce
 vendor
 /public/images
+/App/Config/Constants.php

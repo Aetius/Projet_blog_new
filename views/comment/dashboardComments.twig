@@ -64,7 +64,7 @@
 								</form>
 							</div>
 							<div class="col-md-6 text-center mb-3 mt-4">
-								<form method="post" action="/admin/comments/delete">
+								<form method="post" action="/admin/comments/comments/delete">
 									{{ csrf|raw }}
 									
 									<input type="hidden" name="id" value="{{comment.id}}">

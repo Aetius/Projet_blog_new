@@ -3,6 +3,7 @@
 namespace App\Model;
 
 
+use App\Config\Constants;
 use App\Utilities\Validator;
 
 class EmailModel extends AppModel{
@@ -30,11 +31,11 @@ class EmailModel extends AppModel{
 	/**
 	 *Valide inputs. If validation is ok, send inputs to send function. 
 	 *@param array $inputs
-	 *@return array
+	 *@return array|void
 	 */
 	public function prepareContact($inputs){ 
 		if (empty($this->validation($inputs))){
-			$to = 'thomas.brumain@hotmail.fr';
+			$to = Constants::getMailTo();
 			$subject= 'Message envoyé par ' . $this->lastName .' '. $this->name .'__'.'Email : '.$this->email ;
 			$message_content = $this->message;
 			$this->send($to, $subject, $message_content);
@@ -77,7 +78,7 @@ class EmailModel extends AppModel{
 		$content .='</body></html>';
 		$headers  = 'MIME-Version: 1.0' . "\r\n";
 		$headers .= 'Content-type: text/html; charset=utf-8' . "\r\n";
-		$headers .= 'FROM:' . 'dontomberry@outlook.com';
+		$headers .= 'FROM:' . Constants::getMailFrom();
 		
 		mail ($to, $subject, $content, $headers); 
 	}

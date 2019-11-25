@@ -3,6 +3,7 @@ namespace App\Model;
 
 
 use App\Utilities\ErrorException;
+use App\Config\Constants;
 
 class BDDConnection{
 	private static $_bdd = null;
@@ -13,9 +14,9 @@ class BDDConnection{
      */
     public static function connection(){
 		if ((self::$_bdd)=== null){
-			$dsn = 'mysql:host=localhost;dbname=projet_p5_blog_oc;charset=utf8';
-			$user = 'root';
-			$password = 'root';
+			$dsn = Constants::getDsn();
+			$user = Constants::getUserNameDb();
+			$password = Constants::getPasswordDb();
 			$options=[\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION];
 
 			try{
