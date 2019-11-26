@@ -35,7 +35,7 @@ class EmailModel extends AppModel{
 	 */
 	public function prepareContact($inputs){ 
 		if (empty($this->validation($inputs))){
-			$to = Constants::getMailTo();
+			$to = Constants::MAIL_TO;
 			$subject= 'Message envoyé par ' . $this->lastName .' '. $this->name .'__'.'Email : '.$this->email ;
 			$message_content = $this->message;
 			$this->send($to, $subject, $message_content);
@@ -78,7 +78,7 @@ class EmailModel extends AppModel{
 		$content .='</body></html>';
 		$headers  = 'MIME-Version: 1.0' . "\r\n";
 		$headers .= 'Content-type: text/html; charset=utf-8' . "\r\n";
-		$headers .= 'FROM:' . Constants::getMailFrom();
+		$headers .= 'FROM:' . Constants::MAIL_FROM;
 		
 		mail ($to, $subject, $content, $headers); 
 	}

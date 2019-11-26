@@ -14,7 +14,18 @@ To install your project, you have to copy these files.
 
 - Then you launch a composer install and you run your project locally. 
 
-- You have to configure a Constants file in App\Config, interface of ConstantsInterface
+- You have to configure a Constants file in App\Config : 
+namespace App\Config;
+    class Constants{
+        CONST DOCUMENT_ROUTE = STRING ;
+        CONST MAIN_URL = STRING;
+        CONST DSN =  STRING;
+        CONST USER_NAME_DB = STRING;
+        CONST PASSWORD_DB = STRING;
+        CONST MAIL_TO = STRING;
+        CONST MAIL_FROM = STRING;
+        CONST COOKIE_LIFE_TIME = INTEGER;
+    }
 
 - If you choose to test this project in local mode : 
 	You have to put the TinyMCE module in your public folder, 

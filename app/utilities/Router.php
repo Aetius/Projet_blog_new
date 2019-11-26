@@ -6,6 +6,9 @@
     use AltoRouter;
     use GuzzleHttp\Psr7\Response;
     use Psr\Http\Message\RequestInterface;
+    use Twig\Error\LoaderError;
+    use Twig\Error\RuntimeError;
+    use Twig\Error\SyntaxError;
 
     class Router
     {
@@ -14,7 +17,7 @@
 
         public function __construct()
         {
-            $this->routes = (array(
+            $this -> routes = (array(
                 array('POST', '/admin/settings/email', 'user#emailUpdate'),
                 array('POST', '/admin/settings/password', 'user#passwordUpdate'),
                 array('POST', '/admin/settings/desactivate', 'user#desactivate'),
@@ -31,7 +34,7 @@
                 array('GET', '/admin/comments', 'comment#showDashboard'),
                 array('POST', '/admin/comments', 'comment#update'),
                 array('GET', '/admin/articles/create', 'article#showCreate'),
-                array('POST','/admin/articles/create', 'article#create'),
+                array('POST', '/admin/articles/create', 'article#create'),
                 array('GET', '/admin/logout', 'user#logout'),
                 array('GET', '/admin/settings', 'user#showSettings'),
                 array('GET', '/admin/dashboard', 'article#showDashboard'),
@@ -54,18 +57,17 @@
          * @param $request
          * @param $delegate
          * @return Response
-         * @throws \Twig\Error\LoaderError
-         * @throws \Twig\Error\RuntimeError
-         * @throws \Twig\Error\SyntaxError
+         * @throws LoaderError
+         * @throws RuntimeError
+         * @throws SyntaxError
          * @throws \Exception
          */
         public function process(RequestInterface $request, Dispatcher $delegate)
         {
-            //require '..\App\Config\routes.php';
 
             $router = new AltoRouter();
-            $router -> addRoutes( $this->routes );
-            $match = $router -> match();
+            $router->addRoutes( $this -> routes );
+            $match = $router->match();
             $twig = new Templating();
 
 
@@ -75,7 +77,7 @@
                     if (preg_match( '/#/', $match['target'] )) {
                         $params = explode( '#', $match['target'] );
                         $controller = '\App\controller\\' . $params[0] . "Controller";
-                        $controller = new $controller( $request );
+                        $controller = new $controller($request);
 
                         if (count( $match['params'] ) == "0") {
                             array_push( $match['params'], null );
@@ -95,7 +97,8 @@
                                 $prepareResponse['show']['results'],
                                 $prepareResponse['show']['options']
                             ) );
-                            return $response -> withBody( $body -> getBody() );
+                            //return $response -> withBody( $body -> getBody() );
+                            return $body;
                         };
                     };
                 }

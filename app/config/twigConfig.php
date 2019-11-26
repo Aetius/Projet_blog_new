@@ -2,7 +2,6 @@
 namespace App\Config;
 
 use Twig\Environment;
-use App\Config\Constants;
 
 class TwigConfig{
 
@@ -11,7 +10,7 @@ class TwigConfig{
 
 	protected function config() {
 
-		$path=Constants::getDocumentRoute();
+		$path=Constants::DOCUMENT_ROUTE;
 
 		$loader = new \Twig\Loader\FilesystemLoader(array ("$path/templates", "$path/article", "$path/comment", "$path/user"));
 		$this->twig = new \Twig\Environment($loader, [

@@ -14,9 +14,9 @@ class BDDConnection{
      */
     public static function connection(){
 		if ((self::$_bdd)=== null){
-			$dsn = Constants::getDsn();
-			$user = Constants::getUserNameDb();
-			$password = Constants::getPasswordDb();
+			$dsn = Constants::DSN;
+			$user = Constants::USER_NAME_DB;
+			$password = Constants::PASSWORD_DB;
 			$options=[\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION];
 
 			try{
