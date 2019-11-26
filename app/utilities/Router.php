@@ -66,38 +66,38 @@
         {
 
             $router = new AltoRouter();
-            $router->addRoutes( $this -> routes );
+            $router->addRoutes($this -> routes);
             $match = $router->match();
             $twig = new Templating();
 
 
             try {
-                if (is_array( $match )) {
+                if (is_array($match)) {
 
-                    if (preg_match( '/#/', $match['target'] )) {
-                        $params = explode( '#', $match['target'] );
+                    if (preg_match('/#/', $match['target'])) {
+                        $params = explode('#', $match['target']);
                         $controller = '\App\controller\\' . $params[0] . "Controller";
                         $controller = new $controller($request);
 
-                        if (count( $match['params'] ) == "0") {
-                            array_push( $match['params'], null );
+                        if (count($match['params']) == "0") {
+                            array_push($match['params'], null);
                         };
 
-                        $prepareResponse = call_user_func_array( [$controller, $params[1]], $match['params'] );
-                        $response = $delegate -> process( $request );
+                        $prepareResponse = call_user_func_array([$controller, $params[1]], $match['params']);
+                        $response = $delegate -> process($request);
 
-                        if (key_exists( 'redirect', $prepareResponse )) {
+                        if (key_exists('redirect', $prepareResponse)) {
                             return $response
-                                -> withStatus( 302 )
-                                -> withHeader( 'location', $prepareResponse['redirect'] );
+                                -> withStatus(302)
+                                -> withHeader('location', $prepareResponse['redirect']);
                         }
-                        if (key_exists( 'show', $prepareResponse )) {
-                            $body = new Response( 200, [], $twig -> show(
+                        if (key_exists('show', $prepareResponse)) {
+                            $body = new Response(200, [], $twig->show(
                                 $prepareResponse['show']['pageId'],
                                 $prepareResponse['show']['results'],
                                 $prepareResponse['show']['options']
-                            ) );
-                            //return $response -> withBody( $body -> getBody() );
+                            ));
+                            //return $response -> withBody($body -> getBody());
                             return $body;
                         };
                     };
@@ -105,14 +105,14 @@
                 return new Response(
                     404,
                     [],
-                    $twig -> show( "error404" )
+                    $twig -> show("error404")
                 );
 
             } catch (ErrorException $e) {
                 return new Response(
                     500,
                     [],
-                    $twig -> show( "500" )
+                    $twig -> show("500")
                 );
             }
 

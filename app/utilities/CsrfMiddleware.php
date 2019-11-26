@@ -2,10 +2,7 @@
 
 namespace App\Utilities;
 
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use App\Utilities\Session;
-use App\Utilities\Purifier;
+
 
 class CsrfMiddleware{
 

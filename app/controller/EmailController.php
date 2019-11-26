@@ -10,6 +10,10 @@ use Psr\Http\Message\ServerRequestInterface;
 
 
 class EmailController extends Controller{
+
+    /**
+     *@var EmailModel object
+     */
 	private $modelEmail; 
 
 

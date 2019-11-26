@@ -4,8 +4,6 @@ namespace App\Model;
 
 
 use App\Utilities\Validator;
-use App\Model\AppModel;
-use App\Utilities\AppFactory;
 
 
 
@@ -126,7 +124,7 @@ class ArticleModel extends AppModel{
 	public function articleDisplay($resultsArticles, $idPage){
 		$resultsArticles['page'] = $idPage;
 
-		if ((!isset($resultsArticles['page']['num'])) || (empty($resultsArticles['page']['num'])) || ($resultsArticles['page']['num'] < 1 )){
+		if ((!isset($resultsArticles['page']['num'])) || (empty($resultsArticles['page']['num'])) || ($resultsArticles['page']['num'] < 1)){
 			$resultsArticles['page']['num'] = 1; 
 		}; 
 	
@@ -139,14 +137,15 @@ class ArticleModel extends AppModel{
      *Verify the page number
      * @param array $resultsArticles
      * @param $idPage
-     * @return int
+     * @return int|null
      */
 	public function verifyPageNumber($resultsArticles, $idPage){
 		$lenArticles = count($resultsArticles['articles']); 
 		if ((($lenArticles/$this->articlesByPage)+1) <= $idPage['num']){
 			$page = ceil($lenArticles/$this->articlesByPage); 
 			return $page; 
-		} 
+		}
+		return null;
 	}
 
 	/**
@@ -239,7 +238,7 @@ class ArticleModel extends AppModel{
      * @return string|null
      */
     public function setId($name){
-		if ($this->one( 'id', $name)){
+		if ($this->one('id', $name)){
 			return $this->id = $name; 
 		}
 		return $this->id = NULL;
@@ -256,6 +255,7 @@ class ArticleModel extends AppModel{
 
 	/**
 	 *Validator verification
+     * @var array inputs
 	 *@return object
 	 */
 	protected function getValidator($inputs){		

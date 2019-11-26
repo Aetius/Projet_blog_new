@@ -4,7 +4,6 @@ namespace App\Utilities;
 
 
 use App\Model\UserModel;
-use App\Utilities\dispatcher;
 
 class Auth{
 

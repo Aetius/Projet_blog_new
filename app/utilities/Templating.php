@@ -13,7 +13,7 @@
 
         public function __construct()
         {
-            $this -> config();
+            $this->config();
         }
 
         /**
@@ -28,17 +28,17 @@
         public function show($page, $results = [], $options = [])
         {
             $display = [];
-            if (isset( $_SESSION['success'] )) {
+            if (isset($_SESSION['success'])) {
                 $display['success'] = $_SESSION['success'];
-                unset( $_SESSION['success'] );
+                unset($_SESSION['success']);
             };
-            if (isset( $_SESSION['errors'] )) {
+            if (isset($_SESSION['errors'])) {
                 $results['errors'] = $_SESSION['errors'];
-                unset( $_SESSION['errors'] );
+                unset($_SESSION['errors']);
             };
 
 
-            return $this -> twig -> render(
+            return $this->twig->render(
                 "$page.twig",
                 [
                     'results' => $results,

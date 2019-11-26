@@ -62,9 +62,9 @@ class CommentController extends Controller{
 		$inputs = $this->modelComment->hydrate($this->request->getParsedBody());
 
 		if ($this->modelComment->prepareUpdate($inputs) == false){
-			$_SESSION['success']['2']="Echec de l'enregistrement.";
+			$_SESSION['success']['2'] = "Echec de l'enregistrement.";
 		}else{
-			$_SESSION['success']['1']='Le commentaire a été modifié.';
+			$_SESSION['success']['1'] = 'Le commentaire a été modifié.';
 		}
 		return $this->redirectTo("$page");
 	}

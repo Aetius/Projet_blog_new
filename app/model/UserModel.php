@@ -27,7 +27,7 @@ class UserModel extends AppModel{
 	public function prepareInscription($inputs){  
 		$this->validation($inputs); 
 		
-		if ($this->one( 'email', $this->email)){
+		if ($this->one('email', $this->email)){
 			$this->errors[]="Cette adresse email existe déjà";
 		};
 		if ($this->one('login', $this->login)){

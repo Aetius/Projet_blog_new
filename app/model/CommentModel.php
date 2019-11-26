@@ -65,32 +65,60 @@ class CommentModel extends AppModel{
 	/**
 	 *Setters
 	 */
+    /**
+     * @param $input
+     * @return string
+     */
 	public function setAuthor($input){
 		return $this->author = $input; 
 	}
 
-	public function setComment($input){
+    /**
+     * @param $input
+     * @return string
+     */
+    public function setComment($input){
 		return $this->comment = $input; 
 	}
 
+    /**
+     * @param $input
+     * @return string
+     */
 	public function setArticleId($input){
 		return $this->articleId = $input; 
 	}
 
+    /**
+     * @param $input
+     * @return string
+     */
 	public function setDate(){
 		$datetime = getdate(); 
 		$date = $datetime['year']."-".$datetime['mon']."-".($datetime['mday']);
 		return $date; 
 	}
 
+    /**
+     * @param $input
+     * @return int
+     */
 	public function setId($input){
 		return $this->id=intval($input); 
 	}
 
+    /**
+     * @param $input
+     * @return bool
+     */
 	public function setPublished($input){
 		return $this->published=$input;  
 	}
 
+    /**
+     * @param $input
+     * @return bool
+     */
 	public function setAdminAnswer($input){
 		return $this->adminAnswer=$input; 
 	}
@@ -114,6 +142,7 @@ class CommentModel extends AppModel{
 
 	/**
 	 *Validator verification
+     * @var array $inputs
 	 *@return object
 	 */
 	protected function getValidator($inputs){

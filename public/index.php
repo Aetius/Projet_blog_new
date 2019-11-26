@@ -5,8 +5,6 @@
 
     use \App\Utilities\Router;
     use function Http\Response\send;
-    use Psr\Http\Message\ResponseInterface;
-    use Psr\Http\Message\ServerRequestInterface;
     use GuzzleHttp\Psr7\ServerRequest;
     use GuzzleHttp\Psr7\Response;
     use \App\utilities\Dispatcher;

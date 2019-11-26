@@ -32,8 +32,8 @@ class ArticleController extends Controller{
 		$page = $this->modelArticles->hydrate($input);  	
 		$results['articles'] = $this->allArticlesPublished(); 
 		
-		$verifyPage = $this->modelArticles->verifyPageNumber($results, $page);//var_dump($verifyPage); die();
-		if ( $verifyPage != null){
+		$verifyPage = $this->modelArticles->verifyPageNumber($results, $page);
+		if ($verifyPage != null){
 			return $this->redirectTo("/articles/page/$verifyPage");
 		};
 
@@ -82,7 +82,7 @@ class ArticleController extends Controller{
 		$preparation['articles']=$this->allArticles();
 
 		$verifyPage = $this->modelArticles->verifyPageNumber($preparation, $page);
-		if ( $verifyPage != null){
+		if ($verifyPage != null){
 			return $this->redirectTo("/admin/articles/page/$verifyPage");
 		};
 
@@ -141,7 +141,7 @@ class ArticleController extends Controller{
 	public function delete(){
 		$this->modelArticles->hydrate($this->request->getParsedBody());
 		$id = $this->modelArticles->id();
-		if ( $id == null){
+		if ($id == null){
 			$_SESSION['success'][2]="Echec de la suppression!!";
 			return $this->redirectTo("/admin/articles");
 		};
@@ -180,7 +180,8 @@ class ArticleController extends Controller{
 
 	/**
 	 * Update article
-	 * @param int $idArticle
+	 * @param integer $idArticle
+     * @return array
 	 */
 	public function updateArticle($idArticle){ 
 		$inputs = $this->request->getParsedBody();
@@ -212,7 +213,7 @@ class ArticleController extends Controller{
 	 *@return array
 	 */
 	private function allArticles(){
-		$allArticles=$this->defineAllUsers( (array)$this -> modelArticles -> all() );
+		$allArticles=$this->defineAllUsers((array)$this -> modelArticles -> all());
 		return $allArticles; 
 	}
 
@@ -275,7 +276,7 @@ class ArticleController extends Controller{
                 "operator"=>"="
             )];
         return $modelComment->search($search);
-        //return $modelComment->search( "article_id", $idArticle);
+        //return $modelComment->search("article_id", $idArticle);
 	}
 
 	/**

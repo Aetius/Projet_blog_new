@@ -23,8 +23,8 @@
         public function __construct(ServerRequestInterface $request)
         {
             Session ::getSession();
-            $this -> factory = AppFactory ::getInstance();
-            $this -> request = $request;
+            $this->factory = AppFactory::getInstance();
+            $this->request = $request;
         }
 
 

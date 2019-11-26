@@ -33,33 +33,51 @@ class EmailModel extends AppModel{
 	 *@param array $inputs
 	 *@return array|void
 	 */
-	public function prepareContact($inputs){ 
-		if (empty($this->validation($inputs))){
-			$to = Constants::MAIL_TO;
-			$subject= 'Message envoyé par ' . $this->lastName .' '. $this->name .'__'.'Email : '.$this->email ;
-			$message_content = $this->message;
-			$this->send($to, $subject, $message_content);
-		};
-		return $this->errors; 
-		
+	public function prepareContact($inputs){
+        $this->validation($inputs);
+        if (!empty($this->errors)){
+            return $this->errors;
+        }
+        $to = Constants::MAIL_TO;
+        $subject= 'Message envoyé par ' . $this->lastName .' '. $this->name .'__'.'Email : '.$this->email ;
+        $message_content = $this->message;
+        $this->send($to, $subject, $message_content);
+
 	}
 	
 
 	/**
 	 *Setters
 	 */
+
+    /**
+     * @param $value
+     * @return string
+     */
 	public function setName($value){
 		return $this->name = $value; 
 	}
 
-	public function setLastName($value){
+    /**
+     * @param $value
+     * @return string
+     */
+    public function setLastName($value){
 		return $this->lastName = $value; 
 	}
 
+    /**
+     * @param $value
+     * @return string
+     */
 	public function setEmail($value){
 		return $this->email = $value; 
 	}
 
+    /**
+     * @param $value
+     * @return string
+     */
 	public function setMessage($value){
 		return $this->message = $value; 
 	}
