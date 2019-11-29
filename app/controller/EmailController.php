@@ -33,8 +33,8 @@ class EmailController extends Controller{
 		if (!empty($errors)) {
 			$_SESSION['success']['2']= "Echec lors de l'envoi du mail."; 
 			$results['errors']=$errors; 
-			$results['contact']=$inputs; 
-			return $this->show('homePage', $results);
+			$results['inputs']=$inputs;
+			return $this->show('home', $results);
 		}
 		$_SESSION['success']['1'] = "La demande de contact a bien été envoyée!";
 		return $this->redirectTo("/#contact");
